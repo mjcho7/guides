@@ -170,6 +170,8 @@
   .labs dl div { display: flex; gap: 6px; } .labs dt { font-weight: 600; } .labs dd { margin: 0; }
   .labs .go { justify-self: start; margin-top: 4px; font: 600 14.5px/1 var(--sans); padding: 10px 16px; border-radius: 8px; background: var(--accent); color: var(--accent-ink); text-decoration: none; }
   .labs .go:hover { opacity: .9; }
+  .dl { display: inline-block; font: 600 15.5px/1 var(--sans); padding: 13px 20px; border-radius: 8px; background: var(--accent); color: var(--accent-ink); text-decoration: none; }
+  .dl:hover { opacity: .9; }
   .block { display: grid; gap: 14px; margin-top: 36px; min-width: 0; }
   .block > h2 { margin: 0; font-size: 19px; font-weight: 700; }
   .hubmain { max-width: 860px; }
@@ -185,9 +187,19 @@
     <ul class="facts">
       <li><b>강사</b> 조미정</li>
       <li><b>도구</b> VS Code, Codex, uv, Streamlit, GitHub</li>
-      <li><b>자료</b> 실습파일 (강사가 배포)</li>
+      <li><b>자료</b> 실습파일 (아래에서 내려받기)</li>
     </ul>
   </header>
+
+  <div class="block">
+    <h2>실습파일 내려받기</h2>
+    <p>실습에 쓰는 파일을 먼저 내려받아 압축을 풉니다. 세 실습의 폴더가 모두 들어 있습니다.</p>
+    <p><a class="dl" href="rag-lab-files.zip" download>실습파일 내려받기 (zip, 약 2.5MB)</a></p>
+    <ul class="plain">
+      <li>내려받은 zip을 마우스 오른쪽 버튼으로 눌러 <b>압축 풀기</b>를 합니다. 압축을 풀지 않고 zip 안에서 바로 열면 실습이 되지 않습니다.</li>
+      <li>API 키는 들어 있지 않습니다. 강사가 알려 주는 키를 각 폴더의 <code>.env</code> 파일에 넣습니다.</li>
+    </ul>
+  </div>
 
   <div class="block">
     <h2>실습 순서</h2>
@@ -228,7 +240,7 @@
 
   <div class="block">
     <h2>실습파일의 구성</h2>
-    <p>강사에게 받은 실습파일의 압축을 풀면 폴더 세 개가 있습니다. 실습마다 해당 폴더 하나만 VS Code로 엽니다.</p>
+    <p>실습파일의 압축을 풀면 폴더 세 개가 있습니다. 실습마다 해당 폴더 하나만 VS Code로 엽니다.</p>
     <div class="tablewrap"><table>
       <tr><th>폴더</th><th>쓰는 실습</th><th>들어 있는 것</th></tr>
       <tr><td><code>01_basic</code></td><td>1</td><td>노트북 3개, Streamlit 파일 2개, 패키지 목록, <code>.env</code></td></tr>

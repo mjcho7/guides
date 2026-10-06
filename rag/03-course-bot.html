@@ -203,7 +203,7 @@
         <ul class="checks" id="checks">
           <li><label><input type="checkbox" id="c1"><span>Codex를 실행할 수 있고 로그인돼 있다</span></label></li>
           <li><label><input type="checkbox" id="c2"><span>터미널에서 <code>uv --version</code>과 <code>git --version</code>이 동작한다</span></label></li>
-          <li><label><input type="checkbox" id="c3"><span>강사에게 받은 <code>course-bot.zip</code>의 압축을 풀었다</span></label></li>
+          <li><label><input type="checkbox" id="c3"><span>과정 안내에서 실습파일을 내려받아 압축을 풀었다</span></label></li>
           <li><label><input type="checkbox" id="c4"><span><code>course-bot</code> 폴더 안에 <code>data/courses.json</code>, <code>.env</code>가 있다</span></label></li>
           <li><label><input type="checkbox" id="c5"><span>Codex를 <code>course-bot</code> 폴더에서 열었다</span></label></li>
           <li><label><input type="checkbox" id="c6"><span>GitHub 계정이 있고 로그인할 수 있다</span></label></li>
@@ -212,7 +212,7 @@
           <strong>헷갈리기 쉬운 점</strong>
           <ul>
             <li>ChatGPT 구독으로 Codex는 쓸 수 있지만, 우리가 만드는 챗봇이 호출하는 임베딩과 답변 생성에는 OpenAI API 키가 따로 필요합니다.</li>
-            <li>수업용 API 키는 받은 <code>.env</code> 파일에 이미 들어 있습니다. 채팅창이나 코드에 붙여 넣지 않습니다.</li>
+            <li><code>course-bot</code> 폴더의 <code>.env</code> 파일을 메모장으로 열어 <code>OPENAI_API_KEY=</code> 뒤에 강사가 알려 주는 키를 붙여 넣습니다. 채팅창이나 코드에는 붙여 넣지 않습니다.</li>
             <li><code>.env</code>는 이름이 점으로 시작해서 탐색기에서 안 보일 수 있습니다. 정상입니다.</li>
           </ul>
         </div>

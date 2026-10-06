@@ -193,11 +193,18 @@
         <div class="mhead"><span class="clock">준비</span><h2 class="title">준비 확인</h2><span class="progress" id="progress"></span></div>
         <p class="goal">오늘 쓰는 파일과 순서를 먼저 확인합니다. 체크한 내용은 이 브라우저에만 저장됩니다.</p>
         <ul class="checks" id="checks">
-          <li><label><input type="checkbox" id="c1"><span>강사에게 받은 실습파일의 압축을 풀었다</span></label></li>
+          <li><label><input type="checkbox" id="c1"><span>과정 안내에서 실습파일을 내려받아 압축을 풀었다</span></label></li>
           <li><label><input type="checkbox" id="c2"><span>실습파일 안에 <code>01_basic</code> 폴더가 있다</span></label></li>
-          <li><label><input type="checkbox" id="c3"><span><code>01_basic</code> 폴더 안에 <code>.env</code> 파일이 있다 (수업용 API 키가 들어 있음)</span></label></li>
+          <li><label><input type="checkbox" id="c3"><span><code>01_basic</code> 폴더의 <code>.env</code> 파일에 강사가 알려 준 API 키를 넣었다</span></label></li>
           <li><label><input type="checkbox" id="c4"><span>인터넷에 연결돼 있다</span></label></li>
         </ul>
+        <h3>API 키 넣기</h3>
+        <ol class="steps">
+          <li><code>01_basic</code> 폴더의 <code>.env</code> 파일을 메모장으로 엽니다. 파일이 안 보이면 탐색기의 <b>보기 → 표시 → 숨긴 항목</b>을 켭니다.</li>
+          <li><code>OPENAI_API_KEY=</code> 바로 뒤에 강사가 알려 주는 키를 붙여 넣습니다. 따옴표와 공백은 넣지 않습니다.</li>
+          <li>저장하고 닫습니다.</li>
+        </ol>
+
         <h3>01_basic 폴더의 파일</h3>
         <div class="tablewrap"><table>
           <tr><th>파일</th><th>단계</th><th>내용</th></tr>
