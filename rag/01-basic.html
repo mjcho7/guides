@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{box-sizing:border-box}body{margin:0}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<title>RAG 챗봇 기초 만들기</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* 배치: 왼쪽에 순서 진행표, 오른쪽에 단계별 실습 본문. 좁은 화면에서는 한 줄로 쌓인다. */
+  :root {
+    --bg: #f5f6f8; --surface: #ffffff; --ink: #1b2230; --muted: #5d6676; --line: #dfe3ea;
+    --accent: #2f4bbf; --accent-soft: #e8ecfb; --check: #0f7a5a; --check-soft: #e2f4ee;
+    --warn: #9a5b00; --warn-soft: #fdf1dc; --code-bg: #eef0f5; --accent-ink: #ffffff;
+    --sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", "D2Coding", Consolas, "Courier New", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14171d; --surface: #1c2029; --ink: #e6e9ef; --muted: #9aa3b2; --line: #2e3440;
+      --accent: #8ea2ff; --accent-soft: #232b4a; --check: #5fd0a8; --check-soft: #17332b;
+      --warn: #f0b458; --warn-soft: #3a2c12; --code-bg: #12151b; --accent-ink: #14171d; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14171d; --surface: #1c2029; --ink: #e6e9ef; --muted: #9aa3b2; --line: #2e3440;
+    --accent: #8ea2ff; --accent-soft: #232b4a; --check: #5fd0a8; --check-soft: #17332b;
+    --warn: #f0b458; --warn-soft: #3a2c12; --code-bg: #12151b; --accent-ink: #14171d; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font: 16px/1.7 var(--sans); }
+  .page { max-width: 1120px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 64px; }
+  a { color: var(--accent); }
+  code { font-family: var(--mono); font-size: .92em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  header.top { display: grid; gap: 10px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+  .eyebrow { font: 500 13px/1.4 var(--mono); color: var(--accent); letter-spacing: .04em; }
+  h1 { margin: 0; font-size: clamp(26px, 4.2vw, 38px); line-height: 1.25; font-weight: 700; text-wrap: balance; letter-spacing: -.01em; }
+  .sub { margin: -4px 0 2px; font-size: 18px; font-weight: 500; color: var(--accent); max-width: none; }
+  .lede { margin: 0; color: var(--muted); max-width: 62ch; }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 6px 0 0; padding: 0; list-style: none; font-size: 14.5px; }
+  .facts b { font-weight: 600; }
+  .layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 40px; margin-top: 28px; align-items: start; }
+  nav.rail { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
+  .rail h2 { margin: 0 0 10px; font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: .03em; }
+  .rail ol { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--line); }
+  .rail li a { display: grid; grid-template-columns: 46px 14px 1fr; gap: 6px; padding: 8px 8px 8px 12px; margin-left: -2px; border-left: 2px solid transparent; color: var(--ink); text-decoration: none; font-size: 14.5px; line-height: 1.45; }
+  .rail li a:hover { border-left-color: var(--accent); color: var(--accent); }
+  .rail li a[aria-current="step"] { border-left-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; border-radius: 0 6px 6px 0; }
+  .rail li a[aria-current="step"] time { color: var(--accent); }
+  /* 체크 표시는 고정 폭 칸에 넣어 세로로 줄을 맞춘다 */
+  .rail li a::after { content: ""; order: 1; font: 600 13px/1.6 var(--mono); color: var(--check); text-align: center; }
+  .rail li a time { order: 0; } .rail li a span { order: 2; }
+  .rail li a.seen:not([aria-current])::after { content: "✓"; }
+  .rail time { font: 400 12.5px/1.6 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  main { display: grid; gap: 28px; min-width: 0; }
+  section { display: grid; gap: 14px; min-width: 0; scroll-margin-top: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 0 26px 26px; }
+  .mhead { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0 -26px 6px; padding: 16px 26px; background: var(--accent-soft); border-bottom: 1px solid var(--line); border-radius: 10px 10px 0 0; }
+  .clock { font: 600 13px/1.4 var(--mono); color: var(--accent-ink); background: var(--accent); padding: 4px 11px; border-radius: 999px; white-space: nowrap; }
+  h2.title { margin: 0; font-size: 23px; line-height: 1.35; font-weight: 700; text-wrap: balance; }
+  h3 { margin: 14px 0 0; padding-top: 18px; border-top: 1px solid var(--line); font-size: 17px; font-weight: 700; }
+  .mhead + .goal + h3, .mhead + h3 { border-top: 0; padding-top: 0; margin-top: 6px; }
+  section .prompt, section .tablewrap { background: var(--bg); }
+  .pager { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; margin-top: 10px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .pager button { font: 500 15px/1.3 var(--sans); padding: 11px 16px; border-radius: 8px; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-align: left; max-width: 100%; }
+  .pager button small { display: block; font-size: 12.5px; color: var(--muted); font-weight: 400; }
+  .pager button.next { margin-left: auto; background: var(--accent); border-color: var(--accent); color: var(--accent-ink); text-align: right; }
+  .pager button.next small { color: var(--accent-ink); opacity: .8; }
+  .pager button:hover { border-color: var(--accent); }
+  .viewtoggle { margin-top: 14px; font: 500 13px/1 var(--sans); color: var(--accent); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 8px 11px; cursor: pointer; width: 100%; }
+  .viewtoggle:hover { border-color: var(--accent); }
+  .where { font: 500 13px/1.4 var(--mono); color: var(--muted); margin-left: auto; white-space: nowrap; }
+  p { margin: 0; max-width: 68ch; }
+  .goal { color: var(--muted); }
+  ol.steps, ul.plain { margin: 0; padding-left: 22px; display: grid; gap: 6px; max-width: 68ch; }
+  .prompt { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; min-width: 0; }
+  .prompt .bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 7px 8px 7px 14px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+  .prompt pre { margin: 0; padding: 14px; background: var(--code-bg); font: 400 14px/1.75 var(--mono); white-space: pre-wrap; word-break: keep-all; overflow-wrap: anywhere; }
+  button.copy { font: 500 13px/1 var(--sans); color: var(--accent); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 7px 11px; cursor: pointer; white-space: nowrap; }
+  button.copy:hover { border-color: var(--accent); }
+  button.copy.done { color: var(--check); border-color: var(--check); }
+  .slot { background: var(--warn-soft); color: var(--warn); border-radius: 4px; padding: 1px 5px; font-weight: 500; }
+  button.copy.stop { color: var(--warn); border-color: var(--warn); }
+  .slot.filled { background: var(--check-soft); color: var(--check); }
+  .fill { display: grid; gap: 6px; padding: 14px 16px; border: 2px solid var(--warn); border-radius: 8px; background: var(--warn-soft); min-width: 0; }
+  .fill.ok { border-color: var(--check); background: var(--check-soft); }
+  .fill label { font-weight: 700; font-size: 15px; }
+  .fill input { font: 400 15px/1.4 var(--mono); padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); width: 100%; min-width: 0; }
+  .fillnote { font-size: 13.5px; color: var(--muted); }
+  .verify { background: var(--check-soft); border-radius: 8px; padding: 12px 16px; display: grid; gap: 4px; }
+  .verify strong, .caution strong { font-size: 13.5px; letter-spacing: .02em; }
+  .verify strong { color: var(--check); }
+  .caution { background: var(--warn-soft); border-radius: 8px; padding: 12px 16px; display: grid; gap: 4px; }
+  .caution strong { color: var(--warn); }
+  .verify ul, .caution ul { margin: 0; padding-left: 20px; display: grid; gap: 3px; }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+  th, td { text-align: left; vertical-align: top; padding: 9px 13px; border-bottom: 1px solid var(--line); }
+  th { font-weight: 600; color: var(--muted); font-size: 13px; white-space: nowrap; }
+  tr:last-child td { border-bottom: 0; }
+  td { min-width: 9em; }
+  td.q { font-weight: 500; min-width: 15em; }
+  td.k { font-weight: 600; white-space: nowrap; }
+  .note { color: var(--muted); font-size: 14px; }
+  .checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .checks label { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; padding: 7px 10px; border-radius: 6px; cursor: pointer; }
+  .checks label:hover { background: var(--bg); }
+  .checks input { width: 18px; height: 18px; margin: 4px 0 0; accent-color: var(--check); }
+  .checks input:checked + span { color: var(--muted); }
+  .progress { font: 400 13px/1.4 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+  /* 흐름 그림: 내 컴퓨터에서 인터넷으로 넘어가는 다섯 칸 */
+  .flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .flow li { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; background: var(--bg); display: grid; gap: 2px; align-content: start; min-width: 0; }
+  .flow b { font-weight: 700; }
+  .flow span { color: var(--muted); font-size: 14px; }
+  .flow em { font: 500 12.5px/1.5 var(--mono); font-style: normal; color: var(--accent); }
+  /* 과정 이동 줄: 세 실습 중 지금 어디인지 보여 주고 서로 오간다 */
+  .course { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-bottom: 20px; font-size: 13.5px; }
+  .course .lbl { font: 500 12.5px/1.4 var(--mono); color: var(--muted); margin-right: 4px; }
+  .course a, .course .here { padding: 5px 12px; border: 1px solid var(--line); border-radius: 999px; text-decoration: none; color: var(--ink); background: var(--surface); white-space: nowrap; }
+  .course a:hover { border-color: var(--accent); color: var(--accent); }
+  .course .here { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+  /* 접이식 안내: 필요한 사람만 열어 본다 */
+  details.fold { border: 1px solid var(--line); border-radius: 8px; min-width: 0; }
+  details.fold summary { cursor: pointer; padding: 12px 16px; font-weight: 700; font-size: 16px; list-style: none; display: flex; align-items: center; gap: 10px; }
+  details.fold summary::-webkit-details-marker { display: none; }
+  details.fold summary::before { content: "+"; font: 600 16px/1 var(--mono); color: var(--accent); width: 1em; text-align: center; }
+  details.fold[open] summary::before { content: "−"; }
+  details.fold[open] summary { border-bottom: 1px solid var(--line); }
+  details.fold summary:hover { color: var(--accent); }
+  .foldbody { display: grid; gap: 14px; padding: 16px; min-width: 0; }
+  .instructor { margin-top: 56px; padding: 22px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; display: flex; flex-wrap: wrap; gap: 16px 40px; align-items: center; justify-content: space-between; }
+  .instructor .who { display: grid; gap: 2px; min-width: 0; }
+  .instructor .who strong { font-size: 19px; font-weight: 700; }
+  .instructor .who span:last-child { color: var(--muted); }
+  .instructor .work { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 8px; }
+  .instructor .work li { font-size: 14px; padding: 4px 11px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+  .instructor .contact { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; min-width: 0; }
+  .instructor .label { font-size: 13px; color: var(--muted); }
+  .instructor .mail { font: 500 15px/1.4 var(--mono); user-select: all; overflow-wrap: anywhere; }
+  footer { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13.5px; }
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+    nav.rail { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); margin-inline: -20px; padding: 8px 20px; border-bottom: 1px solid var(--line); }
+    .rail h2 { display: none; }
+    .rail ol { display: flex; gap: 6px; border-left: 0; overflow-x: auto; scrollbar-width: none; }
+    .rail ol::-webkit-scrollbar { display: none; }
+    .rail li { flex: none; }
+    .rail li a { display: flex; gap: 6px; align-items: center; border: 1px solid var(--line); border-radius: 999px; margin-left: 0; padding: 6px 12px; background: var(--surface); white-space: nowrap; }
+    .rail li a[aria-current="step"] { border-radius: 999px; border-color: var(--accent); }
+    .rail li a:not(.seen)::after, .rail li a[aria-current]::after { display: none; }
+    .viewtoggle { width: auto; margin-top: 8px; }
+    section { padding: 0 16px 20px; scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 112px); }
+    .mhead { margin: 0 -16px 6px; padding: 14px 16px; }
+    .where { margin-left: 0; }
+  }
+  @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <nav class="course" aria-label="과정 이동"><span class="lbl">RAG 기반 LLM 서비스 제작</span><a href="index.html">과정 안내</a><span class="here" aria-current="page">1 기초 실습</span><a href="02-chatbot.html">2 여비 챗봇</a><a href="03-course-bot.html">3 강의 추천 챗봇</a></nav>
+  <header class="top">
+    <div class="eyebrow">실습 안내 · 1</div>
+    <h1>RAG 챗봇 기초 만들기</h1>
+    <p class="sub">도구 설치부터 벡터DB까지</p>
+    <p class="lede">개발 도구를 설치하고, OpenAI API로 AI와 대화하고, LangChain과 Streamlit, 벡터DB를 차례로 다뤄 봅니다. 여기까지 하면 RAG 챗봇을 만들 준비가 끝납니다.</p>
+    <ul class="facts">
+      <li><b>강사</b> 조미정</li>
+      <li><b>도구</b> VS Code, Codex, uv, Jupyter 노트북</li>
+      <li><b>자료</b> 실습파일의 <code>01_basic</code> 폴더</li>
+    </ul>
+  </header>
+
+  <div class="layout">
+    <nav class="rail" aria-label="진행표">
+      <h2>진행표</h2>
+      <ol>
+        <li><a href="#prep"><time>준비</time><span>준비 확인</span></a></li>
+        <li><a href="#b1"><time>1</time><span>개발 도구 설치하기</span></a></li>
+        <li><a href="#b2"><time>2</time><span>실습 환경 맞추기</span></a></li>
+        <li><a href="#b3"><time>3</time><span>AI와 직접 대화해보기</span></a></li>
+        <li><a href="#b4"><time>4</time><span>AI 앱에 뼈대 잡기</span></a></li>
+        <li><a href="#b5"><time>5</time><span>채팅 화면 만들기</span></a></li>
+        <li><a href="#b6"><time>6</time><span>내 문서를 AI에 연결하기</span></a></li>
+        <li><a href="#next"><time>다음</time><span>RAG 챗봇 만들기로</span></a></li>
+      </ol>
+      <button class="viewtoggle" type="button" id="viewtoggle" hidden>전체 펼쳐 보기</button>
+    </nav>
+
+    <main>
+      <section id="prep">
+        <div class="mhead"><span class="clock">준비</span><h2 class="title">준비 확인</h2><span class="progress" id="progress"></span></div>
+        <p class="goal">오늘 쓰는 파일과 순서를 먼저 확인합니다. 체크한 내용은 이 브라우저에만 저장됩니다.</p>
+        <ul class="checks" id="checks">
+          <li><label><input type="checkbox" id="c1"><span>강사에게 받은 실습파일의 압축을 풀었다</span></label></li>
+          <li><label><input type="checkbox" id="c2"><span>실습파일 안에 <code>01_basic</code> 폴더가 있다</span></label></li>
+          <li><label><input type="checkbox" id="c3"><span><code>01_basic</code> 폴더 안에 <code>.env</code> 파일이 있다 (수업용 API 키가 들어 있음)</span></label></li>
+          <li><label><input type="checkbox" id="c4"><span>인터넷에 연결돼 있다</span></label></li>
+        </ul>
+        <h3>01_basic 폴더의 파일</h3>
+        <div class="tablewrap"><table>
+          <tr><th>파일</th><th>단계</th><th>내용</th></tr>
+          <tr><td><code>01_OpenAI_Chat_API.ipynb</code></td><td>3</td><td>OpenAI API로 질문하고 답 받기</td></tr>
+          <tr><td><code>02_Langchain_Basic.ipynb</code></td><td>4</td><td>LangChain의 다섯 가지 구성 요소</td></tr>
+          <tr><td><code>03_Streamlit_app1.py</code></td><td>5</td><td>가장 단순한 웹 화면</td></tr>
+          <tr><td><code>04_Streamlit_app2.py</code></td><td>5</td><td>대화를 기억하는 챗봇 화면</td></tr>
+          <tr><td><code>05_VectorDB_Search.ipynb</code></td><td>6</td><td>임베딩과 벡터DB 검색</td></tr>
+          <tr><td><code>pyproject.toml</code>, <code>uv.lock</code></td><td>2</td><td>설치할 패키지 목록</td></tr>
+        </table></div>
+        <div class="caution"><strong>헷갈리기 쉬운 점</strong><ul>
+          <li><code>.ipynb</code>는 노트북 파일입니다. 코드를 한 칸(셀)씩 실행하고 결과를 바로 아래에서 봅니다.</li>
+          <li><code>.py</code>는 파이썬 파일입니다. 터미널에서 명령으로 통째로 실행합니다.</li>
+          <li>API 키는 <code>.env</code> 파일에만 둡니다. 채팅창이나 코드에 붙여 넣지 않습니다.</li>
+        </ul></div>
+      </section>
+
+      <section id="b1">
+        <div class="mhead"><span class="clock">1단계</span><h2 class="title">개발 도구 설치하기</h2></div>
+        <p class="goal">코드를 쓰고 실행할 작업 공간을 만듭니다. 설치할 것은 VS Code와 익스텐션입니다. 이미 설치된 것은 건너뜁니다.</p>
+
+        <h3>파이썬은 따로 설치하지 않아도 됩니다</h3>
+        <p>이 과정에서는 uv가 파이썬을 대신 설치합니다. 2단계에서 <code>uv sync</code>를 실행하면 실습에 맞는 버전(3.12)을 자동으로 내려받아 실습 폴더 안에 준비합니다.</p>
+        <ul class="plain">
+          <li>PC에 파이썬이 없어도 실습할 수 있습니다.</li>
+          <li>이미 다른 버전이 설치돼 있어도 그대로 두면 됩니다. 실습은 uv가 준비한 버전으로 돌아갑니다.</li>
+        </ul>
+        <details class="fold" id="py-install">
+          <summary>그래도 파이썬을 직접 설치하려면</summary>
+          <div class="foldbody">
+            <p>uv 없이 파이썬을 쓸 일이 있을 때 참고합니다. 이 실습에는 필요하지 않습니다.</p>
+            <ol class="steps">
+              <li><a href="https://www.python.org/downloads" target="_blank" rel="noopener">https://www.python.org/downloads</a>에서 설치 파일을 내려받습니다.</li>
+              <li>설치 첫 화면에서 <b>Add Python to PATH</b>를 체크한 뒤 설치합니다.</li>
+            </ol>
+          </div>
+        </details>
+
+        <h3>1. VS Code 설치</h3>
+        <ol class="steps">
+          <li><a href="https://code.visualstudio.com/" target="_blank" rel="noopener">https://code.visualstudio.com/</a>에서 내 운영체제에 맞는 설치 파일을 내려받아 실행합니다.</li>
+        </ol>
+
+        <h3>2. 익스텐션 설치</h3>
+        <p>VS Code 왼쪽 메뉴의 <b>Extensions</b>를 누르고, 아래 이름을 검색해 설치합니다.</p>
+        <div class="tablewrap"><table>
+          <tr><th>검색어</th><th>설치할 것</th><th>용도</th></tr>
+          <tr><td class="k">python</td><td>Microsoft의 Python</td><td>파이썬 코드 실행</td></tr>
+          <tr><td class="k">jupyter</td><td>Microsoft의 Jupyter</td><td>노트북(.ipynb) 열기와 실행</td></tr>
+          <tr><td class="k">codex</td><td>OpenAI의 Codex</td><td>AI 코딩 도구</td></tr>
+          <tr><td class="k">korean</td><td>Korean Language Pack (선택)</td><td>메뉴를 한글로 표시</td></tr>
+        </table></div>
+
+        <h3>3. Codex 확인하기</h3>
+        <ol class="steps">
+          <li>VS Code 오른쪽의 <b>Codex</b> 탭을 선택합니다. 초기 설정 화면이 나오면 아래쪽 <b>다음</b>을 눌러 진행합니다.</li>
+          <li>로그인 화면이 나오면 로그인합니다.</li>
+          <li>설정이 끝나면 사용할 모델과 추론 수준을 고를 수 있습니다.</li>
+        </ol>
+        <div class="verify"><strong>확인할 것</strong><ul>
+          <li>VS Code 익스텐션 목록에 Python, Jupyter, Codex가 설치됨으로 나오나요?</li>
+          <li>Codex 탭에 글을 입력할 수 있는 창이 보이나요?</li>
+        </ul></div>
+        <details class="fold" id="colab">
+          <summary>설치가 어렵다면: Colab으로 노트북만 실습하기</summary>
+          <div class="foldbody">
+            <p>Google Colab은 설치 없이 브라우저에서 노트북을 실행하는 서비스입니다. 구글 계정으로 <a href="https://colab.research.google.com/" target="_blank" rel="noopener">https://colab.research.google.com/</a>에 접속해 노트북 파일을 올리면 됩니다. PC에 설치가 안 될 때의 대안입니다.</p>
+            <div class="tablewrap"><table>
+              <tr><th>Colab에서 되는 것</th><th>Colab에서 안 되는 것</th></tr>
+              <tr><td>3단계 <code>01_OpenAI_Chat_API.ipynb</code><br>4단계 <code>02_Langchain_Basic.ipynb</code><br>6단계 <code>05_VectorDB_Search.ipynb</code></td><td>5단계 Streamlit 화면 실습<br>2번, 3번 실습 (Codex, uv, GitHub 배포)</td></tr>
+            </table></div>
+            <ul class="plain">
+              <li>패키지 설치와 API 키 넣는 방법이 PC와 다릅니다. Colab으로 할 때는 강사의 안내에 따릅니다.</li>
+              <li>2번 실습부터는 VS Code와 Codex가 꼭 필요합니다. Colab은 1번 실습의 노트북까지만 대신할 수 있습니다.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <section id="b2">
+        <div class="mhead"><span class="clock">2단계</span><h2 class="title">실습 환경 맞추기</h2></div>
+        <p class="goal">모두가 같은 버전의 패키지로 실습하도록 환경을 맞춥니다. uv가 <code>01_basic</code> 폴더의 목록대로 한 번에 설치합니다.</p>
+
+        <h3>1. 폴더 열기</h3>
+        <ol class="steps">
+          <li>VS Code에서 <b>파일 → 폴더 열기</b>로 <code>01_basic</code> 폴더를 엽니다. 실습파일 전체가 아니라 <code>01_basic</code>을 엽니다.</li>
+          <li><b>터미널 → 새 터미널</b>로 터미널을 엽니다.</li>
+        </ol>
+
+        <h3>2. uv 설치</h3>
+        <p>uv는 파이썬 패키지와 가상환경을 관리하는 도구입니다. 공식 안내는 <a href="https://docs.astral.sh/uv/" target="_blank" rel="noopener">https://docs.astral.sh/uv/</a>에 있습니다.</p>
+        <div class="prompt"><div class="bar"><span>Windows · PowerShell에서 설치</span><button class="copy" type="button">복사</button></div>
+<pre>powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex&quot;</pre></div>
+        <div class="prompt"><div class="bar"><span>macOS · 터미널에서 설치</span><button class="copy" type="button">복사</button></div>
+<pre>curl -LsSf https://astral.sh/uv/install.sh | sh</pre></div>
+        <p class="note">설치한 뒤 VS Code를 닫았다가 다시 엽니다. 새로 열어야 <code>uv</code> 명령을 찾습니다.</p>
+
+        <h3>3. 환경 동기화</h3>
+        <div class="prompt"><div class="bar"><span>VS Code 터미널에서</span><button class="copy" type="button">복사</button></div>
+<pre>uv sync</pre></div>
+        <p>처음에는 패키지를 내려받느라 몇 분 걸립니다. 끝나면 폴더에 <code>.venv</code>가 생깁니다. 노트북 실행에 필요한 ipykernel과 pandas도 이때 함께 설치됩니다.</p>
+
+        <h3>4. 노트북 커널 선택</h3>
+        <ol class="steps">
+          <li><code>01_OpenAI_Chat_API.ipynb</code>를 엽니다.</li>
+          <li>오른쪽 위의 <b>커널 선택</b>을 누릅니다.</li>
+          <li><b>Python 환경</b>을 고르고, 목록에서 <code>.venv</code>가 붙은 항목을 선택합니다.</li>
+        </ol>
+        <div class="verify"><strong>확인할 것</strong><ul>
+          <li>터미널에서 <code>uv --version</code>을 실행하면 버전 번호가 나오나요?</li>
+          <li><code>01_basic</code> 폴더에 <code>.venv</code> 폴더가 생겼나요?</li>
+          <li>노트북 오른쪽 위에 <code>.venv</code>가 표시되나요?</li>
+        </ul></div>
+        <div class="caution"><strong>커널 목록에 .venv가 안 보이면</strong><ul>
+          <li>VS Code에서 연 폴더가 <code>01_basic</code>인지 확인합니다. 상위 폴더를 열면 <code>.venv</code>를 찾지 못합니다.</li>
+          <li><code>uv sync</code>가 오류 없이 끝났는지 터미널을 확인합니다.</li>
+        </ul></div>
+      </section>
+
+      <section id="b3">
+        <div class="mhead"><span class="clock">3단계</span><h2 class="title">AI와 직접 대화해보기</h2></div>
+        <p class="goal">파이썬 코드로 OpenAI API에 질문을 보내고 답을 받습니다. ChatGPT 화면 없이 AI를 부르는 방법입니다.</p>
+        <div class="tablewrap"><table>
+          <tr><td class="k">파일</td><td><code>01_OpenAI_Chat_API.ipynb</code></td></tr>
+          <tr><td class="k">실행 방법</td><td>셀을 누르고 <b>Shift + Enter</b>. 위에서부터 차례로 실행합니다.</td></tr>
+        </table></div>
+
+        <h3>API를 부르는 다섯 단계</h3>
+        <ol class="flow">
+          <li><em>1</em><b>라이브러리 설치</b><span>uv sync로 이미 끝남</span></li>
+          <li><em>2</em><b>API 키 설정</b><span>.env에서 읽어 옴</span></li>
+          <li><em>3</em><b>질문 준비</b><span>질문을 프롬프트로 작성</span></li>
+          <li><em>4</em><b>API 호출</b><span>OpenAI 서버에 전송</span></li>
+          <li><em>5</em><b>응답 받기</b><span>답을 프로그램에서 사용</span></li>
+        </ol>
+
+        <h3>노트북의 실습 순서</h3>
+        <div class="tablewrap"><table>
+          <tr><th>실습</th><th>배우는 것</th></tr>
+          <tr><td class="k">환경 설정</td><td><code>load_dotenv()</code>로 <code>.env</code>의 키 불러오기</td></tr>
+          <tr><td class="k">실습 1</td><td>첫 번째 질문 보내고 <code>output_text</code>로 답 확인하기</td></tr>
+          <tr><td class="k">실습 2</td><td>질문을 변수로 만들어 내용만 바꾸기</td></tr>
+          <tr><td class="k">실습 3</td><td>f-string으로 여러 조건을 넣은 프롬프트 만들기</td></tr>
+          <tr><td class="k">실습 4</td><td><code>instructions</code>로 역할과 응답 원칙 지정하기</td></tr>
+          <tr><td class="k">실습 5</td><td>출력 항목, 개수, 길이 지정하기</td></tr>
+          <tr><td class="k">실습 6</td><td>예시를 주고 같은 형식으로 답하게 하기</td></tr>
+          <tr><td class="k">실습 7</td><td>파이썬이 만든 표를 AI에게 넘겨 해석시키기</td></tr>
+          <tr><td class="k">이미지 분석</td><td><code>data/graph02.png</code> 그래프를 보여 주고 설명 받기</td></tr>
+          <tr><td class="k">오디오 출력</td><td>답변을 음성 파일 <code>sample.wav</code>로 저장하기</td></tr>
+        </table></div>
+        <div class="verify"><strong>확인할 것</strong><ul>
+          <li><code>load_dotenv()</code> 셀을 실행하면 <code>True</code>가 나오나요? <code>False</code>면 <code>.env</code>를 찾지 못한 것입니다.</li>
+          <li>실습 1에서 "답변:" 아래에 한 문장이 나오나요?</li>
+          <li>같은 셀을 두 번 실행하면 답이 똑같은가요, 조금 다른가요?</li>
+        </ul></div>
+        <h3>직접 해 보기</h3>
+        <ul class="plain">
+          <li>실습 2의 <code>question</code>을 내 업무에 관한 질문으로 바꿔 실행합니다.</li>
+          <li>실습 3의 <code>goal</code>, <code>daily_time</code>, <code>level</code> 값을 바꿔 계획이 어떻게 달라지는지 봅니다.</li>
+          <li>실습 4의 <code>instructions</code>에서 역할을 "초등학교 선생님"으로 바꿔 말투가 달라지는지 봅니다.</li>
+        </ul>
+        <div class="caution"><strong>오류가 나면</strong><ul>
+          <li>오류 메시지에 <code>api_key</code>가 보이면 <code>load_dotenv()</code> 셀을 먼저 실행했는지 확인합니다.</li>
+          <li>그래도 안 되면 오류 메시지를 복사해 Codex에게 "이 오류의 원인을 알려줘"라고 물어봅니다.</li>
+        </ul></div>
+        <details class="fold" id="key-own">
+          <summary>내 API 키를 직접 발급받으려면</summary>
+          <div class="foldbody">
+            <p>수업에서는 받은 키를 씁니다. 수업 뒤에 혼자 실습할 때는 직접 발급받습니다.</p>
+            <ol class="steps">
+              <li><a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">https://platform.openai.com/api-keys</a>에 로그인합니다.</li>
+              <li><b>Create new secret key</b>를 눌러 키를 만들고, 바로 복사해 안전한 곳에 저장합니다. 다시 볼 수 없습니다.</li>
+              <li>환경 설정에서 결제할 카드를 등록하고, 사전 충전(Prepaid) 방식으로 금액을 결제합니다.</li>
+              <li><code>.env</code> 파일의 <code>OPENAI_API_KEY=</code> 뒤를 새 키로 바꿉니다.</li>
+            </ol>
+          </div>
+        </details>
+      </section>
+
+      <section id="b4">
+        <div class="mhead"><span class="clock">4단계</span><h2 class="title">AI 앱에 뼈대 잡기</h2></div>
+        <p class="goal">LangChain은 프롬프트, 모델, 출력 처리를 부품처럼 연결하게 해 주는 프레임워크입니다. 부품을 <code>|</code> 기호로 이어 붙이는 방법을 익힙니다.</p>
+        <div class="tablewrap"><table>
+          <tr><td class="k">파일</td><td><code>02_Langchain_Basic.ipynb</code></td></tr>
+          <tr><td class="k">실행 방법</td><td>커널이 <code>.venv</code>인지 확인하고, 위에서부터 Shift + Enter</td></tr>
+        </table></div>
+
+        <h3>다섯 가지 구성 요소</h3>
+        <div class="tablewrap"><table>
+          <tr><th>구성 요소</th><th>하는 일</th><th>노트북에서 쓰는 것</th></tr>
+          <tr><td class="k">1. 모델</td><td>답을 만드는 AI</td><td><code>ChatOpenAI</code></td></tr>
+          <tr><td class="k">2. 메시지</td><td>사용자, AI, 시스템의 말을 구분</td><td><code>HumanMessage</code>, <code>AIMessage</code>, <code>SystemMessage</code></td></tr>
+          <tr><td class="k">3. 프롬프트 템플릿</td><td>빈칸이 있는 질문 틀</td><td><code>PromptTemplate</code>, <code>ChatPromptTemplate</code></td></tr>
+          <tr><td class="k">4. 출력 파서</td><td>답을 원하는 형태로 정리</td><td><code>StrOutputParser</code>, <code>JsonOutputParser</code></td></tr>
+          <tr><td class="k">5. 메모리</td><td>앞의 대화를 기억</td><td><code>RunnableWithMessageHistory</code></td></tr>
+        </table></div>
+        <div class="verify"><strong>확인할 것</strong><ul>
+          <li><code>response.content</code>와 <code>response</code>를 각각 출력하면 무엇이 다른가요?</li>
+          <li><code>response.usage_metadata</code>에서 토큰 사용량이 보이나요? 요금은 이 숫자로 계산됩니다.</li>
+          <li>시스템 메시지를 번역 어시스턴트로 준 뒤 "Peace"만 보내도 번역이 나오나요?</li>
+          <li>메모리 부분에서 "여기에 숫자 2를 곱하면 얼마인가요?"에 앞의 숫자를 기억하고 답하나요?</li>
+        </ul></div>
+        <h3>직접 해 보기</h3>
+        <p>노트북 끝의 <b>[실습]</b>을 풉니다. 영어 문장을 넣으면 한국어로 번역하는 체인을 <code>PromptTemplate</code>, <code>ChatOpenAI</code>, <code>StrOutputParser</code>로 만들고 2회 이상 실행합니다. 먼저 직접 써 본 뒤 아래의 Solution과 비교합니다.</p>
+        <div class="caution"><strong>이 구조가 뒤에서 다시 나옵니다</strong><ul>
+          <li><code>프롬프트 | 모델 | 파서</code>로 잇는 방식은 여비 챗봇의 <code>app.py</code>에서도 그대로 씁니다.</li>
+        </ul></div>
+      </section>
+
+      <section id="b5">
+        <div class="mhead"><span class="clock">5단계</span><h2 class="title">채팅 화면 만들기</h2></div>
+        <p class="goal">Streamlit은 파이썬 코드만으로 웹 화면을 만드는 도구입니다. 화면 하나를 띄워 보고, 대화를 기억하는 챗봇 화면까지 실행합니다.</p>
+
+        <h3>1. 가장 단순한 화면</h3>
+        <div class="prompt"><div class="bar"><span>VS Code 터미널에서</span><button class="copy" type="button">복사</button></div>
+<pre>uv run streamlit run 03_Streamlit_app1.py</pre></div>
+        <p>브라우저가 열리고 "간단한 챗봇"이라는 제목이 보입니다. 끝낼 때는 터미널에서 <b>Ctrl + C</b>를 누릅니다.</p>
+
+        <h3>2. 직접 해 보기: 인사 앱으로 바꾸기</h3>
+        <p><code>03_Streamlit_app1.py</code>의 <code>st.title</code> 줄 아래에 두 줄을 추가하고 저장합니다. 브라우저에서 <b>Rerun</b>을 누르면 바로 반영됩니다.</p>
+        <div class="prompt"><div class="bar"><span>03_Streamlit_app1.py에 추가할 코드</span><button class="copy" type="button">복사</button></div>
+<pre>name = st.text_input("당신의 이름을 입력하세요")
+if name: st.write(f"안녕하세요, {name}님! 반갑습니다!")</pre></div>
+
+        <h3>3. 대화를 기억하는 챗봇</h3>
+        <div class="prompt"><div class="bar"><span>VS Code 터미널에서</span><button class="copy" type="button">복사</button></div>
+<pre>uv run streamlit run 04_Streamlit_app2.py</pre></div>
+        <p>4단계에서 배운 프롬프트 템플릿, 모델, 메모리가 화면과 합쳐진 것입니다. 대화 주제를 고르고 메시지를 입력합니다.</p>
+        <div class="verify"><strong>확인할 것</strong><ul>
+          <li>이름을 입력하면 인사말이 나오나요?</li>
+          <li>챗봇에 "내 이름은 ○○야"라고 한 뒤 "내 이름이 뭐지?"라고 물으면 기억하나요?</li>
+          <li>주제를 "수학"으로 두고 요리 질문을 하면 "잘 모르겠습니다"라고 답하나요?</li>
+        </ul></div>
+        <div class="caution"><strong>터미널을 닫지 마세요</strong><ul>
+          <li>터미널이 화면을 돌리고 있습니다. 닫거나 Ctrl + C를 누르면 브라우저의 화면도 멈춥니다.</li>
+          <li>다른 파일을 실행하려면 먼저 Ctrl + C로 끝낸 뒤 새 명령을 넣습니다.</li>
+        </ul></div>
+      </section>
+
+      <section id="b6">
+        <div class="mhead"><span class="clock">6단계</span><h2 class="title">내 문서를 AI에 연결하기</h2></div>
+        <p class="goal">RAG는 질문과 관련된 문서를 먼저 찾아 AI에게 함께 넘기는 방법입니다. 그 바탕이 되는 임베딩과 벡터DB 검색을 직접 실행합니다.</p>
+        <div class="tablewrap"><table>
+          <tr><td class="k">파일</td><td><code>05_VectorDB_Search.ipynb</code></td></tr>
+          <tr><td class="k">실행 방법</td><td>커널이 <code>.venv</code>인지 확인하고, 위에서부터 Shift + Enter</td></tr>
+        </table></div>
+
+        <h3>두 가지 개념</h3>
+        <div class="tablewrap"><table>
+          <tr><td class="k">임베딩</td><td>글을 숫자 목록(벡터)으로 바꾸는 일. 뜻이 비슷한 글은 숫자도 비슷해집니다.</td></tr>
+          <tr><td class="k">벡터DB</td><td>벡터를 저장해 두고, 질문과 가까운 것을 빠르게 찾아 주는 저장소. 여기서는 FAISS를 씁니다.</td></tr>
+        </table></div>
+
+        <h3>노트북의 순서</h3>
+        <div class="tablewrap"><table>
+          <tr><th>부분</th><th>배우는 것</th></tr>
+          <tr><td class="k">1. Embeddings</td><td>문장 하나와 여러 문장을 벡터로 바꾸기</td></tr>
+          <tr><td class="k">2-(1) 벡터 생성</td><td>글과 문서로 FAISS 벡터DB 만들기</td></tr>
+          <tr><td class="k">2-(2) 저장과 불러오기</td><td><code>save_local</code>, <code>load_local</code></td></tr>
+          <tr><td class="k">2-(3) 유사도 검색</td><td>질문과 가까운 문서 찾기, 개수(<code>k</code>)와 필터 지정</td></tr>
+          <tr><td class="k">2-(4) 검색기</td><td><code>as_retriever</code>로 검색기 만들기</td></tr>
+          <tr><td class="k">2-(5) 코사인 유사도</td><td>거리 대신 유사도로 비교하기</td></tr>
+          <tr><td class="k">2-(6) 문서 추가</td><td>만들어 둔 벡터DB에 새 문서 넣기</td></tr>
+        </table></div>
+        <div class="verify"><strong>확인할 것</strong><ul>
+          <li><code>len(query_result)</code>가 1536으로 나오나요? 문장 하나가 숫자 1536개로 바뀐 것입니다.</li>
+          <li><code>save_local</code>을 실행한 뒤 폴더에 <code>faiss_index</code>가 생겼나요?</li>
+          <li>"인공지능에 대해 알려줘"로 검색했을 때 인공지능 문서가 맨 위에 나오나요?</li>
+          <li><code>k=2</code>로 바꾸면 결과가 2개만 나오나요?</li>
+          <li>점수는 작을수록 비슷한 것인가요, 클수록 비슷한 것인가요? 노트북의 설명에서 찾아보세요.</li>
+        </ul></div>
+        <h3>직접 해 보기</h3>
+        <p>노트북 끝의 <b>[실습]</b>을 풉니다. 서울, 부산, 제주의 관광지 설명 3개를 벡터DB에 넣고, 질문에 맞는 관광지를 찾는 추천 시스템을 만듭니다. 먼저 직접 써 본 뒤 Solution과 비교합니다.</p>
+        <p class="note">"바다가 보고 싶어"처럼 설명에 없는 단어로 물어도 부산이 나오는지 확인해 보세요. 단어가 아니라 뜻으로 찾는다는 것이 임베딩 검색의 핵심입니다.</p>
+      </section>
+
+      <section id="next">
+        <div class="mhead"><span class="clock">다음</span><h2 class="title">RAG 챗봇 만들기로</h2></div>
+        <p class="goal">지금까지 익힌 네 가지를 합치면 RAG 챗봇이 됩니다.</p>
+        <div class="tablewrap"><table>
+          <tr><th>오늘 익힌 것</th><th>RAG 챗봇에서 맡는 일</th></tr>
+          <tr><td class="k">OpenAI API</td><td>임베딩과 답변 생성</td></tr>
+          <tr><td class="k">LangChain</td><td>검색 결과와 질문을 프롬프트로 묶어 모델에 전달</td></tr>
+          <tr><td class="k">Streamlit</td><td>질문을 입력하고 답을 보는 화면</td></tr>
+          <tr><td class="k">벡터DB</td><td>문서 조각을 저장하고 질문과 가까운 것 찾기</td></tr>
+        </table></div>
+        <p>다음 실습에서는 공무원 여비 문서로 실제 챗봇을 만들고 배포합니다. 이번에는 코드를 직접 쓰지 않고 Codex에게 프롬프트로 맡깁니다.</p>
+        <div class="tablewrap"><table>
+          <tr><td class="k">다음 실습</td><td><a href="02-chatbot.html">공무원 여비 RAG 챗봇 만들기</a> · 프로젝트 설정부터 배포까지<br><span class="note">실습파일의 <code>chatbot</code> 폴더를 씁니다.</span></td></tr>
+        </table></div>
+      </section>
+    </main>
+  </div>
+
+  <aside class="instructor" aria-label="강사 소개">
+    <div class="who"><strong>조미정</strong><span>공공기관 AI효율화를 도와주는 교육컨설턴트</span></div>
+    <ul class="work"><li>데이터 분석</li><li>AI 업무자동화</li><li>AI 프로젝트</li></ul>
+    <div class="contact"><span class="label">문의</span><span class="mail" id="mail">mjcho7@naver.com</span><button class="copy" type="button" id="mailcopy">주소 복사</button></div>
+  </aside>
+  <footer>수업용 API 키는 실습 기간에만 씁니다. 수업 뒤에는 직접 발급받은 키로 바꿔 주세요.</footer>
+</div>
+
+<script>
+  // 복사 버튼 공통: 실패하면 글자를 선택해 직접 복사할 수 있게 한다
+  // 저장소 주소 칸: 넣은 주소가 명령에 바로 들어간다
+  var REPO_OK = /^https:\/\/github\.com\/[^\/\s]+\/[^\/\s]+$/;
+  (function () {
+    var field = document.getElementById("repo-url"), slot = document.getElementById("repo-slot");
+    if (!field) return;  // 주소 칸이 없는 페이지에서는 건너뛴다
+    var note = document.getElementById("repo-note"), wrap = field.parentNode, RKEY = "basic-rag-lab-repo";
+    var EMPTY = slot.textContent, HINT = note.textContent;
+    var sync = function () {
+      var v = field.value.trim().replace(/\/+$/, ""), ok = REPO_OK.test(v);
+      slot.textContent = ok ? v : EMPTY; slot.classList.toggle("filled", ok); wrap.classList.toggle("ok", ok);
+      note.textContent = ok ? "명령에 주소가 들어갔습니다. 아래 복사 버튼을 누르세요."
+        : (v ? "https://github.com/계정/저장소 형태의 주소를 넣어 주세요." : HINT);
+      try { localStorage.setItem(RKEY, v); } catch (e) {}
+    };
+    try { field.value = localStorage.getItem(RKEY) || ""; } catch (e) {}
+    field.addEventListener("input", sync); sync();
+  })();
+  function wireCopy(btn, source, idle, needs) {
+    btn.addEventListener("click", function () {
+      if (needs) {
+        var field = document.getElementById(needs);
+        if (!REPO_OK.test(field.value.trim().replace(/\/+$/, ""))) {
+          btn.textContent = "주소를 먼저 넣으세요"; btn.classList.add("stop");
+          try { field.focus(); field.scrollIntoView({ block: "center" }); } catch (e) {}
+          setTimeout(function () { btn.textContent = idle; btn.classList.remove("stop"); }, 2200);
+          return;
+        }
+      }
+      var done = function (label) {
+        btn.textContent = label; btn.classList.add("done");
+        setTimeout(function () { btn.textContent = idle; btn.classList.remove("done"); }, 1800);
+      };
+      var selectText = function () {
+        var range = document.createRange(); range.selectNodeContents(source);
+        var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+        done("선택됨 · Ctrl+C");
+      };
+      try { navigator.clipboard.writeText(source.textContent.trim()).then(function () { done("복사됨"); }, selectText); }
+      catch (e) { selectText(); }
+    });
+  }
+  document.querySelectorAll(".prompt").forEach(function (box) {
+    wireCopy(box.querySelector("button.copy"), box.querySelector("pre"), "복사", box.getAttribute("data-needs"));
+  });
+  wireCopy(document.getElementById("mailcopy"), document.getElementById("mail"), "주소 복사");
+
+  // 한 단계씩 보기: 진행표에서 고른 단계만 보여주고, 아래에 이전/다음 버튼을 둔다
+  (function () {
+    var sections = Array.prototype.slice.call(document.querySelectorAll("main > section"));
+    var links = Array.prototype.slice.call(document.querySelectorAll(".rail a"));
+    var toggle = document.getElementById("viewtoggle");
+    var ids = sections.map(function (x) { return x.id; });
+    var SKEY = "basic-rag-lab-step", paged = true, current = ids[0], seen = {};
+    var title = function (sec) { return sec.querySelector("h2.title").textContent; };
+    var label = function (sec) { return sec.querySelector(".clock").textContent; };
+    sections.forEach(function (sec, i) {
+      var where = document.createElement("span"); where.className = "where";
+      where.textContent = (i + 1) + " / " + sections.length; sec.querySelector(".mhead").appendChild(where);
+      var pager = document.createElement("div"); pager.className = "pager";
+      if (i > 0) {
+        var prev = document.createElement("button"); prev.type = "button"; prev.className = "prev";
+        prev.innerHTML = "<small>이전</small>"; prev.appendChild(document.createTextNode("← " + title(sections[i - 1])));
+        prev.addEventListener("click", function () { show(ids[i - 1], true); }); pager.appendChild(prev);
+      }
+      if (i < sections.length - 1) {
+        var next = document.createElement("button"); next.type = "button"; next.className = "next";
+        var small = document.createElement("small"); small.textContent = "다음 · " + label(sections[i + 1]); next.appendChild(small);
+        next.appendChild(document.createTextNode(title(sections[i + 1]) + " →"));
+        next.addEventListener("click", function () { show(ids[i + 1], true); }); pager.appendChild(next);
+      }
+      sec.appendChild(pager);
+    });
+    function render() {
+      sections.forEach(function (sec) { sec.hidden = paged && sec.id !== current; sec.querySelector(".pager").hidden = !paged; });
+      links.forEach(function (a) {
+        var id = a.getAttribute("href").slice(1);
+        if (id === current) a.setAttribute("aria-current", "step"); else a.removeAttribute("aria-current");
+        a.classList.toggle("seen", !!seen[id]);
+      });
+      toggle.textContent = paged ? "전체 펼쳐 보기" : "한 단계씩 보기";
+      var active = document.querySelector('.rail a[aria-current="step"]');
+      if (active && active.scrollIntoView && window.matchMedia("(max-width: 860px)").matches) {
+        try { active.scrollIntoView({ block: "nearest", inline: "center" }); } catch (e) {}
+      }
+    }
+    function show(id, scroll) {
+      if (ids.indexOf(id) < 0) return;
+      seen[current] = true; current = id;
+      try { sessionStorage.setItem(SKEY, id); } catch (e) {}
+      try { history.replaceState(null, "", "#" + id); } catch (e) {}
+      render();
+      if (scroll) {
+        var target = document.getElementById(id);
+        try { target.scrollIntoView({ block: "start", behavior: "instant" }); } catch (e) { try { target.scrollIntoView(true); } catch (e2) {} }
+      }
+    }
+    links.forEach(function (a) { a.addEventListener("click", function (e) { e.preventDefault(); show(a.getAttribute("href").slice(1), true); }); });
+    toggle.hidden = false;
+    toggle.addEventListener("click", function () { paged = !paged; render(); if (!paged) { try { document.getElementById(current).scrollIntoView({ block: "start" }); } catch (e) {} } });
+    window.addEventListener("hashchange", function () { show(location.hash.slice(1), true); });
+    var start = location.hash.slice(1);
+    if (ids.indexOf(start) < 0) { try { start = sessionStorage.getItem(SKEY) || ""; } catch (e) { start = ""; } }
+    // 새로 열면 첫 단계부터, 같은 탭에서 새로고침하면 보던 단계를 유지한다
+    current = ids.indexOf(start) >= 0 ? start : ids[0];
+    render();
+  })();
+
+  // 준비 확인 체크: 이 브라우저에만 저장 (저장이 안 되는 환경에서도 그대로 동작)
+  (function () {
+    var KEY = "basic-rag-lab-checks", boxes = Array.prototype.slice.call(document.querySelectorAll("#checks input"));
+    var progress = document.getElementById("progress"), saved = {};
+    try { saved = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) {}
+    var refresh = function () { progress.textContent = boxes.filter(function (b) { return b.checked; }).length + " / " + boxes.length + " 완료"; };
+    boxes.forEach(function (b) {
+      if (saved[b.id]) b.checked = true;
+      b.addEventListener("change", function () { saved[b.id] = b.checked; try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {} refresh(); });
+    });
+    refresh();
+  })();
+</script>
+</body>
+</html>
