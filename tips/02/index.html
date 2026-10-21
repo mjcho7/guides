@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI 활용꿀팁 #02 · Gemini 노트북으로 민원 답변 챗봇 만들기</title>
+<title>AI 활용꿀팁 #02 · Gemini 노트북으로 공무원 여비 도우미 만들기</title>
 <meta name="description" content="자료를 올리면 근거까지 달아 답하는 Gemini 노트북(구 NotebookLM)으로 민원 답변 초안을 쓰는 실습">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -121,9 +121,9 @@
     <span class="ep">#02</span>
   </nav>
 
-  <span class="chip">AI 활용꿀팁 실습 · 민원 답변 챗봇</span>
-  <h1>AI 답변, 그 <em>근거</em>는<br>어디에 있나요?</h1>
-  <p class="subt">Gemini 노트북으로 민원 답변 챗봇 만들기</p>
+  <span class="chip">AI 활용꿀팁 실습 · 규정 도우미</span>
+  <h1>같은 문의, 매번<br><em>규정 찾아</em> 답하고 계신가요?</h1>
+  <p class="subt">Gemini 노트북으로 '공무원 여비 도우미' 만들기</p>
   <p class="meta">약 10분 · 구글 계정 필요 · 2026년 10월 화면 기준</p>
 
   <div class="what">
@@ -144,19 +144,29 @@
   </section>
 
   <section class="step" aria-labelledby="s1">
-    <div class="step-head"><span class="num">1</span><h2 id="s1">새 노트북에 자료 올리기</h2></div>
+    <div class="step-head"><span class="num">1</span><h2 id="s1">새 노트북 만들기</h2></div>
     <div class="card">
       <ol class="how">
         <li><b>notebooklm.google.com</b>에 접속해 구글 계정으로 로그인해요.</li>
-        <li><span class="ui">새 노트북 만들기</span>를 누르고, 소스 추가 창에서 <span class="ui">파일 업로드</span>를 눌러요.</li>
-        <li>0단계에서 받은 PDF를 선택해요. 왼쪽 <b>출처(소스)</b> 목록에 보이면 준비 끝이에요.</li>
+        <li><span class="ui">새 노트북 만들기</span>를 눌러요.</li>
       </ol>
-      <p class="tip" style="margin-top:12px">이름이 <b>Gemini 노트북</b>으로 바뀌어 화면 이름이 다를 수 있어요. 버튼이 안 보이면 <b>"노트북"</b>, <b>"소스"</b>라는 단어를 찾아보세요.</p>
+      <p class="tip" style="margin-top:12px">이름이 <b>Gemini 노트북</b>으로 바뀌어 화면 이름이 다를 수 있어요. 버튼이 안 보이면 <b>"노트북"</b>이라는 단어를 찾아보세요.</p>
+    </div>
+  </section>
+
+  <section class="step" aria-labelledby="s1b">
+    <div class="step-head"><span class="num">2</span><h2 id="s1b">자료 올리기</h2></div>
+    <div class="card">
+      <ol class="how">
+        <li>소스 추가 창에서 <span class="ui">파일 업로드</span>를 누르고, 0단계에서 받은 PDF를 선택해요.</li>
+        <li>왼쪽 <b>출처(소스)</b> 목록에 자료 이름이 보이면 준비 끝이에요.</li>
+      </ol>
+      <p class="tip" style="margin-top:12px"><b>관련 자료는 모두 올릴 수 있어요.</b> PDF뿐 아니라 문서 파일, 웹페이지 링크, 붙여넣은 텍스트도 소스로 추가돼요. 규정 원문, 지침, 자주 묻는 질문을 함께 올리면 답이 더 정확해져요.</p>
     </div>
   </section>
 
   <section class="step" aria-labelledby="s2">
-    <div class="step-head"><span class="num">2</span><h2 id="s2">챗봇 역할 정하기</h2></div>
+    <div class="step-head"><span class="num">3</span><h2 id="s2">역할 정하기</h2></div>
     <div class="card">
       <ol class="how">
         <li>가운데 <b>채팅</b> 창 오른쪽 위 <span class="ui">채팅 설정</span>(조절 아이콘)을 눌러요.</li>
@@ -184,9 +194,9 @@
   </section>
 
   <section class="step" aria-labelledby="s3">
-    <div class="step-head"><span class="num">3</span><h2 id="s3">민원 넣고 물어보기</h2></div>
+    <div class="step-head"><span class="num">4</span><h2 id="s3">테스트하기</h2></div>
     <div class="card">
-      <p style="margin:0;font-size:15px">이제 민원 내용만 붙여넣으면 돼요. 형식은 역할 정의가 알아서 맞춰요.</p>
+      <p style="margin:0;font-size:15px">자주 받는 문의를 넣어 보세요. 형식은 역할 정의가 알아서 맞춰요. 아래 예시를 복사해 써도 돼요.</p>
       <div class="inputs">
         <div class="q-row"><span id="m1">출장 중 주차 영수증을 잃어버렸는데 주차비를 받을 수 있나요?</span><button class="copy" type="button" data-copy="m1">복사</button></div>
         <div class="q-row"><span id="m2">출장 가서 배우자 집에서 잤는데 숙박비가 나오나요?</span><button class="copy" type="button" data-copy="m2">복사</button></div>
@@ -194,7 +204,7 @@
       </div>
 
       <div class="result">
-        <span class="result-label">이런 형태로 나오면 성공 (1번 민원)</span>
+        <span class="result-label">이런 형태로 나오면 성공 (1번 문의)</span>
         <p><b>[한 줄 답변]</b> 영수증을 분실한 주차비는 지급되지 않습니다.<br>
         <b>[근거]</b> 공무원 여비 100문 100답, Q&amp;A 26 (22쪽)<span class="cite">1</span><br>
         <b>[상세 안내]</b> 개인차량 이용 시 통행료와 주차비는 실비로 정산하는 것이 원칙이므로, 영수증이 없으면 해당 금액을 지급할 수 없습니다.<br>
@@ -207,12 +217,12 @@
         </ul>
       </div>
       <p class="tip"><b>근거 번호를 눌러 보세요.</b> 원문의 해당 부분이 바로 열려요. 답변을 보내기 전에 꼭 직접 읽어 확인하세요.</p>
-      <p class="tip"><b>자료에 없는 질문도 해 보세요.</b> 예: "출장 중 반려동물 돌봄 비용도 받을 수 있나요?" → "자료에서 확인되지 않습니다"라고 답하면 잘 만든 챗봇이에요.</p>
+      <p class="tip"><b>자료에 없는 질문도 해 보세요.</b> 예: "출장 중 반려동물 돌봄 비용도 받을 수 있나요?" → "자료에서 확인되지 않습니다"라고 답하면 잘 만든 도우미예요.</p>
     </div>
   </section>
 
   <section class="step" aria-labelledby="s3b">
-    <div class="step-head"><span class="num">4</span><h2 id="s3b">팀원과 공유하기</h2></div>
+    <div class="step-head"><span class="num">5</span><h2 id="s3b">공유하기</h2></div>
     <div class="card">
       <ol class="how">
         <li>오른쪽 위 <span class="ui">공유</span>를 눌러요.</li>
@@ -226,7 +236,7 @@
 
   <section class="step" aria-labelledby="s4">
     <div class="step-head"><span class="num" style="background:var(--green)">+</span><h2 id="s4">내 업무에 써 보기</h2></div>
-    <p style="margin:-4px 0 12px;font-size:15px;color:var(--body)">자료와 역할 정의만 바꾸면 업무별 챗봇이 돼요. 아래 역할 정의를 채팅 설정 → 맞춤에 넣어 보세요. [ ] 부분은 우리 기관에 맞게 고쳐 주세요.</p>
+    <p style="margin:-4px 0 12px;font-size:15px;color:var(--body)">자료와 역할 정의만 바꾸면 업무별 도우미가 돼요. 아래 역할 정의를 채팅 설정 → 맞춤에 넣어 보세요. [ ] 부분은 우리 기관에 맞게 고쳐 주세요.</p>
     <div class="apply">
       <details>
         <summary><span><span class="t">내부 규정 문의</span><span class="s">규정·지침 PDF를 올리고 직원 문의에 답하기</span></span><span class="arrow">▼</span></summary>
@@ -249,7 +259,7 @@
         </div>
       </details>
       <details>
-        <summary><span><span class="t">민원 FAQ 챗봇</span><span class="s">자주 묻는 질문 모음으로 민원 응대하기</span></span><span class="arrow">▼</span></summary>
+        <summary><span><span class="t">민원 FAQ 도우미</span><span class="s">자주 묻는 질문 모음으로 민원 응대하기</span></span><span class="arrow">▼</span></summary>
         <div class="copybox">
           <pre id="p-meet">[목적] 올린 [민원 FAQ 자료]에 근거해 민원 답변 초안을 쓴다.
 - 정중한 민원 답변 문체로 쓴다.
@@ -265,7 +275,7 @@
     <h3 id="w">꼭 지켜 주세요</h3>
     <ul>
       <li>민원인 이름·연락처 등 개인정보는 지우고 넣으세요. 비공개 문서는 올리지 마세요.</li>
-      <li>챗봇 답변은 초안이에요. 근거 원문과 최신 규정을 직접 확인한 뒤 보내세요.</li>
+      <li>도우미 답변은 초안이에요. 근거 원문과 최신 규정을 직접 확인한 뒤 보내세요.</li>
       <li>소속 기관의 AI 사용 지침이 있다면 그 기준을 먼저 따르세요.</li>
     </ul>
   </section>
