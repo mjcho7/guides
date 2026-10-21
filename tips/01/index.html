@@ -151,14 +151,15 @@
           <li>아래 내용을 붙여넣고 <span class="ui">Save instructions (저장)</span>을 눌러요.</li>
         </ol>
         <div class="copybox">
-          <pre id="rule-press">사용자가 기관명, 행사명, 일시, 장소를 입력하면 보도자료의 첫 문단을 작성한다.
+          <pre id="rule-press">사용자가 행사명과 날짜를 입력하면 한빛시 보도자료의 첫 문단을 작성한다.
 - 2~3문장으로 작성한다.
-- 첫 문장에 기관명, 행사명, 일시, 장소를 모두 넣는다.
-- 입력하지 않은 수치, 프로그램, 인용문, 관계자 발언은 만들지 않는다.
+- 첫 문장에 기관명, 행사명, 날짜를 넣는다.
+- 입력하지 않은 장소, 수치, 프로그램, 인용문, 관계자 발언은 만들지 않는다.
 - "~한다고 밝혔다"처럼 객관적이고 간결한 보도자료 문체를 쓴다.
 - 제목이나 별도 설명은 덧붙이지 않는다.</pre>
           <button class="copy" type="button" data-copy="rule-press">지침 복사</button>
         </div>
+        <p style="margin:10px 2px 0;font-size:14px;color:var(--muted)">※ 실제로 쓸 때는 ‘한빛시’를 우리 기관 이름으로 바꾸세요.</p>
       </div>
     </section>
 
@@ -169,17 +170,17 @@
     <div class="card">
       <p style="margin:0;font-size:15px">프로젝트 안에서 <b>새 대화</b>를 열고, 아래 중 하나를 복사해 보내 보세요. 규칙은 다시 쓰지 않아도 돼요.</p>
       <div class="inputs">
-        <div class="input-row"><span id="in1">한빛시, 가을 독서축제, 11월 8일, 시립도서관</span><button class="copy" type="button" data-copy="in1">복사</button></div>
-        <div class="input-row"><span id="in2">한빛시, 청소년 영화제, 11월 22일, 문화예술회관</span><button class="copy" type="button" data-copy="in2">복사</button></div>
-        <div class="input-row"><span id="in3">한빛시, 겨울 음악회, 12월 13일, 시민공원 야외무대</span><button class="copy" type="button" data-copy="in3">복사</button></div>
+        <div class="input-row"><span id="in1">가을 독서축제, 11월 8일</span><button class="copy" type="button" data-copy="in1">복사</button></div>
+        <div class="input-row"><span id="in2">청소년 영화제, 11월 22일</span><button class="copy" type="button" data-copy="in2">복사</button></div>
+        <div class="input-row"><span id="in3">겨울 음악회, 12월 13일</span><button class="copy" type="button" data-copy="in3">복사</button></div>
       </div>
 
       <div class="result">
         <span class="result-label">이런 형태로 나오면 성공</span>
-        <p>한빛시는 11월 8일 시립도서관에서 '가을 독서축제'를 개최한다고 밝혔다. 이번 축제는 독서의 계절을 맞아 시민들이 책과 더 가까워질 수 있도록 마련됐다.</p>
+        <p>한빛시는 11월 8일 '가을 독서축제'를 개최한다고 밝혔다. 이번 축제는 독서의 계절을 맞아 시민들이 책과 더 가까워질 수 있도록 마련됐다.</p>
         <ul class="checks" aria-label="결과 확인하기">
           <li><label><input type="checkbox"> 2~3문장</label></li>
-          <li><label><input type="checkbox"> 기관·행사·일시·장소 포함</label></li>
+          <li><label><input type="checkbox"> 기관·행사·날짜 포함</label></li>
           <li><label><input type="checkbox"> 지어낸 숫자 없음</label></li>
           <li><label><input type="checkbox"> 지어낸 발언 없음</label></li>
         </ul>
