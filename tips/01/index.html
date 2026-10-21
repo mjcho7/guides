@@ -125,7 +125,7 @@
   <div id="panel" role="tabpanel">
 
     <section class="step" aria-labelledby="s1">
-      <div class="step-head"><span class="num">1</span><h2 id="s1">프로젝트 만들기</h2></div>
+      <div class="step-head"><span class="num">1</span><h2 id="s1">새 프로젝트 만들기</h2></div>
       <div class="card">
         <ol class="how" data-for="gpt">
           <li>왼쪽 메뉴에서 <span class="ui">New project (새 프로젝트)</span>를 눌러요.</li>
@@ -151,55 +151,60 @@
     </section>
 
     <section class="step" aria-labelledby="s2">
-      <div class="step-head"><span class="num">2</span><h2 id="s2">지침에 규칙 넣기</h2></div>
+      <div class="step-head"><span class="num">2</span><h2 id="s2">지침·자료 넣기</h2></div>
       <div class="card">
         <ol class="how" data-for="gpt">
           <li>프로젝트 안에서 오른쪽 위 <span class="ui">•••</span> → <span class="ui">Project settings (프로젝트 설정)</span>을 눌러요.</li>
-          <li><b>지침(Instructions)</b> 칸에 아래 내용을 붙여넣고 저장해요.</li>
+          <li><b>지침(Instructions)</b> 칸에 아래 업무 규칙을 붙여넣고 저장해요.</li>
         </ol>
         <ol class="how" data-for="claude" hidden>
           <li>프로젝트 안에서 <span class="ui">Set project instructions (프로젝트 지침 설정)</span>을 눌러요.</li>
-          <li>아래 내용을 붙여넣고 <span class="ui">Save instructions (저장)</span>을 눌러요.</li>
+          <li>아래 업무 규칙을 붙여넣고 <span class="ui">Save instructions (저장)</span>을 눌러요.</li>
         </ol>
         <div class="copybox">
           <pre id="rule-press">사용자가 행사명과 날짜를 입력하면 한빛시 보도자료의 첫 문단을 작성한다.
-- 2~3문장으로 작성한다.
-- 첫 문장에 기관명, 행사명, 날짜를 넣는다.
+- 첫 문장은 반드시 "한빛시는 [날짜] '[행사명]'을(를) 개최한다고 밝혔다."로 쓴다.
+- 이어서 행사 취지를 1~2문장 더해 전체 2~3문장으로 쓴다.
 - 입력하지 않은 장소, 수치, 프로그램, 인용문, 관계자 발언은 만들지 않는다.
-- "~한다고 밝혔다"처럼 객관적이고 간결한 보도자료 문체를 쓴다.
-- 제목이나 별도 설명은 덧붙이지 않는다.</pre>
+- 객관적이고 간결한 보도자료 문체를 쓴다.
+- 제목, 목록, 별도 설명은 덧붙이지 않는다.</pre>
           <button class="copy" type="button" data-copy="rule-press">지침 복사</button>
         </div>
+        <p class="tip"><b>예시 자료를 함께 넣으면 형식을 더 잘 맞춰요.</b> 우리 기관의 지난 보도자료 1~2개를 프로젝트 파일로 올려 두세요.
+          <span data-for="gpt"> 프로젝트 화면의 <span class="ui">Add files (파일 추가)</span>를 눌러 올려요.</span>
+          <span data-for="claude" hidden> 프로젝트 화면 오른쪽 <span class="ui">Files (파일)</span>의 <span class="ui">+</span>를 눌러 올려요.</span>
+          지침에 "올린 예시 보도자료의 문체를 따른다"를 한 줄 추가하면 더 좋아요.</p>
       </div>
     </section>
 
   </div>
 
   <section class="step" aria-labelledby="s3">
-    <div class="step-head"><span class="num">3</span><h2 id="s3">내용만 입력하기</h2></div>
+    <div class="step-head"><span class="num">3</span><h2 id="s3">질문하고 다듬기</h2></div>
     <div class="card">
       <p style="margin:0;font-size:15px">프로젝트 안에서 <b>새 대화</b>를 열고, 아래 중 하나를 복사해 보내 보세요. 규칙은 다시 쓰지 않아도 돼요.</p>
       <div class="inputs">
-        <div class="input-row"><span id="in1">가을 독서축제 11월 8일</span><button class="copy" type="button" data-copy="in1">복사</button></div>
-        <div class="input-row"><span id="in2">청소년 영화제 11월 22일</span><button class="copy" type="button" data-copy="in2">복사</button></div>
-        <div class="input-row"><span id="in3">겨울 음악회 12월 13일</span><button class="copy" type="button" data-copy="in3">복사</button></div>
+        <div class="input-row"><span id="in1">가을 독서축제, 11월 8일</span><button class="copy" type="button" data-copy="in1">복사</button></div>
+        <div class="input-row"><span id="in2">청소년 영화제, 11월 22일</span><button class="copy" type="button" data-copy="in2">복사</button></div>
+        <div class="input-row"><span id="in3">겨울 음악회, 12월 13일</span><button class="copy" type="button" data-copy="in3">복사</button></div>
       </div>
 
       <div class="result">
         <span class="result-label">이런 형태로 나오면 성공</span>
-        <p>한빛시는 11월 8일 '가을 독서축제'를 개최한다고 밝혔다. 이번 축제는 독서의 계절을 맞아 시민들이 책과 더 가까워질 수 있도록 마련됐다.</p>
+        <p><b>한빛시는 11월 8일 '가을 독서축제'를 개최한다고 밝혔다.</b> 이번 축제는 독서의 계절을 맞아 시민들이 책과 더 가까워질 수 있도록 마련됐다.</p>
         <ul class="checks" aria-label="결과 확인하기">
+          <li><label><input type="checkbox"> 정해진 첫 문장</label></li>
           <li><label><input type="checkbox"> 2~3문장</label></li>
-          <li><label><input type="checkbox"> 기관·행사·날짜 포함</label></li>
           <li><label><input type="checkbox"> 지어낸 숫자 없음</label></li>
-          <li><label><input type="checkbox"> 지어낸 발언 없음</label></li>
+          <li><label><input type="checkbox"> 제목·목록 없음</label></li>
         </ul>
       </div>
-      <p class="tip"><b>결과가 마음에 안 들면?</b> 대화가 아니라 <b>지침</b>을 고치세요. 예: "마지막 문장은 '자세한 내용은 [담당부서]로 문의하면 된다'로 끝낸다"를 한 줄 추가하면 다음부터 계속 적용돼요.</p>
+      <p class="tip"><b>다른 행사도 보내서 형식이 같은지 확인하세요.</b> 세 개를 모두 보내 보면 첫 문장이 늘 같은 틀로 나오는지 바로 보여요.</p>
+      <p class="tip"><b>결과가 어긋나면?</b> 대화가 아니라 <b>지침</b>을 고치세요. 예: "마지막 문장은 '자세한 내용은 [담당부서]로 문의하면 된다'로 끝낸다"를 한 줄 추가하면 다음부터 계속 적용돼요. 이렇게 질문 → 확인 → 지침 고치기를 반복하면 우리 업무에 꼭 맞는 지침이 돼요.</p>
     </div>
   </section>
 
-  <section class="step" aria-labelledby="s4">
+    <section class="step" aria-labelledby="s4">
     <div class="step-head"><span class="num" style="background:var(--green)">+</span><h2 id="s4">내 업무에 써 보기</h2></div>
     <p style="margin:-4px 0 12px;font-size:15px;color:var(--body)">업무마다 프로젝트를 하나씩 만들고, 지침만 바꿔 넣으면 돼요. [ ] 부분은 우리 기관에 맞게 고쳐 주세요.</p>
     <div class="apply">
