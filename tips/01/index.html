@@ -26,7 +26,11 @@
   .lead{font-size:16px;color:var(--body);margin:0}
   .lead b{color:var(--coral)}
   h1 em{font-style:normal;color:var(--coral)}
-  .subt{font-size:18px;font-weight:700;color:var(--ink);margin:0 0 8px}
+  .subt{font-size:18px;font-weight:700;color:var(--ink);margin:0}
+  .what{margin-top:18px;display:flex;gap:12px;align-items:baseline;background:var(--coral-soft);border-radius:14px;padding:14px 16px}
+  .what b{flex:none;font-size:15px;color:var(--coral-ink)}
+  .what p{margin:0;font-size:15px;color:var(--ink)}
+  @media (max-width:420px){ .what{flex-direction:column;gap:2px} }
   .meta{font-size:14px;color:var(--muted);margin-top:6px}
 
   .tabs{display:flex;gap:8px;margin:24px 0 8px;padding:6px;background:var(--gray);border-radius:14px}
@@ -105,8 +109,12 @@
   <span class="chip">AI 활용꿀팁 실습 · 반복 업무 자동화</span>
   <h1>같은 요청,<br>매번 <em>다시 설명</em>하고 계신가요?</h1>
   <p class="subt">프로젝트 지침으로 반복 업무 자동화하기</p>
-  <p class="lead"><b>프로젝트 지침</b>에 규칙을 한 번 넣어 두면, 다음부터는 내용만 입력하면 돼요.</p>
-  <p class="meta">약 3분 · 설치 필요 없음 · <b>2026년 10월 화면 기준</b></p>
+  <p class="meta">약 3분 · 2026년 10월 화면 기준</p>
+
+  <div class="what">
+    <b>프로젝트란?</b>
+    <p>규칙(지침)을 저장해 두는 AI 작업 공간이에요. 그 안에서 여는 대화는 저장한 규칙을 늘 따라요.</p>
+  </div>
 
   <div class="tabs" role="tablist" aria-label="사용할 AI 고르기">
     <button class="tab" role="tab" id="tab-gpt" aria-selected="true" aria-controls="panel" data-ai="gpt">ChatGPT</button>
