@@ -51,7 +51,12 @@
   .info .sub{font-size:16px;font-weight:700;color:var(--body);margin:0}
   .tags{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 18px;padding:0;list-style:none}
   .tags li{font-size:13px;color:var(--muted);background:var(--gray);padding:3px 10px;border-radius:999px}
-  .btn{margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;font-size:16px;font-weight:900;color:#fff;background:var(--navy);padding:11px 20px;border-radius:12px;min-height:44px}
+  .gains{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 18px;padding:0;list-style:none}
+  .gains li{font-size:13.5px;font-weight:500;color:#1E6E46;background:#EEF9F3;border:1px solid #BFE6D0;border-radius:999px;padding:3px 11px}
+  .gains li:before{content:"✓ "}
+  .btn{margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;font-size:17px;font-weight:900;color:#fff;background:linear-gradient(90deg,#D2552F,#F0763F);padding:12px 22px;border-radius:14px;min-height:44px;box-shadow:0 6px 16px rgba(210,85,47,.28);transition:transform .15s}
+  .btn span{transition:transform .15s}
+  .feat:hover .btn span{transform:translateX(4px)}
 
   /* 이용 방법 */
   .how{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0;padding:0;list-style:none}
@@ -132,15 +137,16 @@
   <!--
     최신 회차 카드: 새 회차를 올리면 이 카드의 링크·문구를 가장 최신 회차로 바꾸세요.
     ▸ 유튜브 영상 회차도 링크는 /tips/번호/ 로 두고(그 페이지에 영상을 넣음),
-      버튼만 <span class="btn video">▶ 영상 보기</span> 로 바꾸세요.
+      버튼만 <span class="btn video">▶ 영상 보고 따라 하기</span> 로 바꾸세요.
+    ▸ gains(✓ 3개)에는 이 회차로 얻는 것을 짧게 적고, 버튼은 "나도 만들어 보기 →"처럼 직접 해 보는 말로 쓰세요.
   -->
   <a class="feat" href="/tips/02/">
     <div class="info">
       <span class="new">NEW</span>
       <h3>같은 문의, 매번 규정 찾아 답하고 계신가요?</h3>
       <p class="sub">Gemini 노트북으로 '공무원 여비 도우미' 만들기</p>
-      <ul class="tags"><li>규정 도우미</li><li>공유</li><li>약 10분</li></ul>
-      <span class="btn">실습 시작하기 <span aria-hidden="true">→</span></span>
+      <ul class="gains"><li>근거 달린 답변</li><li>늘 같은 형식</li><li>팀원과 공유</li></ul>
+      <span class="btn">나도 만들어 보기 <span aria-hidden="true">→</span></span>
     </div>
   </a>
 
