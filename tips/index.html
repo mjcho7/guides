@@ -10,53 +10,144 @@
 <style>
   :root{
     --ink:#1B2638; --body:#3A4252; --muted:#5B6475; --line:#E4E7EC;
-    --gray:#F5F6F8; --coral:#D2552F; --coral-ink:#B8461F; --coral-soft:#FDECE5;
-    --bg:#FFFFFF;
+    --gray:#F5F6F8; --coral:#D2552F; --coral-ink:#B8461F; --coral-soft:#FDECE5; --peach:#FFF5F0;
+    --green:#1E8A52; --green-soft:#EEF9F3; --navy:#1B2638;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',-apple-system,'Malgun Gothic',sans-serif;line-height:1.6;-webkit-text-size-adjust:100%}
-  .wrap{max-width:720px;margin:0 auto;padding:36px 16px 48px}
-  .chip{display:inline-block;font-size:13px;font-weight:700;color:var(--coral-ink);background:var(--coral-soft);padding:4px 12px;border-radius:999px}
-  h1{font-size:28px;line-height:1.35;font-weight:900;margin:12px 0 8px;letter-spacing:-.3px}
-  .lead{font-size:16px;color:var(--body);margin:0}
+  body{margin:0;background:#fff;color:var(--ink);font-family:'Noto Sans KR',-apple-system,'Malgun Gothic',sans-serif;line-height:1.6;word-break:keep-all;-webkit-text-size-adjust:100%}
+  a{color:inherit}
 
-  .list{list-style:none;margin:28px 0 0;padding:0;display:flex;flex-direction:column;gap:12px}
-  .item a{display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit;background:var(--gray);border-radius:16px;padding:16px 18px;min-height:44px;transition:background .15s}
-  .item a:hover{background:#ECEEF1}
-  .no{flex:none;width:48px;height:48px;border-radius:12px;background:#fff;color:var(--coral);font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--line)}
-  .item.new .no{background:var(--coral);color:#fff;border-color:var(--coral)}
+  /* 상단 */
+  .hero{background:var(--navy);color:#fff;position:relative;overflow:hidden}
+  .hero:before{content:"";position:absolute;right:-120px;top:-140px;width:360px;height:360px;border-radius:50%;background:var(--coral);opacity:.9}
+  .hero:after{content:"";position:absolute;right:120px;bottom:-60px;width:120px;height:120px;border-radius:50%;border:18px solid #FFD43B;opacity:.85}
+  .hero-in{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:44px 20px 52px}
+  .brand{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:#1B2638;background:#FFD43B;padding:5px 14px;border-radius:999px}
+  h1{font-size:40px;line-height:1.25;font-weight:900;letter-spacing:-1px;margin:18px 0 12px}
+  h1 mark{background:linear-gradient(transparent 60%,var(--coral) 60%);color:#fff;padding:0 2px}
+  .lead{font-size:17px;color:#D9DEE7;margin:0;max-width:520px}
+  .facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;padding:0;list-style:none}
+  .facts li{font-size:14px;font-weight:700;color:#fff;border:1.5px solid rgba(255,255,255,.35);padding:5px 12px;border-radius:999px}
+
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px 56px}
+  h2{font-size:21px;font-weight:900;margin:40px 0 14px;display:flex;align-items:center;gap:8px}
+  h2 .cnt{font-size:14px;font-weight:700;color:var(--muted)}
+
+  /* 최신 회차 */
+  .feat{display:grid;grid-template-columns:260px 1fr;margin-top:-28px;position:relative;z-index:2;background:#fff;border:1.5px solid var(--line);border-radius:22px;overflow:hidden;text-decoration:none;box-shadow:0 12px 30px rgba(27,38,56,.10);transition:transform .15s, box-shadow .15s}
+  .feat:hover{transform:translateY(-2px);box-shadow:0 16px 36px rgba(27,38,56,.14)}
+  .thumb{background:var(--peach);padding:20px 18px;display:flex;flex-direction:column;gap:10px;justify-content:center;border-right:1.5px solid var(--line)}
+  .thumb .ep{font-size:13px;font-weight:900;color:var(--coral-ink);letter-spacing:.5px}
+  .bub{font-size:12.5px;line-height:1.45;border-radius:12px 12px 4px 12px;padding:8px 11px;align-self:flex-end;max-width:92%}
+  .bub small{display:block;font-size:11px;font-weight:900;margin-bottom:2px}
+  .bub.b{background:#E7E9ED;color:var(--body)} .bub.b small{color:#C62A2F}
+  .bub.a{background:var(--green);color:#fff;font-weight:900;font-size:15px} .bub.a small{color:#D7F5E3}
+  .thumb .vs{align-self:center;font-size:12px;font-weight:900;color:var(--muted)}
+  .info{padding:24px 26px;display:flex;flex-direction:column}
+  .new{align-self:flex-start;font-size:12px;font-weight:900;color:#fff;background:var(--coral);padding:2px 10px;border-radius:999px}
+  .info h3{font-size:23px;line-height:1.35;font-weight:900;margin:10px 0 4px;letter-spacing:-.4px}
+  .info .sub{font-size:16px;font-weight:700;color:var(--body);margin:0}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 18px;padding:0;list-style:none}
+  .tags li{font-size:13px;color:var(--muted);background:var(--gray);padding:3px 10px;border-radius:999px}
+  .btn{margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;font-size:16px;font-weight:900;color:#fff;background:var(--navy);padding:11px 20px;border-radius:12px;min-height:44px}
+
+  /* 이용 방법 */
+  .how{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0;padding:0;list-style:none}
+  .how li{background:var(--gray);border-radius:16px;padding:16px 18px}
+  .how .n{display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--coral);color:#fff;font-weight:900;font-size:15px;align-items:center;justify-content:center}
+  .how b{display:block;font-size:16px;margin-top:8px}
+  .how span{display:block;font-size:14px;color:var(--muted)}
+
+  /* 전체 목록 */
+  .list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+  .item a{display:flex;align-items:center;gap:16px;text-decoration:none;background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:14px 18px;min-height:44px;transition:border-color .15s, background .15s}
+  .item a:hover{border-color:var(--coral);background:var(--peach)}
+  .no{flex:none;width:48px;height:48px;border-radius:12px;background:var(--coral-soft);color:var(--coral-ink);font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center}
   .txt{flex:1;min-width:0}
   .t{display:block;font-size:17px;font-weight:700}
   .s{display:block;font-size:14px;color:var(--body)}
-  .badge{display:inline-block;margin-left:6px;font-size:11.5px;font-weight:700;color:var(--coral-ink);background:var(--coral-soft);padding:1px 8px;border-radius:999px;vertical-align:2px}
-  .go{flex:none;color:var(--muted);font-size:18px}
+  .go{flex:none;color:var(--muted);font-size:20px}
+  .soon{margin-top:10px;text-align:center;font-size:14px;color:var(--muted);border:1.5px dashed var(--line);border-radius:16px;padding:14px}
 
-  footer{margin-top:36px;text-align:center;font-size:13px;color:var(--muted)}
-  @media (max-width:420px){ h1{font-size:24px} .no{width:42px;height:42px;font-size:15px} }
+  .warn{margin-top:36px;background:#FBF1F1;border-radius:14px;padding:14px 18px;font-size:14.5px;color:#7A2E2E}
+  footer{margin-top:24px;text-align:center;font-size:13px;color:var(--muted)}
+
+  @media (max-width:640px){
+    h1{font-size:30px}
+    .hero-in{padding:36px 16px 48px}
+    .hero:after{display:none}
+    .hero:before{width:200px;height:200px;right:-80px;top:-80px}
+    .wrap{padding:0 16px 48px}
+    .feat{grid-template-columns:1fr}
+    .thumb{border-right:0;border-bottom:1.5px solid var(--line)}
+    .info{padding:20px}
+    .info h3{font-size:21px}
+    .how{grid-template-columns:1fr}
+    .how li{display:flex;gap:12px;align-items:center}
+    .how b{margin-top:0}
+  }
 </style>
 </head>
 <body>
+
+<header class="hero">
+  <div class="hero-in">
+    <span class="brand">AI 활용꿀팁 실습</span>
+    <h1>3분이면 따라 하는<br><mark>AI 활용꿀팁</mark></h1>
+    <p class="lead">어려운 설치 없이, 복사 버튼만 눌러 따라 해 보세요. 지금 하는 업무에 바로 쓸 수 있는 방법만 골랐어요.</p>
+    <ul class="facts">
+      <li>설치 필요 없음</li>
+      <li>ChatGPT · Claude</li>
+      <li>복사해서 바로 실습</li>
+    </ul>
+  </div>
+</header>
+
 <main class="wrap">
 
-  <span class="chip">AI 활용꿀팁 실습</span>
-  <h1>3분이면 따라 하는<br>AI 활용꿀팁</h1>
-  <p class="lead">AI 활용꿀팁에서 소개한 실습을 모두 모아 두었어요. 지난 회차도 언제든 다시 해 보세요.</p>
+  <!-- 최신 회차: 새 회차를 올리면 이 카드의 내용과 링크를 바꾸세요 -->
+  <a class="feat" href="/tips/01/">
+    <div class="thumb" aria-hidden="true">
+      <span class="ep">AI 활용꿀팁 #01</span>
+      <div class="bub b"><small>매번 다시 입력</small>가을 독서축제 보도자료 써줘. 11월 8일, 3문장 이내, 숫자·발언은 지어내지 말고…</div>
+      <span class="vs">▼ 프로젝트 지침을 쓰면</span>
+      <div class="bub a"><small>이것만 입력</small>가을 독서축제 11월 8일</div>
+    </div>
+    <div class="info">
+      <span class="new">NEW</span>
+      <h3>같은 요청, 매번 다시 설명하고 계신가요?</h3>
+      <p class="sub">프로젝트 지침으로 반복 업무 자동화하기</p>
+      <ul class="tags"><li>반복 업무 자동화</li><li>보도자료</li><li>약 3분</li></ul>
+      <span class="btn">실습 시작하기 <span aria-hidden="true">→</span></span>
+    </div>
+  </a>
 
-  <!-- 새 회차는 맨 위에 추가하고, 가장 최신 항목에만 class="item new"와 NEW 배지를 붙이세요 -->
+  <h2>이렇게 이용하세요</h2>
+  <ol class="how">
+    <li><span class="n">1</span><div><b>실습 고르기</b><span>궁금한 회차를 눌러요</span></div></li>
+    <li><span class="n">2</span><div><b>쓰는 AI 선택</b><span>ChatGPT 또는 Claude</span></div></li>
+    <li><span class="n">3</span><div><b>복사해서 따라 하기</b><span>예시를 그대로 붙여넣어요</span></div></li>
+  </ol>
+
+  <h2>전체 꿀팁 <span class="cnt">1개</span></h2>
+  <!-- 새 회차는 목록 맨 위에 추가하고, 위의 개수(cnt)도 바꾸세요 -->
   <ul class="list">
-    <li class="item new">
+    <li class="item">
       <a href="/tips/01/">
         <span class="no">#01</span>
         <span class="txt">
-          <span class="t">같은 요청, 매번 다시 설명하고 계신가요?<span class="badge">NEW</span></span>
+          <span class="t">같은 요청, 매번 다시 설명하고 계신가요?</span>
           <span class="s">프로젝트 지침으로 반복 업무 자동화하기</span>
         </span>
         <span class="go" aria-hidden="true">›</span>
       </a>
     </li>
   </ul>
+  <p class="soon">다음 꿀팁을 준비하고 있어요.</p>
 
+  <p class="warn">※ 실습할 때 개인정보·비공개 자료는 입력하지 말고, AI 결과는 꼭 직접 확인해 주세요.</p>
   <footer>한국문화정보원 · AI 활용꿀팁</footer>
 </main>
+
 </body>
 </html>
