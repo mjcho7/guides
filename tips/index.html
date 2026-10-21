@@ -67,6 +67,10 @@
   .t{display:block;font-size:17px;font-weight:700}
   .s{display:block;font-size:14px;color:var(--body)}
   .go{flex:none;color:var(--muted);font-size:20px}
+  .kind{display:inline-block;margin-left:6px;font-size:11.5px;font-weight:700;padding:1px 8px;border-radius:999px;vertical-align:2px}
+  .kind.web{color:var(--coral-ink);background:var(--coral-soft)}
+  .kind.video{color:#fff;background:#C4302B}
+  .btn.video{background:#C4302B}
   .soon{margin-top:10px;text-align:center;font-size:14px;color:var(--muted);border:1.5px dashed var(--line);border-radius:16px;padding:14px}
 
   .warn{margin-top:36px;background:#FBF1F1;border-radius:14px;padding:14px 18px;font-size:14.5px;color:#7A2E2E}
@@ -94,18 +98,17 @@
   <div class="hero-in">
     <span class="brand">AI 활용꿀팁 실습</span>
     <h1>3분이면 따라 하는<br><mark>AI 활용꿀팁</mark></h1>
-    <p class="lead">어려운 설치 없이, 복사 버튼만 눌러 따라 해 보세요. 지금 하는 업무에 바로 쓸 수 있는 방법만 골랐어요.</p>
-    <ul class="facts">
-      <li>설치 필요 없음</li>
-      <li>ChatGPT · Claude</li>
-      <li>복사해서 바로 실습</li>
-    </ul>
+    <p class="lead">지금 하는 업무에 바로 쓸 수 있는 AI 활용 방법을 골라, 직접 따라 해 볼 수 있게 모았어요.</p>
   </div>
 </header>
 
 <main class="wrap">
 
-  <!-- 최신 회차: 새 회차를 올리면 이 카드의 내용과 링크를 바꾸세요 -->
+  <!--
+    최신 회차 카드: 새 회차를 올리면 이 카드의 링크·문구를 가장 최신 회차로 바꾸세요.
+    ▸ 유튜브 영상 회차라면: <a class="feat" href="https://youtu.be/영상주소" target="_blank" rel="noopener">
+      버튼은 <span class="btn video">▶ 영상 보기</span> 로 바꾸세요.
+  -->
   <a class="feat" href="/tips/01/">
     <div class="thumb" aria-hidden="true">
       <span class="ep">AI 활용꿀팁 #01</span>
@@ -124,19 +127,23 @@
 
   <h2>이렇게 이용하세요</h2>
   <ol class="how">
-    <li><span class="n">1</span><div><b>실습 고르기</b><span>궁금한 회차를 눌러요</span></div></li>
-    <li><span class="n">2</span><div><b>쓰는 AI 선택</b><span>ChatGPT 또는 Claude</span></div></li>
-    <li><span class="n">3</span><div><b>복사해서 따라 하기</b><span>예시를 그대로 붙여넣어요</span></div></li>
+    <li><span class="n">1</span><div><b>꿀팁 고르기</b><span>궁금한 회차를 눌러요</span></div></li>
+    <li><span class="n">2</span><div><b>실습 페이지·영상 열기</b><span>회차에 따라 달라요</span></div></li>
+    <li><span class="n">3</span><div><b>내 업무에 적용하기</b><span>예시를 바꿔 써 봐요</span></div></li>
   </ol>
 
   <h2>전체 꿀팁 <span class="cnt">1개</span></h2>
-  <!-- 새 회차는 목록 맨 위에 추가하고, 위의 개수(cnt)도 바꾸세요 -->
+  <!--
+    새 회차는 목록 맨 위에 추가하고, 위의 개수(cnt)도 바꾸세요.
+    ▸ 실습 페이지 회차:  <a href="/tips/02/"> … <span class="kind web">실습</span>
+    ▸ 유튜브 영상 회차:  <a href="https://youtu.be/영상주소" target="_blank" rel="noopener"> … <span class="kind video">▶ 영상</span>
+  -->
   <ul class="list">
     <li class="item">
       <a href="/tips/01/">
         <span class="no">#01</span>
         <span class="txt">
-          <span class="t">같은 요청, 매번 다시 설명하고 계신가요?</span>
+          <span class="t">같은 요청, 매번 다시 설명하고 계신가요?<span class="kind web">실습</span></span>
           <span class="s">프로젝트 지침으로 반복 업무 자동화하기</span>
         </span>
         <span class="go" aria-hidden="true">›</span>
@@ -146,7 +153,7 @@
   <p class="soon">다음 꿀팁을 준비하고 있어요.</p>
 
   <p class="warn">※ 실습할 때 개인정보·비공개 자료는 입력하지 말고, AI 결과는 꼭 직접 확인해 주세요.</p>
-  <footer>한국문화정보원 · AI 활용꿀팁</footer>
+  <footer>한국문화정보원 · AI 활용꿀팁<br>제작 네모공장</footer>
 </main>
 
 </body>
