@@ -111,6 +111,19 @@
   .q-row .copy.done{background:var(--ink)}
   .q-row.out span{color:var(--muted)}
   .ext{font-weight:700;color:var(--coral-ink);text-decoration:underline;text-underline-offset:3px}
+
+  /* 꿀팁 목록 이동 */
+  .topnav a{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:var(--ink);background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:7px 14px;min-height:40px;transition:border-color .15s,color .15s}
+  .topnav a:hover{border-color:var(--coral);color:var(--coral-ink)}
+  .next{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:32px;padding:20px 22px;border-radius:18px;text-decoration:none;color:#fff;
+    background:radial-gradient(120% 160% at 20% 0%, #1D3466 0%, #13244A 55%, #0D1A38 100%);box-shadow:0 10px 24px rgba(27,38,56,.16);transition:transform .15s}
+  .next:hover{transform:translateY(-2px)}
+  .next .nx-t{display:block;font-size:18px;font-weight:900}
+  .next .nx-s{display:block;font-size:14px;color:#D9DEE7;margin-top:2px}
+  .next .nx-b{flex:none;display:inline-flex;align-items:center;gap:6px;font-size:15px;font-weight:900;color:#fff;background:linear-gradient(90deg,#D2552F,#F0763F);border-radius:12px;padding:11px 18px;min-height:44px}
+  .next .nx-b span{transition:transform .15s}
+  .next:hover .nx-b span{transform:translateX(4px)}
+  @media (max-width:520px){ .next{flex-direction:column;align-items:flex-start} .next .nx-b{align-self:stretch;justify-content:center} }
 </style>
 
 </head>
@@ -118,7 +131,7 @@
 <main class="wrap">
 
   <nav class="topnav" aria-label="꿀팁 이동">
-    <a href="/tips/">← 전체 꿀팁 보기</a>
+    <a href="/tips/"><span aria-hidden="true">←</span> 전체 꿀팁 보기</a>
     <span class="ep">#02</span>
   </nav>
 
@@ -288,7 +301,10 @@
     </ul>
   </section>
 
-  <div class="more"><a href="/tips/">다른 꿀팁도 보기 →</a></div>
+  <a class="next" href="/tips/">
+    <span><span class="nx-t">다른 꿀팁도 따라 해 보세요</span><span class="nx-s">지금까지 나온 AI 활용꿀팁을 한곳에 모았어요</span></span>
+    <span class="nx-b">전체 꿀팁 보기 <span aria-hidden="true">→</span></span>
+  </a>
 
   <footer>한국문화정보원 · AI 활용꿀팁<br>제작 네모공장(주)</footer>
 </main>
