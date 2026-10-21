@@ -133,7 +133,7 @@
     <button class="tab" role="tab" id="tab-gpt" aria-selected="true" aria-controls="panel" data-ai="gpt">ChatGPT</button>
     <button class="tab" role="tab" id="tab-claude" aria-selected="false" aria-controls="panel" data-ai="claude">Claude</button>
   </div>
-  <p class="tabnote">쓰시는 AI를 고르면 1·2단계 안내가 바뀌어요. AI 화면은 자주 바뀌니, 버튼 이름이 다르면 메뉴에서 <b>“프로젝트(Project)”</b>라는 단어를 찾아보세요.</p>
+  <p class="tabnote">쓰시는 AI를 고르면 1~3단계 안내가 바뀌어요. AI 화면은 자주 바뀌니, 버튼 이름이 다르면 메뉴에서 <b>“프로젝트(Project)”</b>라는 단어를 찾아보세요.</p>
 
   <div id="panel" role="tabpanel">
 
@@ -164,7 +164,7 @@
     </section>
 
     <section class="step" aria-labelledby="s2">
-      <div class="step-head"><span class="num">2</span><h2 id="s2">지침·자료 넣기</h2></div>
+      <div class="step-head"><span class="num">2</span><h2 id="s2">지침에 업무 규칙 넣기</h2></div>
       <div class="card">
         <ol class="how" data-for="gpt">
           <li>프로젝트 안에서 오른쪽 위 <span class="ui">•••</span> → <span class="ui">Project settings (프로젝트 설정)</span>을 눌러요.</li>
@@ -183,17 +183,29 @@
 - 제목, 목록, 별도 설명은 덧붙이지 않는다.</pre>
           <button class="copy" type="button" data-copy="rule-press">지침 복사</button>
         </div>
-        <p class="tip"><b>예시 자료를 함께 넣으면 형식을 더 잘 맞춰요.</b> 우리 기관의 지난 보도자료 1~2개를 프로젝트 파일로 올려 두세요.
-          <span data-for="gpt"> 프로젝트 화면의 <span class="ui">Add files (파일 추가)</span>를 눌러 올려요.</span>
-          <span data-for="claude" hidden> 프로젝트 화면 오른쪽 <span class="ui">Files (파일)</span>의 <span class="ui">+</span>를 눌러 올려요.</span>
-          지침에 "올린 예시 보도자료의 문체를 따른다"를 한 줄 추가하면 더 좋아요.</p>
+      </div>
+    </section>
+
+    <section class="step" aria-labelledby="s2b">
+      <div class="step-head"><span class="num">3</span><h2 id="s2b">예시 자료 올리기</h2></div>
+      <div class="card">
+        <p style="margin:0 0 10px;font-size:15px">우리 기관의 지난 보도자료 1~2건을 프로젝트 파일로 올려 두면, 문체와 형식을 더 정확하게 따라요.</p>
+        <ol class="how" data-for="gpt">
+          <li>프로젝트 화면에서 <span class="ui">Add files (파일 추가)</span>를 눌러요.</li>
+          <li>지난 보도자료 파일(PDF·한글 변환 문서 등)을 올려요.</li>
+        </ol>
+        <ol class="how" data-for="claude" hidden>
+          <li>프로젝트 화면 오른쪽 <span class="ui">Files (파일)</span>의 <span class="ui">+</span>를 눌러요.</li>
+          <li>지난 보도자료 파일(PDF·한글 변환 문서 등)을 올려요.</li>
+        </ol>
+        <p class="tip" style="margin-top:12px"><b>지침에 한 줄 더!</b> "올린 예시 보도자료의 문체를 따른다"를 지침 마지막에 추가하면 더 좋아요. 예시 자료가 없으면 이 단계는 건너뛰어도 돼요.</p>
       </div>
     </section>
 
   </div>
 
   <section class="step" aria-labelledby="s3">
-    <div class="step-head"><span class="num">3</span><h2 id="s3">질문하고 다듬기</h2></div>
+    <div class="step-head"><span class="num">4</span><h2 id="s3">질문하고 다듬기</h2></div>
     <div class="card">
       <p style="margin:0;font-size:15px">프로젝트 안에서 <b>새 대화</b>를 열고, 아래 중 하나를 복사해 보내 보세요. 규칙은 다시 쓰지 않아도 돼요.</p>
       <div class="inputs">
