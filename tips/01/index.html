@@ -110,8 +110,11 @@
   .next:hover .nx-b span{transform:translateX(4px)}
   @media (max-width:520px){ .next{flex-direction:column;align-items:flex-start} .next .nx-b{align-self:stretch;justify-content:center} }
   .topnav .brand{height:22px;width:auto;display:block}
-  .navr{display:flex;align-items:center;gap:12px}
-  @media (max-width:600px){.topnav .brand{height:17px}.navr{gap:8px}}
+  @media (max-width:600px){.topnav .brand{height:17px}}
+  .chiprow{display:flex;align-items:center;gap:10px}
+  .chiprow .ep{font-size:15px}
+  .topnav a{color:#A94C36;background:#FFF5F1;border:1.5px solid #B9553C}
+  .topnav a:hover{color:#fff;background:#B9553C;border-color:#B9553C}
 </style>
 </head>
 <body>
@@ -119,10 +122,10 @@
 
   <nav class="topnav" aria-label="꿀팁 이동">
     <img class="brand" src="/tips/kcisa-logo.png" alt="한국문화정보원">
-    <span class="navr"><span class="ep">#01</span><a href="/tips/"><span aria-hidden="true">←</span> 전체 꿀팁 보기</a></span>
+    <a href="/tips/"><span aria-hidden="true">←</span> 전체 꿀팁 보기</a>
   </nav>
 
-  <span class="chip">AI 활용꿀팁 실습 · 반복 업무 자동화</span>
+  <div class="chiprow"><span class="ep">#01</span><span class="chip">AI 활용꿀팁 실습 · 반복 업무 자동화</span></div>
   <h1>같은 요청,<br>매번 <em>다시 설명</em>하고 계신가요?</h1>
   <p class="subt">프로젝트 지침으로 반복 업무 자동화하기</p>
   <p class="meta">2026년 10월 화면 기준</p>
