@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>기후에너지환경부 생성형 AI 업무 활용 2일차 실습</title>
+<title>생성형 AI 업무 활용 심화 실습 · 반복 업무, AI Agent에게 맡기기</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>:root {
   --bg: #f5f6f8; --surface: #ffffff; --ink: #1b2230; --muted: #5d6676; --line: #dfe3ea;
@@ -213,10 +213,19 @@ ol.how { background:var(--bg); border:1px solid var(--line); border-radius:8px; 
 .preview strong { color:var(--accent); font-size:15px; }
 .preview span { font-size:14px; color:var(--muted); }
 a.ext.go { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); font-weight:600; }
+.cases { display:grid; gap:8px; }
+.cases .ct { font-size:15px; color:var(--c-codex); }
+.cases ul { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:10px; }
+.cases li { border:1px solid var(--line); border-top:3px solid var(--c-codex); border-radius:8px; padding:12px 14px; background:var(--bg); display:grid; gap:8px; align-content:start; }
+.cases .ch { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 10px; }
+.cases .ch strong { font-size:16px; }
+.cases .who { font-size:12.5px; color:var(--c-codex); background:var(--c-codex-s); padding:1px 8px; border-radius:999px; }
+.cases p { font-size:14.5px; }
+.cases a.ext { justify-self:start; }
 </style></head><body>
 <div class="page">
   <header class="top">
-    <div class="eyebrow">기후에너지환경부 · 생성형 AI 업무 활용 심화 · 2일차 실습</div>
+    <div class="eyebrow">생성형 AI 업무 활용 심화 · 실습 교재</div>
     <h1>반복 업무, AI Agent에게 맡기기</h1>
     <p class="sub">ChatGPT → Project → Skill → Work → Codex</p>
     <p class="lede">설문 분석, 문서 검수, 한글 보고서, 회의록, 발표자료, 지하수 대시보드까지 실제 업무 파일로 맡겨 봅니다. 업무에 맞는 자동화 수준을 고르고, 잘 된 방식은 다시 쓸 수 있게 남깁니다.</p>
@@ -274,6 +283,7 @@ a.ext.go { background:var(--accent); color:var(--accent-ink); border-color:var(-
   <div class="mhead"><span class="clock">실습 1</span><h2 class="title">설문 결과를 분석해 보고서와 메일까지</h2></div>
   <div class="meta"><span class="tool tool-project">Project</span><span class="kind">EXCEL → HTML 보고서 → GMAIL 임시저장</span></div>
   <dl class="spec"><div><dt>목표</dt><dd>설문 엑셀을 분석해 HTML 보고서와 Gmail 초안까지 만든다</dd></div><div><dt>재료</dt><dd>조직내_생성형AI_활용실태조사.xlsx (가상 직원 50명 응답)</dd></div><div><dt>결과물</dt><dd>HTML 분석 보고서, 이메일용 HTML 보고서, Gmail 초안, 프로젝트 지침</dd></div><div><dt>핵심</dt><dd>Project는 ‘이 업무가 무엇인지’ 기억한다. 한 번 잘 해낸 방식을 지침으로 남기면 다음부터는 파일만 올리면 된다</dd></div></dl>
+  
   
   
   <p class="folder"><span>실습 파일</span><code>1. 설문분석자동화</code> · 사용 도구: ChatGPT · 프로젝트</p>
@@ -352,6 +362,7 @@ STEP 6. 검증 - 원본 데이터와 평균값 재확인 / 응답자 수 확인 
   <div class="meta"><span class="tool tool-skill">Skill</span><span class="kind">DOCX → 점검표 → SKILL</span></div>
   <dl class="spec"><div><dt>목표</dt><dd>숫자·날짜 점검 방식을 정하고 스킬로 저장한다</dd></div><div><dt>재료</dt><dd>숫자_날짜_오류점검_실습문서.docx</dd></div><div><dt>결과물</dt><dd>오류 의심·확인 필요 점검표, ‘숫자·날짜 오류 점검 규칙’ 스킬</dd></div><div><dt>핵심</dt><dd>규칙을 처음부터 내가 다 쓰지 않는다. AI가 내 문서에서 패턴을 찾고 → 내가 고르고 고쳐서 → 스킬로 저장하고 → 새 문서로 검증한다</dd></div></dl>
   
+  
   <div class="intro"><strong>스킬, 이렇게 얻고 이렇게 씁니다</strong><ul><li><b>얻는 방법 ① 직접 만들기</b> · 잘 된 작업을 “방금 한 작업을 스킬로 만들어줘”로 저장합니다. 이번 실습(2-A)과 회의록 실습(3-D)이 이 방법입니다.</li><li><b>얻는 방법 ② 다른 사람이 만든 스킬 설치</b> · GitHub 주소 등을 주고 “이 스킬을 설치해줘”라고 합니다. HWPX 실습(2-B)과 Vercel 배포(4-A)가 이 방법입니다.</li><li><b>쓰는 방법 ① 이름을 불러 명시하기</b> · “숫자·날짜 오류 점검 규칙 스킬로 점검해줘”처럼 스킬 이름을 넣어 부릅니다. 확실하게 그 스킬을 쓰게 할 때 씁니다.</li><li><b>쓰는 방법 ② 알아서 돌아가게 두기</b> · 요청이 스킬 설명과 맞으면 이름을 부르지 않아도 AI가 알아서 스킬을 골라 씁니다. “점검” 한마디로 되는 이유입니다. 결과가 기대와 다르면 이름을 불러 명시합니다.</li></ul></div>
   <p class="folder"><span>실습 파일</span><code>2. 업무처리방법 표준화 / 숫자날짜오류점검</code> · 사용 도구: ChatGPT · 스킬</p>
   <h3>진행 단계</h3>
@@ -377,6 +388,7 @@ STEP 6. 검증 - 원본 데이터와 평균값 재확인 / 응답자 수 확인 
   <div class="meta"><span class="tool tool-skill">Skill</span><span class="kind">DOCX → HWPX → SKILL 개선</span></div>
   <dl class="spec"><div><dt>목표</dt><dd>HWPX 스킬을 설치해 Word 보고서를 기관 한글 양식으로 옮긴다</dd></div><div><dt>재료</dt><dd>2030_온실가스감축목표_보고서.docx, 보고서 양식.hwpx</dd></div><div><dt>결과물</dt><dd>양식이 적용된 .hwpx 보고서, 내 방식이 반영된 HWPX 스킬</dd></div><div><dt>핵심</dt><dd>남이 만든 스킬을 가져다 쓰고, 내 업무에 맞게 고쳐 내 것으로 만든다</dd></div></dl>
   
+  
   <div class="intro"><strong>이번 실습은 ‘설치’하는 방법입니다</strong><ul><li>2-A에서는 스킬을 직접 만들었습니다. 이번에는 다른 사람이 만들어 공개한 HWPX 스킬을 설치해서 씁니다.</li><li>설치한 뒤에는 “HWPX로 만들어줘”라고만 해도 알아서 이 스킬이 쓰입니다. 다른 스킬과 헷갈리면 “HWPX 스킬로 만들어줘”처럼 이름을 불러 명시합니다.</li><li>남이 만든 스킬도 내 업무에 맞게 고쳐 쓸 수 있습니다. 마지막 단계에서 고친 내용을 스킬에 반영합니다.</li></ul></div>
   <p class="folder"><span>실습 파일</span><code>2. 업무처리방법 표준화 / HWPX 보고서 생성</code> · 사용 도구: ChatGPT · 스킬</p>
   <h3>진행 단계</h3>
@@ -392,6 +404,7 @@ STEP 6. 검증 - 원본 데이터와 평균값 재확인 / 응답자 수 확인 
   <dl class="spec"><div><dt>목표</dt><dd>파일을 종류별로 정리하고 되돌려 본다</dd></div><div><dt>재료</dt><dd>PDF·Word·엑셀·이미지·동영상 파일 8개</dd></div><div><dt>결과물</dt><dd>문서 / 이미지 / 동영상 폴더로 정리된 상태</dd></div><div><dt>핵심</dt><dd>파일을 옮기는 일도 맡길 수 있다. 맡기기 전에 목록을 보고, 맡긴 뒤에는 되돌릴 수 있는지 확인한다</dd></div></dl>
   
   
+  
   <p class="folder"><span>실습 파일</span><code>3. 결과물 위임하기 / 다운로드폴더</code> · 사용 도구: ChatGPT · Work</p>
   <h3>진행 단계</h3>
   <div class="step"><h4><span class="sn">1</span>폴더 확인</h4><p>무엇이 있는지 먼저 봅니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>폴더에 어떤 파일이 있는지 알려줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>파일 8개가 모두 나왔나요?</li></ul></div></div><div class="step"><h4><span class="sn">2</span>종류별 분류</h4><p>세 폴더로 나눠 옮깁니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>파일을 문서, 이미지, 동영상 폴더로 분류해줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>탐색기에서 세 폴더를 열어 보고, 파일이 종류에 맞게 들어갔나요?</li><li>빠지거나 남은 파일은 없나요?</li></ul></div></div><div class="step"><h4><span class="sn">3</span>원복</h4><p>방금 한 정리를 되돌립니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>다시 원복해줘</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>파일이 처음처럼 한 폴더에 모였고, 새로 만든 폴더는 사라졌나요?</li></ul></div></div>
@@ -404,6 +417,7 @@ STEP 6. 검증 - 원본 데이터와 평균값 재확인 / 응답자 수 확인 
   <div class="mhead"><span class="clock">실습 3-B</span><h2 class="title">수료증 파일명으로 명단 만들기</h2></div>
   <div class="meta"><span class="tool tool-work">Work</span><span class="kind">PDF 파일명 → EXCEL</span></div>
   <dl class="spec"><div><dt>목표</dt><dd>수료증 파일명으로 이름·과 명단을 만든다</dd></div><div><dt>재료</dt><dd>‘이름_과_수료증.pdf’ 형식의 PDF 15개</dd></div><div><dt>결과물</dt><dd>이름·과 2개 열의 엑셀 파일</dd></div><div><dt>핵심</dt><dd>지울 것(임시 파일)과 남길 것(원본)을 분명히 말한다</dd></div></dl>
+  
   
   
   <p class="folder"><span>실습 파일</span><code>3. 결과물 위임하기 / 문서확인</code> · 사용 도구: ChatGPT · Work</p>
@@ -421,6 +435,7 @@ STEP 6. 검증 - 원본 데이터와 평균값 재확인 / 응답자 수 확인 
   <dl class="spec"><div><dt>목표</dt><dd>6개월 경비 파일을 합쳐 합계와 증감을 분석한다</dd></div><div><dt>재료</dt><dd>1월.xlsx ~ 6월.xlsx (열: 날짜, 거래처, 품목, 수량, 금액, 비고)</dd></div><div><dt>결과물</dt><dd>통합·분석 결과가 담긴 새 엑셀 파일</dd></div><div><dt>핵심</dt><dd>매달 하던 복사·붙여넣기를 한 번의 지시로 맡긴다</dd></div></dl>
   
   
+  
   <p class="folder"><span>실습 파일</span><code>3. 결과물 위임하기 / 월별경비지출_파일통합</code> · 사용 도구: ChatGPT · Work</p>
   <h3>진행 단계</h3>
   <div class="step"><h4><span class="sn">1</span>폴더 확인</h4><p>파일 6개가 있는지 봅니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>폴더에 어떤 파일이 있는지 알려줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>1월~6월 파일 6개가 나왔나요?</li></ul></div></div><div class="step"><h4><span class="sn">2</span>통합·분석</h4><p>합치고, 합계와 증감을 계산하고, 표와 차트로 정리합니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>월별 경비지출 엑셀 파일을 통합하고, 월별·항목별 지출 합계와 전월 대비 증감액을 분석해 주세요. 주요 결과는 표와 차트로 정리해 새 엑셀 파일로 만들어 주세요.
@@ -434,6 +449,7 @@ STEP 6. 검증 - 원본 데이터와 평균값 재확인 / 응답자 수 확인 
   <div class="mhead"><span class="clock">실습 3-D</span><h2 class="title">회의 녹취로 회의록과 후속조치까지</h2></div>
   <div class="meta"><span class="tool tool-work">Work</span><span class="kind">녹취 TXT → 회의록 HWPX → 메일·보고 → SKILL</span></div>
   <dl class="spec"><div><dt>목표</dt><dd>회의 녹취로 회의록과 후속 업무까지 맡긴다</dd></div><div><dt>재료</dt><dd>01_녹취원문.txt, 02_회의록서식.hwpx, 03_지난회의록_예시.hwpx, 04_녹취원문2.txt</dd></div><div><dt>결과물</dt><dd>회의록 .hwpx, 원문 대조 검수표, 안내 메일 초안, 1쪽 결과보고, ‘회의록 작성’ 스킬</dd></div><div><dt>핵심</dt><dd>Work에는 ‘작업 순서’보다 ‘목표와 완료 조건’을 전달한다. 확정할 수 없는 것은 지어내지 말고 ‘확인 필요’로 표시하게 한다</dd></div></dl>
+  
   
   
   <p class="folder"><span>실습 파일</span><code>3. 결과물 위임하기 / 회의록작성</code> · 사용 도구: ChatGPT · Work</p>
@@ -482,6 +498,7 @@ STEP 6. 검증 - 원본 데이터와 평균값 재확인 / 응답자 수 확인 
   <dl class="spec"><div><dt>목표</dt><dd>보고서로 10장 내외 발표자료를 만든다</dd></div><div><dt>재료</dt><dd>폴더의 보고서(.docx), 디자인레퍼런스.jpeg</dd></div><div><dt>결과물</dt><dd>PPT 발표자료 (도전: 인터랙티브 웹 발표자료)</dd></div><div><dt>핵심</dt><dd>디자인은 말보다 이미지 한 장과 폰트 주소로 전달하는 쪽이 정확하다</dd></div></dl>
   <div class="preview"><div><strong>완성 예시 미리 보기</strong><span>같은 보고서로 Claude에서 만든 웹 발표자료입니다. 만들기 전에 열어 보고 목표 수준을 정합니다.</span></div><a class="ext go" href="https://claude.ai/artifact/XU3EqEYDU1oSZvaAoC9fT5" target="_blank" rel="noopener">열어 보기 ↗</a></div>
   
+  
   <p class="folder"><span>실습 파일</span><code>3. 결과물 위임하기 / 발표자료만들기</code> · 사용 도구: ChatGPT · Work</p>
   <h3>진행 단계</h3>
   <div class="step"><h4><span class="sn">1</span>디자인 레퍼런스 고르기</h4><p>폴더의 디자인레퍼런스.jpeg를 그대로 써도 됩니다. 다른 디자인을 원하면 핀터레스트에서 마음에 드는 슬라이드 이미지를 저장해 폴더의 레퍼런스 파일과 바꿉니다.</p><p class="links"><a class="ext" href="https://www.pinterest.co.kr/search/pins/?q=PPT%20%EB%94%94%EC%9E%90%EC%9D%B8" target="_blank" rel="noopener">핀터레스트 · PPT 디자인 ↗</a><a class="ext" href="https://www.pinterest.co.kr/search/pins/?q=%EB%B0%9C%ED%91%9C%EC%9E%90%EB%A3%8C%20%EB%94%94%EC%9E%90%EC%9D%B8%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83" target="_blank" rel="noopener">핀터레스트 · 발표자료 레이아웃 ↗</a><a class="ext" href="https://notefolio.net/" target="_blank" rel="noopener">노트폴리오 · 국내 디자인 작업 ↗</a></p><div class="verify"><strong>확인할 것</strong><ul><li>레퍼런스 이미지가 한 장만 폴더에 있나요? 여러 장이면 어느 것을 따를지 헷갈립니다.</li></ul></div></div><div class="step"><h4><span class="sn">2</span>폰트 고르기</h4><p>눈누에서 무료 폰트를 고릅니다. 아래 링크는 OFL(자유 이용) 필터가 켜진 목록입니다. 고른 폰트 페이지의 주소를 복사해 둡니다.</p><p class="links"><a class="ext" href="https://noonnu.cc/index?locale=ko&category_use_ids=4&order_by=pd" target="_blank" rel="noopener">눈누 · OFL 무료 폰트 목록 ↗</a><a class="ext" href="https://noonnu.cc/font_page/366" target="_blank" rel="noopener">눈누 · 예시 폰트 페이지 ↗</a></p><div class="verify"><strong>확인할 것</strong><ul><li>폰트 페이지의 ‘라이선스 요약’에서 인쇄·영상·웹 사용이 허용되는지 봤나요?</li></ul></div></div><div class="step"><h4><span class="sn">3</span>PPT 만들기</h4><p>보고서, 레퍼런스, 분량, 폰트를 한 번에 전달합니다. 폰트 주소는 내가 고른 것으로 바꿉니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게 · 색칠된 부분을 내 것으로</span><button class="copy" type="button">복사</button></div><pre>폴더안에 있는 보고서를 기반으로 회사에서 발표할 때 쓸 PPT를 만들어줘 디자인은 폴더안의 디자인레퍼런스 파일을 참고하고 10장 내외로 만들어줘. 폰트는 <span class="slot">https://noonnu.cc/font_page/366</span></pre></div><div class="verify"><strong>확인할 것</strong><ul><li>PowerPoint에서 열리고 10장 내외인가요?</li><li>보고서의 숫자와 표현이 슬라이드에 그대로 옮겨졌나요? 두세 장을 골라 원문과 대조해 보세요.</li><li>레퍼런스의 색과 제목 위치를 따랐나요?</li></ul></div><div class="caution"><strong>주의</strong><ul><li>발표할 PC에 그 폰트가 없으면 다른 글꼴로 바뀌어 보입니다. 폰트를 설치하거나 PDF로도 저장해 둡니다.</li></ul></div></div><div class="step"><h4><span class="sn">4</span>[도전] 인터랙티브 웹 발표자료</h4><p>입력창에서 Sites를 선택하고, 같은 내용을 웹 발표자료로 만듭니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게 · 색칠된 부분을 내 것으로</span><button class="copy" type="button">복사</button></div><pre>폴더에 있는 보고서 내용을 기반으로 발표용 슬라이드를 만들어줘
@@ -501,6 +518,7 @@ STEP 6. 검증 - 원본 데이터와 평균값 재확인 / 응답자 수 확인 
   <div class="meta"><span class="tool tool-codex">Codex</span><span class="kind">말로 설명 → 단일 HTML → VERCEL 주소</span></div>
   <dl class="spec"><div><dt>목표</dt><dd>나를 소개하는 웹페이지를 만들어 Vercel로 배포한다</dd></div><div><dt>재료</dt><dd>내 소개 내용, (선택) 내 사진 photo.jpg, 참고하고 싶은 웹사이트 주소</dd></div><div><dt>결과물</dt><dd>index.html 한 파일, 누구나 접속할 수 있는 vercel.app 주소</dd></div><div><dt>핵심</dt><dd>코드를 몰라도 말로 설명하면 웹페이지가 된다. 배포까지 한 번 해 보면 4-B 대시보드도 같은 방법으로 공유할 수 있다</dd></div></dl>
   
+  <div class="cases"><strong class="ct">바이브 코딩으로 만든 실제 사례</strong><p class="note">코드를 직접 짜지 않고 말로 설명해 만든 업무 도구입니다. 만들기 전에 열어 보고 “나는 무엇을 만들 수 있을까” 떠올려 봅니다.</p><ul><li><div class="ch"><strong>엑셀 한눈에</strong><span class="who">강사 제작</span></div><p>엑셀 표를 올리면 결론 문장, 핵심 숫자 카드, 그래프로 정리해 줍니다. 병합 셀·소계가 있어도 읽고, 기간·항목 필터, 원본 확인, 엑셀·PDF 저장까지 됩니다. 모든 처리는 브라우저 안에서만 이루어집니다.</p><a class="ext" href="https://excelchart.vercel.app/" target="_blank" rel="noopener">사이트 열어 보기 ↗</a></li><li><div class="ch"><strong>온봄 · 복지서비스 신청 안내</strong><span class="who">화성시 AI 챔피언 수료 후 제작</span></div><p>필요한 복지를 찾아 신청 방법을 안내하는 플랫폼입니다. 업무 화면별 담당자 메모와, 민원인에게 줄 안내 사항을 복사·인쇄하는 기능이 있습니다.</p><a class="ext" href="https://onbom.vercel.app/" target="_blank" rel="noopener">사이트 열어 보기 ↗</a></li></ul></div>
   
   <p class="folder"><span>실습 파일</span><code>바탕화면에 새로 만드는 my-intro 폴더</code> · 사용 도구: Codex 앱</p>
   <h3>진행 단계</h3>
@@ -546,6 +564,7 @@ STEP 6. 검증 - 원본 데이터와 평균값 재확인 / 응답자 수 확인 
   <div class="meta"><span class="tool tool-codex">Codex</span><span class="kind">CSV → 단일 HTML 대시보드 → VERCEL 배포</span></div>
   <dl class="spec"><div><dt>목표</dt><dd>지하수 데이터로 대시보드를 만들고 배포한다</dd></div><div><dt>재료</dt><dd>한국수자원공사_지하수이용정보_지역별_연도별_20241231.csv (전처리 엑셀도 있음)</dd></div><div><dt>결과물</dt><dd>더블클릭으로 열리는 대시보드 HTML, 누구나 접속할 수 있는 vercel.app 주소</dd></div><div><dt>핵심</dt><dd>“코드를 알려줘”가 아니라 “작동하는 도구를 만들어줘”. 기능은 한 번에 하나씩 더하고, 매번 “기존 기능은 변경하지 마”를 붙인다</dd></div></dl>
   <div class="preview"><div><strong>결과물 예시 보기</strong><span>이번 실습으로 만들 지하수 대시보드의 완성본입니다. 필터, 지도, 업로드 기능을 먼저 눌러 보세요.</span></div><a class="ext go" href="https://water-sandy-eta.vercel.app/" target="_blank" rel="noopener">열어 보기 ↗</a></div>
+  
   
   <p class="folder"><span>실습 파일</span><code>4. 업무도구만들기</code> · 사용 도구: Codex 앱</p>
   <h3>진행 단계</h3>
