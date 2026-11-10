@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>기후에너지환경부 생성형 AI 업무 활용 2일차 실습</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>:root {
+  --bg: #f5f6f8; --surface: #ffffff; --ink: #1b2230; --muted: #5d6676; --line: #dfe3ea;
+  --accent: #2f4bbf; --accent-soft: #e8ecfb; --check: #0f7a5a; --check-soft: #e2f4ee;
+  --warn: #9a5b00; --warn-soft: #fdf1dc; --code-bg: #eef0f5; --accent-ink: #ffffff;
+  --t1: #2f4bbf; --t1s: #e8ecfb; --t2: #0f7a5a; --t2s: #e2f4ee; --t3: #8a4fb0; --t3s: #f3eafa;
+  --sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", "D2Coding", Consolas, "Courier New", monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14171d; --surface: #1c2029; --ink: #e6e9ef; --muted: #9aa3b2; --line: #2e3440;
+    --accent: #8ea2ff; --accent-soft: #232b4a; --check: #5fd0a8; --check-soft: #17332b;
+    --warn: #f0b458; --warn-soft: #3a2c12; --code-bg: #12151b; --accent-ink: #14171d;
+    --t1: #8ea2ff; --t1s: #232b4a; --t2: #5fd0a8; --t2s: #17332b; --t3: #d2a6f0; --t3s: #2e2338;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.7 var(--sans); padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+[hidden] { display: none !important; }
+.page { max-width: 1120px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 64px; }
+a { color: var(--accent); }
+code { font-family: var(--mono); font-size: .92em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+header.top { display: grid; gap: 10px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+.eyebrow { font: 500 13px/1.4 var(--mono); color: var(--accent); letter-spacing: .04em; }
+h1 { margin: 0; font-size: clamp(26px, 4.2vw, 38px); line-height: 1.25; font-weight: 700; text-wrap: balance; letter-spacing: -.01em; }
+.sub { margin: -4px 0 2px; font-size: 18px; font-weight: 500; color: var(--accent); }
+.lede { margin: 0; color: var(--muted); max-width: 64ch; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 6px 0 0; padding: 0; list-style: none; font-size: 14.5px; }
+.facts b { font-weight: 600; }
+.layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 40px; margin-top: 28px; align-items: start; }
+nav.rail { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
+.rail h2 { margin: 0 0 10px; font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: .03em; }
+.rail ol { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--line); }
+.rail li a { display: grid; grid-template-columns: 50px 14px 1fr; gap: 6px; padding: 7px 8px 7px 12px; margin-left: -2px; border-left: 2px solid transparent; color: var(--ink); text-decoration: none; font-size: 14.5px; line-height: 1.45; }
+.rail li a:hover { border-left-color: var(--accent); color: var(--accent); }
+.rail li a[aria-current="step"] { border-left-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; border-radius: 0 6px 6px 0; }
+.rail li a[aria-current="step"] time { color: var(--accent); }
+.rail li a::after { content: ""; order: 1; font: 600 13px/1.6 var(--mono); color: var(--check); text-align: center; }
+.rail li a time { order: 0; } .rail li a span { order: 2; }
+.rail li a.seen:not([aria-current])::after { content: "✓"; }
+.rail time { font: 400 12.5px/1.6 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.railbtns { display: grid; gap: 6px; margin-top: 14px; }
+.viewtoggle { font: 500 13px/1.2 var(--sans); color: var(--accent); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 8px 11px; cursor: pointer; width: 100%; }
+.viewtoggle:hover { border-color: var(--accent); }
+.viewtoggle[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+main { display: grid; gap: 28px; min-width: 0; }
+section { display: grid; gap: 14px; min-width: 0; scroll-margin-top: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 0 26px 26px; }
+.mhead { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0 -26px 4px; padding: 16px 26px; background: var(--accent-soft); border-bottom: 1px solid var(--line); border-radius: 10px 10px 0 0; }
+.clock { font: 600 13px/1.4 var(--mono); color: var(--accent-ink); background: var(--accent); padding: 4px 11px; border-radius: 999px; white-space: nowrap; }
+.mins { font: 500 13px/1.4 var(--mono); color: var(--accent); border: 1px solid var(--accent); padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+h2.title { margin: 0; font-size: 23px; line-height: 1.35; font-weight: 700; text-wrap: balance; }
+.where { font: 500 13px/1.4 var(--mono); color: var(--muted); margin-left: auto; white-space: nowrap; }
+h3 { margin: 14px 0 0; padding-top: 18px; border-top: 1px solid var(--line); font-size: 17px; font-weight: 700; }
+.mhead + .goal + h3, .mhead + h3 { border-top: 0; padding-top: 0; margin-top: 6px; }
+p { margin: 0; max-width: 70ch; }
+.goal { color: var(--muted); }
+.note { color: var(--muted); font-size: 14px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
+.kind { font: 500 12.5px/1.4 var(--mono); color: var(--muted); letter-spacing: .03em; margin-right: 4px; }
+.tag { font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+.t-out { color: var(--t1); background: var(--t1s); }
+.t-skill { color: var(--t2); background: var(--t2s); }
+.t-auto { color: var(--t3); background: var(--t3s); }
+td .tag { margin: 0 4px 4px 0; display: inline-block; }
+dl.spec { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; }
+dl.spec div { border: 1px solid var(--line); border-radius: 8px; padding: 11px 14px; background: var(--bg); min-width: 0; }
+dl.spec dt { font: 600 12.5px/1.4 var(--mono); color: var(--accent); letter-spacing: .03em; }
+dl.spec dd { margin: 3px 0 0; font-size: 15px; overflow-wrap: anywhere; }
+.folder { font-size: 14.5px; color: var(--muted); max-width: none; }
+.folder span { font-weight: 600; color: var(--ink); margin-right: 6px; }
+.step { display: grid; gap: 10px; padding: 16px 0 4px; border-top: 1px dashed var(--line); min-width: 0; }
+h3 + .step { border-top: 0; padding-top: 4px; }
+.step h4 { margin: 0; font-size: 16.5px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.sn { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--ink); color: var(--surface); font: 600 13px/26px var(--mono); text-align: center; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.chipl { font: 500 12.5px/1.4 var(--mono); color: var(--muted); margin-right: 2px; }
+.chip { font-size: 13.5px; padding: 2px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); }
+.links { font-size: 14.5px; }
+ol.steps { margin: 0; padding-left: 22px; display: grid; gap: 6px; max-width: 70ch; }
+.prompt { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; min-width: 0; background: var(--bg); }
+.prompt .bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 7px 8px 7px 14px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+.prompt pre { margin: 0; padding: 14px; background: var(--code-bg); font: 400 14px/1.75 var(--mono); white-space: pre-wrap; word-break: keep-all; overflow-wrap: anywhere; }
+button.copy { font: 500 13px/1 var(--sans); color: var(--accent); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 7px 11px; cursor: pointer; white-space: nowrap; }
+button.copy:hover { border-color: var(--accent); }
+button.copy.done { color: var(--check); border-color: var(--check); }
+.slot { background: var(--warn-soft); color: var(--warn); border-radius: 4px; padding: 1px 5px; font-weight: 500; }
+.verify, .caution { border-radius: 8px; padding: 12px 16px; display: grid; gap: 4px; }
+.verify { background: var(--check-soft); }
+.caution { background: var(--warn-soft); }
+.verify strong, .caution strong { font-size: 13.5px; letter-spacing: .02em; }
+.verify strong { color: var(--check); }
+.caution strong { color: var(--warn); }
+.verify ul, .caution ul { margin: 0; padding-left: 20px; display: grid; gap: 3px; }
+details.fold { border: 1px solid var(--line); border-radius: 8px; min-width: 0; }
+details.fold summary { cursor: pointer; padding: 10px 14px; font-weight: 600; font-size: 15px; list-style: none; display: flex; align-items: center; gap: 10px; }
+details.fold summary::-webkit-details-marker { display: none; }
+details.fold summary::before { content: "+"; font: 600 16px/1 var(--mono); color: var(--accent); width: 1em; text-align: center; }
+details.fold[open] summary::before { content: "−"; }
+details.fold[open] summary { border-bottom: 1px solid var(--line); }
+details.fold summary:hover { color: var(--accent); }
+.sumnote { margin-left: auto; font: 400 12.5px/1.4 var(--mono); color: var(--muted); }
+.foldbody { display: grid; gap: 14px; padding: 14px; min-width: 0; }
+.success { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.success > div { border: 1px solid var(--line); border-radius: 8px; padding: 10px 8px 8px; }
+.lv { display: inline-block; margin: 0 0 4px 10px; font-size: 13px; color: var(--check); }
+.lv2 { color: var(--t3); }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+th, td { text-align: left; vertical-align: top; padding: 9px 13px; border-bottom: 1px solid var(--line); }
+th { font-weight: 600; color: var(--muted); font-size: 13px; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.k { font-weight: 600; min-width: 9em; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.checks label { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; padding: 7px 10px; border-radius: 6px; cursor: pointer; }
+.checks label:hover { background: var(--bg); }
+.checks input { width: 18px; height: 18px; margin: 4px 0 0; accent-color: var(--check); }
+.checks input:checked + span { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line); }
+.progress { font: 400 13px/1.4 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.flow li { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; background: var(--bg); display: grid; gap: 2px; align-content: start; }
+.flow li:nth-child(1) { border-top: 3px solid var(--t1); }
+.flow li:nth-child(2) { border-top: 3px solid var(--t2); }
+.flow li:nth-child(3) { border-top: 3px solid var(--t3); }
+.flow b { font-weight: 700; font-size: 17px; }
+.flow span { color: var(--muted); font-size: 14px; }
+.flow em { font: 500 12.5px/1.5 var(--mono); font-style: normal; color: var(--muted); }
+.pager { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; margin-top: 10px; padding-top: 18px; border-top: 1px solid var(--line); }
+.pager button { font: 500 15px/1.3 var(--sans); padding: 11px 16px; border-radius: 8px; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-align: left; max-width: 100%; }
+.pager button small { display: block; font-size: 12.5px; color: var(--muted); font-weight: 400; }
+.pager button.next { margin-left: auto; background: var(--accent); border-color: var(--accent); color: var(--accent-ink); text-align: right; }
+.pager button.next small { color: var(--accent-ink); opacity: .8; }
+.pager button:hover { border-color: var(--accent); }
+.instructor { margin-top: 56px; padding: 22px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; display: flex; flex-wrap: wrap; gap: 16px 40px; align-items: center; justify-content: space-between; }
+.instructor .who { display: grid; gap: 2px; }
+.instructor .who strong { font-size: 19px; font-weight: 700; }
+.instructor .who span:last-child { color: var(--muted); }
+.instructor .work { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 8px; }
+.instructor .work li { font-size: 14px; padding: 4px 11px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+.instructor .contact { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.instructor .label { font-size: 13px; color: var(--muted); }
+.instructor .mail { font: 500 15px/1.4 var(--mono); user-select: all; }
+footer { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13.5px; }
+@media (max-width: 860px) {
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  nav.rail { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); margin-inline: -20px; padding: 8px 20px; border-bottom: 1px solid var(--line); }
+  .rail h2 { display: none; }
+  .rail ol { display: flex; gap: 6px; border-left: 0; overflow-x: auto; scrollbar-width: none; }
+  .rail ol::-webkit-scrollbar { display: none; }
+  .rail li { flex: none; }
+  .rail li a { display: flex; gap: 6px; align-items: center; border: 1px solid var(--line); border-radius: 999px; margin-left: 0; padding: 6px 12px; background: var(--surface); white-space: nowrap; }
+  .rail li a[aria-current="step"] { border-radius: 999px; border-color: var(--accent); }
+  .rail li a:not(.seen)::after, .rail li a[aria-current]::after { display: none; }
+  .railbtns { display: flex; gap: 6px; margin-top: 8px; }
+  .viewtoggle { width: auto; }
+  section { padding: 0 16px 20px; scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 120px); }
+  .mhead { margin: 0 -16px 4px; padding: 14px 16px; }
+  .where { margin-left: 0; }
+}
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+/* 도구 배지: PPT의 5단계 흐름 색 */
+:root { --c-chat:#5d6676; --c-chat-s:#eceef2; --c-project:#2f4bbf; --c-project-s:#e8ecfb; --c-skill:#0f7a5a; --c-skill-s:#e2f4ee; --c-work:#9a5b00; --c-work-s:#fdf1dc; --c-codex:#8a4fb0; --c-codex-s:#f3eafa; }
+@media (prefers-color-scheme: dark) { :root { --c-chat:#9aa3b2; --c-chat-s:#262b35; --c-project:#8ea2ff; --c-project-s:#232b4a; --c-skill:#5fd0a8; --c-skill-s:#17332b; --c-work:#f0b458; --c-work-s:#3a2c12; --c-codex:#d2a6f0; --c-codex-s:#2e2338; } }
+.tool { display:inline-block; font:600 13px/1.4 var(--sans); padding:3px 11px; border-radius:999px; white-space:nowrap; }
+.tool-chat { color:var(--c-chat); background:var(--c-chat-s); }
+.tool-project { color:var(--c-project); background:var(--c-project-s); }
+.tool-skill { color:var(--c-skill); background:var(--c-skill-s); }
+.tool-work { color:var(--c-work); background:var(--c-work-s); }
+.tool-codex { color:var(--c-codex); background:var(--c-codex-s); }
+.ladder { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; }
+@media (max-width:860px){ .ladder { grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); } }
+.ladder li { border:1px solid var(--line); border-radius:8px; padding:12px 14px; background:var(--bg); display:grid; gap:2px; align-content:start; border-top-width:3px; }
+.ladder em { font:500 12.5px/1.5 var(--mono); font-style:normal; color:var(--muted); }
+.ladder b { font-size:17px; }
+.ladder span { font-size:14px; }
+.ladder i { font-style:normal; font-size:13px; color:var(--muted); }
+.l-chat { border-top-color:var(--c-chat)!important; } .l-project { border-top-color:var(--c-project)!important; } .l-skill { border-top-color:var(--c-skill)!important; } .l-work { border-top-color:var(--c-work)!important; } .l-codex { border-top-color:var(--c-codex)!important; }
+.l-chat b { color:var(--c-chat); } .l-project b { color:var(--c-project); } .l-skill b { color:var(--c-skill); } .l-work b { color:var(--c-work); } .l-codex b { color:var(--c-codex); }
+.links { display:flex; flex-wrap:wrap; gap:8px; max-width:none; }
+a.ext { font-size:14px; text-decoration:none; padding:6px 12px; border:1px solid var(--line); border-radius:6px; background:var(--surface); }
+a.ext:hover { border-color:var(--accent); }
+ol.how { background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:14px 16px 14px 36px; max-width:none; }
+.ws { display:grid; gap:14px; border:1px solid var(--line); border-radius:8px; padding:16px; background:var(--bg); }
+.wsq { display:grid; gap:6px; }
+.wsq label, .wl { font-weight:600; font-size:15px; }
+.ws input[type=text], .ws textarea { font:400 15px/1.5 var(--sans); padding:9px 11px; border:1px solid var(--line); border-radius:6px; background:var(--surface); color:var(--ink); width:100%; min-width:0; resize:vertical; }
+.four { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:8px; }
+.opts { display:flex; flex-wrap:wrap; gap:6px; }
+.opts label { display:flex; align-items:center; gap:6px; font-weight:400; font-size:14.5px; padding:5px 11px; border:1px solid var(--line); border-radius:999px; background:var(--surface); cursor:pointer; }
+.opts input { accent-color:var(--accent); margin:0; }
+.opts label:has(input:checked) { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); }
+.intro { border:1px solid var(--c-skill); background:var(--c-skill-s); border-radius:8px; padding:12px 16px; display:grid; gap:6px; }
+.intro strong { color:var(--c-skill); font-size:15px; }
+.intro ul { margin:0; padding-left:20px; display:grid; gap:5px; }
+.tips { border:1px dashed var(--line); border-radius:8px; padding:12px 16px; display:grid; gap:4px; }
+.tips strong { font-size:13.5px; color:var(--accent); }
+.tips ul { margin:0; padding-left:20px; display:grid; gap:3px; }
+.two { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px; }
+.inl { display:flex; align-items:center; gap:8px; font-weight:400!important; font-size:14.5px!important; }
+.inl input[type=color] { width:52px; height:34px; border:1px solid var(--line); border-radius:6px; background:var(--surface); padding:2px; }
+.pb .wsq { gap:8px; }
+.preview { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 16px; border:1px solid var(--accent); background:var(--accent-soft); border-radius:8px; padding:12px 16px; }
+.preview div { display:grid; gap:2px; min-width:0; flex:1 1 280px; }
+.preview strong { color:var(--accent); font-size:15px; }
+.preview span { font-size:14px; color:var(--muted); }
+a.ext.go { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); font-weight:600; }
+</style></head><body>
+<div class="page">
+  <header class="top">
+    <div class="eyebrow">기후에너지환경부 · 생성형 AI 업무 활용 심화 · 2일차 실습</div>
+    <h1>반복 업무, AI Agent에게 맡기기</h1>
+    <p class="sub">ChatGPT → Project → Skill → Work → Codex</p>
+    <p class="lede">설문 분석, 문서 검수, 한글 보고서, 회의록, 발표자료, 지하수 대시보드까지 실제 업무 파일로 맡겨 봅니다. 업무에 맞는 자동화 수준을 고르고, 잘 된 방식은 다시 쓸 수 있게 남깁니다.</p>
+    <ul class="facts">
+      <li><b>강사</b> 조미정</li>
+      <li><b>도구</b> ChatGPT (Project · Skill · Work), Codex 앱</li>
+      <li><b>자료</b> 실습파일_자동화.zip</li>
+    </ul>
+  </header>
+  <div class="layout">
+    <nav class="rail" aria-label="진행표">
+      <h2>진행표</h2>
+      <ol><li><a href="#prep"><time>준비</time><span>시작 전 확인</span></a></li><li><a href="#lab1"><time>1</time><span>설문 분석 보고서</span></a></li><li><a href="#lab2a"><time>2-A</time><span>숫자·날짜 점검 스킬</span></a></li><li><a href="#lab2b"><time>2-B</time><span>HWPX 보고서</span></a></li><li><a href="#lab3a"><time>3-A</time><span>다운로드 폴더 정리</span></a></li><li><a href="#lab3b"><time>3-B</time><span>수료증 명단 만들기</span></a></li><li><a href="#lab3c"><time>3-C</time><span>월별 경비 통합</span></a></li><li><a href="#lab3d"><time>3-D</time><span>회의록 작성</span></a></li><li><a href="#lab3e"><time>3-E</time><span>발표자료 만들기</span></a></li><li><a href="#lab4a"><time>4-A</time><span>자기소개 페이지·배포</span></a></li><li><a href="#lab4b"><time>4-B</time><span>지하수 대시보드</span></a></li><li><a href="#help"><time>부록</time><span>자주 막히는 곳</span></a></li><li><a href="#wrap"><time>마무리</time><span>내 업무 자동화 설계</span></a></li></ol>
+      <div class="railbtns"><button class="viewtoggle" type="button" id="viewtoggle" hidden>전체 펼쳐 보기</button></div>
+    </nav>
+    <main>
+      <section id="prep">
+        <div class="mhead"><span class="clock">준비</span><h2 class="title">시작 전 확인</h2><span class="progress" id="progress"></span></div>
+        <div class="preview dlbox"><div><strong>실습파일 내려받기</strong><span>zip, 약 6.5MB · 실습 4개 폴더와 예시 파일이 들어 있습니다.</span></div><a class="ext go" href="https://edu.nemofactory.kr/automation/%EC%8B%A4%EC%8A%B5%ED%8C%8C%EC%9D%BC_%EC%9E%90%EB%8F%99%ED%99%94.zip" target="_blank" rel="noopener">내려받기 ↓</a></div>
+        <ol class="steps">
+          <li>위 버튼으로 zip을 내려받습니다. 바로 받아지지 않으면 <a href="https://github.com/mjcho7/guides/raw/main/automation/%EC%8B%A4%EC%8A%B5%ED%8C%8C%EC%9D%BC_%EC%9E%90%EB%8F%99%ED%99%94.zip" target="_blank" rel="noopener">GitHub에서 내려받기</a>를 누릅니다.</li>
+          <li>내려받은 zip을 마우스 오른쪽 버튼으로 눌러 <b>압축 풀기</b>를 합니다. zip 안에서 바로 열면 실습이 되지 않습니다.</li>
+          <li>압축을 푼 폴더를 바탕화면 등 찾기 쉬운 곳에 둡니다.</li>
+        </ol>
+        <p class="goal">아래 항목을 확인하고 시작합니다. 체크한 내용은 이 브라우저에만 저장됩니다.</p>
+        <ul class="checks" id="checks">
+          <li><label><input type="checkbox" data-key="p1"><span>ChatGPT 유료 플랜(Plus·Team·Enterprise 등)으로 로그인했고, 사이드바에 프로젝트와 스킬 탭이 보인다</span></label></li>
+          <li><label><input type="checkbox" data-key="p2"><span>ChatGPT 커넥터에서 실습용 Gmail을 연결할 수 있다 (실습 1)</span></label></li>
+          <li><label><input type="checkbox" data-key="p3"><span>Codex 앱을 설치하고 같은 계정으로 로그인했다 (실습 4)</span></label></li>
+          <li><label><input type="checkbox" data-key="p4"><span>위에서 실습파일(실습파일_자동화.zip)을 내려받아 압축을 풀었고, 폴더 4개(설문분석자동화, 업무처리방법 표준화, 결과물 위임하기, 업무도구만들기)가 보인다</span></label></li>
+          <li><label><input type="checkbox" data-key="p5"><span>한글(HWP) 프로그램과 PowerPoint가 설치돼 있다</span></label></li>
+        </ul>
+        <h3>오늘의 흐름</h3>
+        <ol class="ladder">
+          <li class="l-chat"><em>1단계</em><b>ChatGPT</b><span>업무를 요청한다</span><i>“AI가 이 일을 잘할 수 있는가?”</i></li>
+          <li class="l-project"><em>2단계</em><b>Project</b><span>업무 맥락을 기억한다</span><i>실습 1 · 설문 분석</i></li>
+          <li class="l-skill"><em>3단계</em><b>Skill</b><span>처리 방법을 재사용한다</span><i>실습 2 · 숫자 점검, HWPX</i></li>
+          <li class="l-work"><em>4단계</em><b>Work</b><span>여러 단계를 통째로 맡긴다</span><i>실습 3 · 회의록 외</i></li>
+          <li class="l-codex"><em>5단계</em><b>Codex</b><span>반복 업무를 도구로 만든다</span><i>실습 4 · 자기소개 페이지, 대시보드</i></li>
+        </ol>
+        <p class="note">Project는 ‘이 업무가 무엇인지’, Skill은 ‘이 업무를 어떻게 처리하는지’ 기억합니다. Work에는 순서보다 목표와 완료 조건을 주고, Codex에는 “코드를 알려줘”가 아니라 “작동하는 도구를 만들어줘”라고 합니다.</p>
+        <h3>진행 규칙</h3>
+        <ol class="steps">
+          <li><b>한 번에 하나씩</b> 지시하고, 결과를 확인한 뒤 다음 단계로 넘어갑니다.</li>
+          <li>프롬프트는 복사해서 써도 되고, 내 말로 바꿔 써도 됩니다. <b>색칠된 부분</b>은 내 파일명이나 내용으로 바꿉니다.</li>
+          <li>단계마다 있는 <b>‘확인할 것’</b>은 꼭 직접 확인합니다. AI가 완료했다고 해도 열어 보기 전에는 완료가 아닙니다.</li>
+          <li>파일 변경·실행 승인을 물으면 <b>내용을 읽고</b> 승인합니다. 메일 발송, 원본 삭제는 승인하지 않습니다.</li>
+        </ol>
+        <h3>실습 순서</h3>
+        <div class="tablewrap"><table><tr><th>실습</th><th>도구</th><th>내용</th></tr><tr><td class="k">1</td><td><span class="tool tool-project">Project</span></td><td>설문 결과를 분석해 보고서와 메일까지</td></tr><tr><td class="k">2-A</td><td><span class="tool tool-skill">Skill</span></td><td>숫자·날짜 오류 점검 스킬 만들기</td></tr><tr><td class="k">2-B</td><td><span class="tool tool-skill">Skill</span></td><td>HWPX 양식에 맞춰 보고서 만들기</td></tr><tr><td class="k">3-A</td><td><span class="tool tool-work">Work</span></td><td>다운로드 폴더 정리하고 되돌리기</td></tr><tr><td class="k">3-B</td><td><span class="tool tool-work">Work</span></td><td>수료증 파일명으로 명단 만들기</td></tr><tr><td class="k">3-C</td><td><span class="tool tool-work">Work</span></td><td>월별 경비지출 파일 통합·분석</td></tr><tr><td class="k">3-D</td><td><span class="tool tool-work">Work</span></td><td>회의 녹취로 회의록과 후속조치까지</td></tr><tr><td class="k">3-E</td><td><span class="tool tool-work">Work</span></td><td>보고서로 발표자료 만들기</td></tr><tr><td class="k">4-A</td><td><span class="tool tool-codex">Codex</span></td><td>바이브 코딩 맛보기 · 자기소개 페이지 만들고 Vercel로 배포</td></tr><tr><td class="k">4-B</td><td><span class="tool tool-codex">Codex</span></td><td>지하수 이용현황 웹 대시보드 만들고 배포하기</td></tr></table></div>
+        <p class="note">빠른 분은 각 실습의 ‘도전 성공’까지, 그렇지 않은 분은 ‘기본 성공’까지 하고 다음으로 넘어갑니다.</p>
+      </section>
+      
+<section id="lab1">
+  <div class="mhead"><span class="clock">실습 1</span><h2 class="title">설문 결과를 분석해 보고서와 메일까지</h2></div>
+  <div class="meta"><span class="tool tool-project">Project</span><span class="kind">EXCEL → HTML 보고서 → GMAIL 임시저장</span></div>
+  <dl class="spec"><div><dt>목표</dt><dd>설문 엑셀을 분석해 HTML 보고서와 Gmail 초안까지 만든다</dd></div><div><dt>재료</dt><dd>조직내_생성형AI_활용실태조사.xlsx (가상 직원 50명 응답)</dd></div><div><dt>결과물</dt><dd>HTML 분석 보고서, 이메일용 HTML 보고서, Gmail 초안, 프로젝트 지침</dd></div><div><dt>핵심</dt><dd>Project는 ‘이 업무가 무엇인지’ 기억한다. 한 번 잘 해낸 방식을 지침으로 남기면 다음부터는 파일만 올리면 된다</dd></div></dl>
+  
+  
+  <p class="folder"><span>실습 파일</span><code>1. 설문분석자동화</code> · 사용 도구: ChatGPT · 프로젝트</p>
+  <h3>진행 단계</h3>
+  <div class="step"><h4><span class="sn">1</span>프로젝트 만들기</h4><p>ChatGPT 왼쪽 메뉴에서 새 프로젝트를 만들고 이름을 ‘설문 분석’으로 정합니다. 설문 엑셀 파일을 프로젝트 파일로 올립니다.</p><div class="verify"><strong>확인할 것</strong><ul><li>프로젝트 안에서 새 대화를 열었나요? 이후 단계는 모두 이 프로젝트 안에서 합니다.</li></ul></div></div><div class="step"><h4><span class="sn">2</span>Gmail 커넥터 연결</h4><p>설정의 커넥터(앱)에서 Gmail을 연결합니다. 7단계에서 메일 초안을 저장할 때 씁니다.</p><div class="verify"><strong>확인할 것</strong><ul><li>Gmail 연결 상태가 ‘연결됨’으로 보이나요?</li></ul></div><div class="caution"><strong>주의</strong><ul><li>기관 메일이 아니라 실습용 개인 Gmail 계정으로 연결합니다.</li></ul></div></div><div class="step"><h4><span class="sn">3</span>데이터 구조부터 확인</h4><p>보고서를 바로 만들지 않고, 구조와 품질부터 확인시킵니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>첨부한 설문 결과 데이터를 확인해줘.
+다음 순서로 진행해.
+1. 전체 응답자 수
+2. 전체 문항 확인
+3. 객관식 / 척도형 / 주관식 문항 구분
+4. 문항별 결측값 확인
+아직 보고서는 만들지 말고 데이터 구조와 품질만 확인해줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>응답자 수와 문항 수를 메모해 두세요. 뒤에서 보고서 숫자와 대조합니다.</li><li>‘실습가이드’ 시트처럼 응답이 아닌 시트를 섞어 세지 않았나요?</li><li>척도형(1~5점)과 주관식 문항이 맞게 구분됐나요?</li><li>보고서를 만들지 않고 확인 결과만 보여줬나요?</li></ul></div></div><div class="step"><h4><span class="sn">4</span>정량 분석</h4><p>척도형 평균, KPI 3개, 객관식 빈도를 계산시킵니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>이제 정량 분석을 진행해줘.
+1. 5점 척도 문항별 평균을 계산해줘.
+2. 평균은 모두 5점 만점으로 표시해줘.
+3. 가장 중요한 KPI 3개를 선정해줘.
+4. 주요 객관식 문항은 빈도와 비율을 계산해줘.
+5. 분석 결과에서 눈에 띄는 특징과 핵심 인사이트를 정리해줘.
+모든 수치는 실제 데이터에 근거해서 계산하고 데이터에 없는 내용은 추측하지 마.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>척도형 평균 하나를 엑셀에서 =AVERAGE()로 직접 계산해 같은지 확인하세요.</li><li>빈도의 합이 응답자 수와 같고, 비율의 합이 100%가 되나요?</li><li>KPI 3개를 고른 이유가 붙어 있나요?</li></ul></div></div><div class="step"><h4><span class="sn">5</span>주관식 응답 분석</h4><p>비슷한 의견끼리 묶고 대표 의견을 고르게 합니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>주관식 응답을 분석해줘.
+다음 기준으로 진행해.
+1. 유사한 의견끼리 그룹화
+2. 각 그룹의 응답 빈도 확인
+3. 긍정 의견과 개선 의견 구분
+4. 반복적으로 등장하는 의견 우선 정리
+5. 각 그룹을 보여줄 수 있는 대표 의견 선정
+반드시 실제 응답에 있는 내용을 근거로 분석하고 데이터에 없는 의견은 만들지 마.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>대표 의견 하나를 골라 엑셀에서 Ctrl+F로 찾아보세요. 실제 응답에 있는 문장인가요?</li><li>그룹별 빈도를 더하면 응답 수와 맞나요? 한 응답이 여러 그룹에 들어갔다면 그렇게 설명했나요?</li></ul></div></div><div class="step"><h4><span class="sn">6</span>개선방안 도출</h4><p>정량·주관식 결과를 합쳐 우선순위가 있는 개선안을 받습니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>지금까지의 정량 분석과 주관식 분석을 종합해서 향후 개선방안을 도출해줘.
+조건:
+1. 실제 설문 결과를 근거로 할 것
+2. 데이터에 없는 내용은 추측하지 말 것
+3. 우선순위가 높은 개선사항부터 제시할 것
+4. 각 개선안의 근거가 된 분석 결과를 함께 설명할 것</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>개선안마다 근거가 된 수치나 의견이 붙어 있나요?</li><li>설문에 없는 일반론(예: ‘AI 거버넌스 체계 구축’)이 근거 없이 끼어들지 않았나요?</li></ul></div></div><div class="step"><h4><span class="sn">7</span>HTML 분석 보고서 생성</h4><p>분석 결과를 한 장짜리 HTML 보고서로 만들고, 마지막에 원본과 다시 대조시킵니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>지금까지 분석한 결과를 바탕으로 HTML 분석 보고서를 만들어줘.
+보고서 구성:
+1. 조사 개요
+2. 핵심 KPI 3개
+3. 주요 정량 분석 결과
+4. 주관식 의견 분석
+5. 핵심 인사이트
+6. 향후 개선방안
+디자인:
+- 깔끔한 비즈니스 보고서 스타일
+- 핵심 KPI는 카드 형태
+- 중요한 숫자는 시각적으로 강조
+- 표와 차트를 적절하게 활용
+- 한글 가독성을 높일 것
+- 하나의 HTML 파일로 완성할 것
+마지막으로 원본 데이터와 비교하여 응답자 수, 평균, 빈도, 비율이 정확한지 다시 검증해줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>HTML 파일을 내려받아 더블클릭하면 브라우저에서 열리나요?</li><li>보고서의 응답자 수와 평균이 3·4단계 값과 같나요?</li><li>검증 결과를 표로 보여줬나요, ‘정확합니다’라고 말만 했나요?</li></ul></div></div><div class="step"><h4><span class="sn">8</span>메일용 HTML로 바꾸기</h4><p>메일 본문은 일반 웹페이지와 규칙이 다릅니다. 메일에서 깨지지 않는 방식으로 다시 만듭니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>방금 만든 보고서를 Gmail과 Outlook의 메일 본문에서도 잘 보이는 이메일용 HTML 보고서로 만들어줘.
+조건:
+- JavaScript 사용 금지
+- table 기반 레이아웃 사용
+- inline CSS 중심으로 작성
+- KPI 카드는 이메일에서도 잘 보이게 구성
+- 복잡한 인터랙션 사용 금지
+- 핵심 분석과 개선방안이 메일 본문에서 바로 보이도록 구성
+- 모바일에서도 내용을 읽을 수 있도록 구성</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>코드에 &lt;script&gt;가 없나요?</li><li>앞 단계 보고서와 별도 파일로 만들어졌나요?</li><li>실습 폴더의 <code>조직내_생성형AI_활용실태조사_이메일용_HTML보고서.html</code>과 비교해 보세요.</li></ul></div></div><div class="step"><h4><span class="sn">9</span>Gmail 초안 저장</h4><p>Gmail 커넥터로 임시보관함에 초안만 저장합니다. 발송하지 않습니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>완성된 이메일용 HTML 보고서를 이용해서 Gmail 메일 초안을 작성해줘.
+제목: [설문분석] 조직 내 생성형 AI 활용 실태조사 결과
+조건:
+- HTML 보고서를 첨부파일이 아니라 메일 본문에 넣을 것
+- 보고서 디자인과 KPI가 본문에서 보이도록 할 것
+- 아직 발송하지 말 것
+- Gmail 임시보관함에만 저장할 것</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>Gmail 임시보관함에 초안이 있고, 제목이 그대로인가요?</li><li>초안을 열었을 때 KPI 카드가 본문에 보이나요? 첨부파일로 붙어 있으면 다시 지시합니다.</li><li>보낸편지함에는 아무것도 없나요?</li></ul></div><div class="caution"><strong>주의</strong><ul><li>발송 확인을 물으면 거절합니다. 초안 저장까지만 승인합니다.</li></ul></div></div><div class="step"><h4><span class="sn">10</span>프로젝트 지침 만들기</h4><p>오늘 한 과정을 프로젝트 지침으로 정리시킵니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>지금까지 수행한 설문 분석 과정을 ChatGPT Project용 지침으로 만들어줘.
+분석 → 인사이트 → 개선안 → 검증 → HTML 보고서 → Gmail 초안까지 포함하고,
+HTML은 Project에 등록된 기준 템플릿을 그대로 사용해.
+지금까지 우리가 실제로 수행한 작업 방식과 규칙을 빠짐없이 반영해줘.</pre></div><details class="fold"><summary>지침 예시</summary><div class="foldbody"><div class="prompt"><div class="bar"><span>참고</span><button class="copy" type="button">복사</button></div><pre>당신은 교육 만족도 분석 Agent입니다.
+사용자가 Google Form 만족도 결과 파일을 제공하면 다음 순서로 작업합니다.
+STEP 1. 데이터 구조 확인 - 전체 응답자 수 확인 / 객관식·척도형·주관식 문항 구분 / 결측값 확인
+STEP 2. 정량 분석 - 만족도 문항별 평균 계산 / 5점 척도 기준으로 표시 / 주요 KPI 3개 선정
+STEP 3. 주관식 분석 - 유사 의견끼리 그룹화 / 긍정 의견·개선 의견 구분 / 반복 빈도가 높은 의견 우선 정리
+STEP 4. 개선안 도출 - 실제 응답에 근거하여 개선사항 작성 / 데이터에 없는 내용은 추측 금지
+STEP 5. HTML 보고서 생성 - 단일 HTML 파일 / KPI 카드 / 주관식 분석 / 향후 개선방안 / 깔끔한 보고서형 디자인
+STEP 6. 검증 - 원본 데이터와 평균값 재확인 / 응답자 수 확인 / HTML에 표시된 수치와 계산값 비교</pre></div></div></details><div class="verify"><strong>확인할 것</strong><ul><li>아래 지침 예시와 비교해 빠진 단계(특히 검증과 Gmail 초안)가 없나요?</li></ul></div></div><div class="step"><h4><span class="sn">11</span>지침과 템플릿을 프로젝트에 등록</h4><p>만들어진 지침을 복사해 프로젝트 설정의 지침(Instructions) 칸에 붙여 넣습니다. 8단계의 이메일용 HTML 파일을 프로젝트 파일에 기준 템플릿으로 올립니다.</p><div class="verify"><strong>확인할 것</strong><ul><li>프로젝트 지침 칸에 지침이 저장됐나요?</li><li>프로젝트 파일 목록에 이메일용 HTML이 보이나요?</li></ul></div></div><div class="step"><h4><span class="sn">12</span>새 대화에서 검증</h4><p>같은 프로젝트에서 새 대화를 열고, 업데이트된 설문 파일을 올린 뒤 한 줄만 지시합니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>첨부한 조직내_생성형AI_활용실태조사_업데이트.xlsx로 설문 분석 보고서와 Gmail 초안을 만들어줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>긴 지시 없이 같은 순서로 분석하고, 같은 디자인의 보고서가 나오나요?</li><li>응답자 수 등 바뀐 숫자가 보고서에 반영됐나요?</li></ul></div></div>
+  <h3>성공 기준</h3>
+  <div class="success"><div><b class="lv">기본 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab1-s0"><span>KPI 카드 3개, 정량·주관식 분석, 개선방안이 담긴 HTML 보고서가 브라우저에서 열린다</span></label></li><li><label><input type="checkbox" data-key="lab1-s1"><span>보고서의 응답자 수와 평균 하나를 엑셀에서 직접 계산한 값과 대조했다</span></label></li><li><label><input type="checkbox" data-key="lab1-s2"><span>Gmail 임시보관함에 초안이 저장됐다</span></label></li></ul></div><div><b class="lv lv2">도전 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab1-c0"><span>프로젝트 지침과 템플릿을 등록했고, 새 대화에서 한 줄 지시로 같은 보고서가 나왔다</span></label></li></ul></div></div>
+  <h3>막힐 때</h3>
+  <div class="tablewrap"><table><tr><th>이럴 때</th><th>이렇게</th></tr><tr><td class="k">숫자가 엑셀과 다르다</td><td>“<span class="slot">문항명</span> 평균이 보고서에는 <span class="slot">보고서 값</span>, 엑셀 계산은 <span class="slot">내 계산 값</span>이야. 원본에서 다시 계산해서 표로 비교하고 고쳐줘.”라고 보냅니다.</td></tr><tr><td class="k">한글이 깨진다</td><td>“HTML을 UTF-8로 저장하고 meta charset을 넣어줘.”라고 보냅니다.</td></tr><tr><td class="k">Gmail에 저장하지 못한다</td><td>커넥터 화면에서 Gmail 연결을 다시 확인합니다. 그래도 안 되면 메일용 HTML을 브라우저에서 열어 보는 것으로 마칩니다.</td></tr></table></div>
+</section>
+<section id="lab2a">
+  <div class="mhead"><span class="clock">실습 2-A</span><h2 class="title">숫자·날짜 오류 점검 스킬 만들기</h2></div>
+  <div class="meta"><span class="tool tool-skill">Skill</span><span class="kind">DOCX → 점검표 → SKILL</span></div>
+  <dl class="spec"><div><dt>목표</dt><dd>숫자·날짜 점검 방식을 정하고 스킬로 저장한다</dd></div><div><dt>재료</dt><dd>숫자_날짜_오류점검_실습문서.docx</dd></div><div><dt>결과물</dt><dd>오류 의심·확인 필요 점검표, ‘숫자·날짜 오류 점검 규칙’ 스킬</dd></div><div><dt>핵심</dt><dd>규칙을 처음부터 내가 다 쓰지 않는다. AI가 내 문서에서 패턴을 찾고 → 내가 고르고 고쳐서 → 스킬로 저장하고 → 새 문서로 검증한다</dd></div></dl>
+  
+  <div class="intro"><strong>스킬, 이렇게 얻고 이렇게 씁니다</strong><ul><li><b>얻는 방법 ① 직접 만들기</b> · 잘 된 작업을 “방금 한 작업을 스킬로 만들어줘”로 저장합니다. 이번 실습(2-A)과 회의록 실습(3-D)이 이 방법입니다.</li><li><b>얻는 방법 ② 다른 사람이 만든 스킬 설치</b> · GitHub 주소 등을 주고 “이 스킬을 설치해줘”라고 합니다. HWPX 실습(2-B)과 Vercel 배포(4-A)가 이 방법입니다.</li><li><b>쓰는 방법 ① 이름을 불러 명시하기</b> · “숫자·날짜 오류 점검 규칙 스킬로 점검해줘”처럼 스킬 이름을 넣어 부릅니다. 확실하게 그 스킬을 쓰게 할 때 씁니다.</li><li><b>쓰는 방법 ② 알아서 돌아가게 두기</b> · 요청이 스킬 설명과 맞으면 이름을 부르지 않아도 AI가 알아서 스킬을 골라 씁니다. “점검” 한마디로 되는 이유입니다. 결과가 기대와 다르면 이름을 불러 명시합니다.</li></ul></div>
+  <p class="folder"><span>실습 파일</span><code>2. 업무처리방법 표준화 / 숫자날짜오류점검</code> · 사용 도구: ChatGPT · 스킬</p>
+  <h3>진행 단계</h3>
+  <div class="step"><h4><span class="sn">1</span>AI가 패턴을 찾게 하기</h4><p>문서를 올리고, 생길 수 있는 오류와 점검 항목을 먼저 제안받습니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>이 문서들은 내가 업무에서 주로 사용하는 문서야. 문서들을 분석해서 숫자와 날짜에서 발생할 수 있는 오류를 찾아보고, 앞으로 이런 문서를 검토할 때 어떤 항목을 점검하면 좋을지 정리해줘</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>합계 검산, 비율 재계산, 단가×수량, 없는 날짜, 일정 순서 같은 점검 항목이 나왔나요?</li><li>문서 내용을 고치지 않고 정리만 했나요?</li></ul></div></div><div class="step"><h4><span class="sn">2</span>업무 규칙으로 형식 고정</h4><p>결과 표의 열과 판단 기준을 정해 줍니다. 이 형식이 그대로 스킬이 됩니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>먼저 ‘오류 의심 ○건, 확인 필요 ○건’으로 요약해줘.
+이어서 아래 5개 열의 표를 작성해줘. 열 이름과 순서는 바꾸거나 추가하지 마.
+
+| 위치 | 원문 | 비교 대상 또는 계산값 | 판단 | 근거 |
+- ‘위치’에는 문서의 장·절 제목이나 표 이름을 적어줘.
+- ‘원문’에는 문제가 되는 숫자·날짜와 관련 문구를 그대로 적어줘.
+- ‘비교 대상 또는 계산값’에는 대조한 문서 내 값이나 직접 계산한 결과를 적어줘.
+- ‘판단’은 ‘오류 의심’ 또는 ‘확인 필요’ 중 하나로 표시해줘.
+- ‘근거’에는 불일치 이유나 계산식을 간결하게 적어줘.
+- 한 행에는 하나의 점검 사항만 적어줘.
+- 문제가 없는 항목은 표에 넣지 말고, 표 아래에 ‘이상 없음’으로 간단히 요약해줘.
+- 원문을 임의로 수정하거나 근거 없이 정확한 값을 단정하지 마.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>표의 열이 정확히 5개이고 순서가 같나요? ‘판단’에는 ‘오류 의심’, ‘확인 필요’만 있나요?</li><li>본문의 금액·비율 몇 개를 계산기로 직접 계산해 보세요. 틀린 값이 표에 잡혔나요?</li><li>달력에 없는 날짜나 앞뒤가 맞지 않는 일정도 잡혔나요?</li></ul></div></div><div class="step"><h4><span class="sn">3</span>스킬로 만들기</h4><p>잘 나온 방식을 스킬로 저장합니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>좋아. 방금 한 작업을 "숫자·날짜 오류 점검 규칙" 스킬로 만들어줘. 다음부터 파일을 올리고 점검이라고 하면 같은 형식으로 정리되게</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>스킬 탭에 ‘숫자·날짜 오류 점검 규칙’이 보이나요?</li><li>스킬 내용을 열어 5개 열, 판단 기준, ‘원문 수정 금지’ 규칙이 들어 있는지 확인했나요?</li></ul></div><div class="caution"><strong>주의</strong><ul><li>스킬 탭은 Plus·Team·Enterprise 등 유료 플랜에서만 보입니다. 무료 계정은 플러그인 탭만 있습니다.</li><li>스킬 설치·저장 여부를 물으면 설치를 누릅니다.</li></ul></div></div><div class="step"><h4><span class="sn">4</span>새 문서로 검증</h4><p>새 대화를 열고, 처음 보는 문서를 올린 뒤 “점검”만 말합니다. 옆 폴더의 온실가스 보고서를 씁니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게 · 색칠된 부분을 내 것으로</span><button class="copy" type="button">복사</button></div><pre><span class="slot">2030_온실가스감축목표_보고서.docx</span> 점검</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>스킬 이름을 부르지 않았는데도 요약 한 줄과 5열 표가 같은 형식으로 나오나요? 스킬이 알아서 쓰인 것입니다.</li><li>“어떤 스킬을 썼어?”라고 물어 확인해 볼 수 있습니다.</li><li>‘오류 의심’ 하나를 골라 원문에서 직접 확인했나요?</li></ul></div></div>
+  <h3>성공 기준</h3>
+  <div class="success"><div><b class="lv">기본 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab2a-s0"><span>요약 한 줄과 5열 점검표가 나왔고, 직접 계산한 값과 대조했다</span></label></li><li><label><input type="checkbox" data-key="lab2a-s1"><span>스킬 탭에 ‘숫자·날짜 오류 점검 규칙’이 생겼다</span></label></li></ul></div><div><b class="lv lv2">도전 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab2a-c0"><span>새 대화에서 다른 문서에 “점검” 한마디로 같은 형식이 나왔다</span></label></li></ul></div></div>
+  <h3>막힐 때</h3>
+  <div class="tablewrap"><table><tr><th>이럴 때</th><th>이렇게</th></tr><tr><td class="k">오류를 일부만 찾는다</td><td>“본문 금액과 비율을 모두 다시 계산해서, 계산식과 함께 표에 넣어줘.”라고 보냅니다.</td></tr><tr><td class="k">표 형식이 매번 다르다</td><td>“열 이름과 순서를 바꾸지 말라는 규칙을 스킬에 더 분명하게 적어줘.”라고 보냅니다.</td></tr><tr><td class="k">스킬을 안 쓰고 일반 답을 한다</td><td>스킬 이름을 불러 “숫자·날짜 오류 점검 규칙 스킬로 점검해줘.”라고 보냅니다.</td></tr></table></div>
+</section>
+<section id="lab2b">
+  <div class="mhead"><span class="clock">실습 2-B</span><h2 class="title">HWPX 양식에 맞춰 보고서 만들기</h2></div>
+  <div class="meta"><span class="tool tool-skill">Skill</span><span class="kind">DOCX → HWPX → SKILL 개선</span></div>
+  <dl class="spec"><div><dt>목표</dt><dd>HWPX 스킬을 설치해 Word 보고서를 기관 한글 양식으로 옮긴다</dd></div><div><dt>재료</dt><dd>2030_온실가스감축목표_보고서.docx, 보고서 양식.hwpx</dd></div><div><dt>결과물</dt><dd>양식이 적용된 .hwpx 보고서, 내 방식이 반영된 HWPX 스킬</dd></div><div><dt>핵심</dt><dd>남이 만든 스킬을 가져다 쓰고, 내 업무에 맞게 고쳐 내 것으로 만든다</dd></div></dl>
+  
+  <div class="intro"><strong>이번 실습은 ‘설치’하는 방법입니다</strong><ul><li>2-A에서는 스킬을 직접 만들었습니다. 이번에는 다른 사람이 만들어 공개한 HWPX 스킬을 설치해서 씁니다.</li><li>설치한 뒤에는 “HWPX로 만들어줘”라고만 해도 알아서 이 스킬이 쓰입니다. 다른 스킬과 헷갈리면 “HWPX 스킬로 만들어줘”처럼 이름을 불러 명시합니다.</li><li>남이 만든 스킬도 내 업무에 맞게 고쳐 쓸 수 있습니다. 마지막 단계에서 고친 내용을 스킬에 반영합니다.</li></ul></div>
+  <p class="folder"><span>실습 파일</span><code>2. 업무처리방법 표준화 / HWPX 보고서 생성</code> · 사용 도구: ChatGPT · 스킬</p>
+  <h3>진행 단계</h3>
+  <div class="step"><h4><span class="sn">1</span>HWPX 스킬 설치</h4><p>GitHub에 공개된 HWPX 스킬을 설치합니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>https://github.com/ai-public-peasant/hwpx-rekian/ 스킬을 설치해줘</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>스킬 탭에 HWPX 관련 스킬이 생겼나요?</li></ul></div><div class="caution"><strong>주의</strong><ul><li>외부 스킬은 설치 전에 출처를 확인합니다. 기관 PC 보안 정책에 따라 설치가 막힐 수 있습니다.</li></ul></div></div><div class="step"><h4><span class="sn">2</span>HWPX로 만들기</h4><p>Word 보고서와 양식 파일을 함께 올리고 HWPX로 만들게 합니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게 · 색칠된 부분을 내 것으로</span><button class="copy" type="button">복사</button></div><pre><span class="slot">2030_온실가스감축목표_보고서.docx</span> 문서를 <span class="slot">보고서 양식.hwpx</span>에 맞춰 HWPX 파일로 만들어줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>내려받은 파일이 한글에서 정상적으로 열리나요?</li><li>양식의 표지·제목 구성과 □ ○ - 계층이 유지됐나요?</li><li>원본 보고서의 수치가 바뀌거나 빠지지 않았나요?</li></ul></div></div><div class="step"><h4><span class="sn">3</span>마음에 안 드는 곳 고치기</h4><p>한 번에 한 곳씩, 무엇을 어떻게 바꿀지 말로 지시합니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게 · 색칠된 부분을 내 것으로</span><button class="copy" type="button">복사</button></div><pre><span class="slot">고칠 부분</span>을 <span class="slot">이렇게</span> 수정해줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>지시한 곳만 바뀌고 다른 곳은 그대로인가요?</li></ul></div></div><div class="step"><h4><span class="sn">4</span>스킬에 반영</h4><p>방금 고친 내용이 다음부터 처음부터 적용되도록 스킬을 업데이트합니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>방금 수정한 내용을 스킬에 반영해줘</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>새 대화에서 같은 문서로 다시 만들었을 때, 고친 부분이 처음부터 반영돼 나오나요?</li></ul></div></div>
+  <h3>성공 기준</h3>
+  <div class="success"><div><b class="lv">기본 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab2b-s0"><span>한글에서 열리는 .hwpx 보고서가 생겼고, 양식 구조와 원본 수치가 유지됐다</span></label></li></ul></div><div><b class="lv lv2">도전 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab2b-c0"><span>고친 내용을 스킬에 반영했고, 새 대화에서 처음부터 반영돼 나왔다</span></label></li><li><label><input type="checkbox" data-key="lab2b-c1"><span>같은 요청을 스킬 없이 했을 때와 결과를 비교해 봤다</span></label></li></ul></div></div>
+  <h3>막힐 때</h3>
+  <div class="tablewrap"><table><tr><th>이럴 때</th><th>이렇게</th></tr><tr><td class="k">한글에서 파일이 안 열린다</td><td>“저장한 HWPX가 한글에서 열리지 않아. 구조를 검사하고 고쳐서 다시 저장해줘.”라고 보냅니다.</td></tr><tr><td class="k">스킬 설치가 안 된다</td><td>기관 네트워크에서 GitHub가 막혔을 수 있습니다. 강사에게 스킬 파일을 받아 직접 올립니다.</td></tr></table></div>
+</section>
+<section id="lab3a">
+  <div class="mhead"><span class="clock">실습 3-A</span><h2 class="title">다운로드 폴더 정리하고 되돌리기</h2></div>
+  <div class="meta"><span class="tool tool-work">Work</span><span class="kind">FOLDER 정리</span></div>
+  <dl class="spec"><div><dt>목표</dt><dd>파일을 종류별로 정리하고 되돌려 본다</dd></div><div><dt>재료</dt><dd>PDF·Word·엑셀·이미지·동영상 파일 8개</dd></div><div><dt>결과물</dt><dd>문서 / 이미지 / 동영상 폴더로 정리된 상태</dd></div><div><dt>핵심</dt><dd>파일을 옮기는 일도 맡길 수 있다. 맡기기 전에 목록을 보고, 맡긴 뒤에는 되돌릴 수 있는지 확인한다</dd></div></dl>
+  
+  
+  <p class="folder"><span>실습 파일</span><code>3. 결과물 위임하기 / 다운로드폴더</code> · 사용 도구: ChatGPT · Work</p>
+  <h3>진행 단계</h3>
+  <div class="step"><h4><span class="sn">1</span>폴더 확인</h4><p>무엇이 있는지 먼저 봅니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>폴더에 어떤 파일이 있는지 알려줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>파일 8개가 모두 나왔나요?</li></ul></div></div><div class="step"><h4><span class="sn">2</span>종류별 분류</h4><p>세 폴더로 나눠 옮깁니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>파일을 문서, 이미지, 동영상 폴더로 분류해줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>탐색기에서 세 폴더를 열어 보고, 파일이 종류에 맞게 들어갔나요?</li><li>빠지거나 남은 파일은 없나요?</li></ul></div></div><div class="step"><h4><span class="sn">3</span>원복</h4><p>방금 한 정리를 되돌립니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>다시 원복해줘</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>파일이 처음처럼 한 폴더에 모였고, 새로 만든 폴더는 사라졌나요?</li></ul></div></div>
+  <h3>성공 기준</h3>
+  <div class="success"><div><b class="lv">기본 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab3a-s0"><span>세 폴더로 정리됐다가, 원복 후 처음 상태로 돌아왔다</span></label></li></ul></div></div>
+  <h3>막힐 때</h3>
+  <div class="tablewrap"><table><tr><th>이럴 때</th><th>이렇게</th></tr><tr><td class="k">승인 창이 계속 뜬다</td><td>파일을 옮길 때마다 확인을 받습니다. 내용을 읽고 승인합니다.</td></tr></table></div>
+</section>
+<section id="lab3b">
+  <div class="mhead"><span class="clock">실습 3-B</span><h2 class="title">수료증 파일명으로 명단 만들기</h2></div>
+  <div class="meta"><span class="tool tool-work">Work</span><span class="kind">PDF 파일명 → EXCEL</span></div>
+  <dl class="spec"><div><dt>목표</dt><dd>수료증 파일명으로 이름·과 명단을 만든다</dd></div><div><dt>재료</dt><dd>‘이름_과_수료증.pdf’ 형식의 PDF 15개</dd></div><div><dt>결과물</dt><dd>이름·과 2개 열의 엑셀 파일</dd></div><div><dt>핵심</dt><dd>지울 것(임시 파일)과 남길 것(원본)을 분명히 말한다</dd></div></dl>
+  
+  
+  <p class="folder"><span>실습 파일</span><code>3. 결과물 위임하기 / 문서확인</code> · 사용 도구: ChatGPT · Work</p>
+  <h3>진행 단계</h3>
+  <div class="step"><h4><span class="sn">1</span>폴더 확인</h4><p>파일 종류와 개수를 봅니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>폴더에 있는 파일 종류와 개수를 확인해</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>PDF 15개로 나왔나요?</li></ul></div></div><div class="step"><h4><span class="sn">2</span>명단 엑셀 만들기</h4><p>파일명에서 이름과 과를 뽑습니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>수료증 파일명에서 이름과 과를 추출해 엑셀 파일로 만들어줘. 컬럼은 이름, 과만 넣어줘.
+작업 중에 만든 임시 파일은 지우고, 수료증 PDF는 그대로 둬.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>명단의 행 수가 PDF 개수와 같나요?</li><li>이름이 같아도 과가 다르면 다른 사람으로 따로 들어갔나요?</li><li>열이 ‘이름’, ‘과’ 두 개뿐이고, 수료증 PDF는 그대로 남아 있나요?</li></ul></div><div class="caution"><strong>주의</strong><ul><li>무엇을 지우고 무엇을 남길지 분명히 말합니다. ‘결과 파일만 남겨줘’라고만 하면 원본까지 지울 수 있습니다.</li></ul></div></div>
+  <h3>성공 기준</h3>
+  <div class="success"><div><b class="lv">기본 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab3b-s0"><span>이름·과 2열, 15행 엑셀이 생겼고 PDF 15개는 그대로다</span></label></li></ul></div></div>
+  <h3>막힐 때</h3>
+  <div class="tablewrap"><table><tr><th>이럴 때</th><th>이렇게</th></tr><tr><td class="k">동명이인이 한 줄로 합쳐졌다</td><td>“이름이 같아도 과가 다르면 다른 사람이야. 파일마다 한 줄씩 모두 넣어줘.”라고 보냅니다.</td></tr></table></div>
+</section>
+<section id="lab3c">
+  <div class="mhead"><span class="clock">실습 3-C</span><h2 class="title">월별 경비지출 파일 통합·분석</h2></div>
+  <div class="meta"><span class="tool tool-work">Work</span><span class="kind">EXCEL × 6 → EXCEL</span></div>
+  <dl class="spec"><div><dt>목표</dt><dd>6개월 경비 파일을 합쳐 합계와 증감을 분석한다</dd></div><div><dt>재료</dt><dd>1월.xlsx ~ 6월.xlsx (열: 날짜, 거래처, 품목, 수량, 금액, 비고)</dd></div><div><dt>결과물</dt><dd>통합·분석 결과가 담긴 새 엑셀 파일</dd></div><div><dt>핵심</dt><dd>매달 하던 복사·붙여넣기를 한 번의 지시로 맡긴다</dd></div></dl>
+  
+  
+  <p class="folder"><span>실습 파일</span><code>3. 결과물 위임하기 / 월별경비지출_파일통합</code> · 사용 도구: ChatGPT · Work</p>
+  <h3>진행 단계</h3>
+  <div class="step"><h4><span class="sn">1</span>폴더 확인</h4><p>파일 6개가 있는지 봅니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>폴더에 어떤 파일이 있는지 알려줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>1월~6월 파일 6개가 나왔나요?</li></ul></div></div><div class="step"><h4><span class="sn">2</span>통합·분석</h4><p>합치고, 합계와 증감을 계산하고, 표와 차트로 정리합니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>월별 경비지출 엑셀 파일을 통합하고, 월별·항목별 지출 합계와 전월 대비 증감액을 분석해 주세요. 주요 결과는 표와 차트로 정리해 새 엑셀 파일로 만들어 주세요.
+작업 중에 만든 임시 파일은 지우고, 원본 월별 파일은 그대로 두세요.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>한 달을 골라 원본 파일에서 =SUM()으로 합계를 내고, 결과 파일과 비교해 보세요.</li><li>‘항목’을 어느 열 기준으로 묶었나요? 품목 열인지 확인합니다.</li><li>첫 달(1월)의 전월 대비 증감은 어떻게 처리했나요?</li><li>원본 월별 파일이 그대로 남아 있나요?</li></ul></div></div>
+  <h3>성공 기준</h3>
+  <div class="success"><div><b class="lv">기본 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab3c-s0"><span>새 엑셀에 월별·품목별 합계, 전월 대비 증감, 차트가 있다</span></label></li><li><label><input type="checkbox" data-key="lab3c-s1"><span>1월 합계를 직접 계산해 대조했다</span></label></li></ul></div></div>
+  <h3>막힐 때</h3>
+  <div class="tablewrap"><table><tr><th>이럴 때</th><th>이렇게</th></tr><tr><td class="k">차트가 안 보인다</td><td>“엑셀에서 열었을 때 보이는 차트 개체로 넣어줘.”라고 보냅니다.</td></tr><tr><td class="k">항목 기준이 이상하다</td><td>“항목은 ‘품목’ 열 기준으로 다시 집계해줘.”라고 보냅니다.</td></tr></table></div>
+</section>
+<section id="lab3d">
+  <div class="mhead"><span class="clock">실습 3-D</span><h2 class="title">회의 녹취로 회의록과 후속조치까지</h2></div>
+  <div class="meta"><span class="tool tool-work">Work</span><span class="kind">녹취 TXT → 회의록 HWPX → 메일·보고 → SKILL</span></div>
+  <dl class="spec"><div><dt>목표</dt><dd>회의 녹취로 회의록과 후속 업무까지 맡긴다</dd></div><div><dt>재료</dt><dd>01_녹취원문.txt, 02_회의록서식.hwpx, 03_지난회의록_예시.hwpx, 04_녹취원문2.txt</dd></div><div><dt>결과물</dt><dd>회의록 .hwpx, 원문 대조 검수표, 안내 메일 초안, 1쪽 결과보고, ‘회의록 작성’ 스킬</dd></div><div><dt>핵심</dt><dd>Work에는 ‘작업 순서’보다 ‘목표와 완료 조건’을 전달한다. 확정할 수 없는 것은 지어내지 말고 ‘확인 필요’로 표시하게 한다</dd></div></dl>
+  
+  
+  <p class="folder"><span>실습 파일</span><code>3. 결과물 위임하기 / 회의록작성</code> · 사용 도구: ChatGPT · Work</p>
+  <h3>진행 단계</h3>
+  <div class="step"><h4><span class="sn">1</span>폴더 확인</h4><p>파일을 건드리지 않고 목록만 봅니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>폴더에 어떤 파일이 있는지 알려줘.
+파일을 열거나 수정하지 말고 목록만 보여줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>파일 4개가 나왔고, 아무것도 바뀌지 않았나요?</li></ul></div></div><div class="step"><h4><span class="sn">2</span>목표와 완료 조건으로 맡기기</h4><p>Work 방식입니다. 순서를 하나하나 지시하지 않고, 무엇을 만들어야 끝나는지를 한 번에 전달합니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>첨부한 01_녹취원문.txt를 검토해서 부서 공식 회의록을 작성해줘.
+회의 안건별로 주요 논의내용을 정리하고,
+최종 결정사항과 후속조치를 구분해줘.
+후속조치는 해야 할 일 / 담당자 / 완료기한 형태로 정리해줘.
+녹취만으로 확정할 수 없는 담당자나 일정은
+임의로 만들지 말고 '확인 필요'로 표시해줘.
+02_회의록서식.hwpx와 03_지난회의록_예시.hwpx의 형식을
+최대한 유지하고, 최종적으로 편집 가능한 HWPX 파일로 만들어줘.</pre></div><details class="fold"><summary>비교해 보기 · 한 단계씩 맡기는 방법</summary><div class="foldbody"><p class="note">한 번에 맡긴 결과와 단계별로 맡긴 결과를 비교해 봅니다. 단계별 방식에서는 ‘이달 안에’ → 2026-10-31처럼 상대 기한이 날짜로 바뀌고 원문 표현이 괄호에 남는지 확인합니다.</p><div class="prompt"><div class="bar"><span>다른 방법 · 단계별로 확인하며 맡기기</span><button class="copy" type="button">복사</button></div><pre>01_녹취원문.txt로 회의록 초안을 작성해줘. 먼저 안건·참석자 목록만 보여주고, 내가 확인하면 작성해줘.
+
+구성: 회의 개요(회의명·일시·장소·참석자 소속/직급/성명·작성자), 안건별 핵심 논의, 합의된 결정사항, 조치사항 표(번호·내용·담당·기한), 미결사항
+
+공문서 개조식으로 작성하고 잡담·인사말은 제외
+
+녹취에 없는 내용은 추가하지 않고, 불분명하면 [확인 필요] 표시
+
+상대 기한은 회의일 기준 날짜로 환산하고 원문 표현을 괄호에 병기
+
+파일로 저장하지 말고 화면에만 제시</pre></div><div class="prompt"><div class="bar"><span>이어서 · 기관 서식으로 저장</span><button class="copy" type="button">복사</button></div><pre>02_회의록서식.hwpx와 03_지난회의록_예시.hwpx를 확인하고 구조와 문체를 요약해줘. 녹취를 바탕으로 서식에 회의록을 작성해 YYYYMMDD_[제목].hwpx로 저장해줘. 원본·서식은 유지하고, 불명확한 내용은 [확인 필요]로 표시해줘. 저장 후 정상 열기와 원문 대조 결과도 보여줘.</pre></div></div></details><div class="verify"><strong>확인할 것</strong><ul><li>안건별로 나뉘었고, 결정된 것과 다음으로 미룬 것이 구분됐나요?</li><li>녹취만으로 확정할 수 없는 발언자·금액·일정이 ‘확인 필요’로 표시됐나요?</li><li>잡담·인사말은 빠졌나요?</li><li>전화번호 같은 개인정보가 회의록에 그대로 들어가지 않았나요?</li></ul></div></div><div class="step"><h4><span class="sn">3</span>AI 자체 검수</h4><p>저장한 회의록을 녹취와 한 줄씩 대조시킵니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>방금 저장한 회의록을 01_녹취원문.txt와 한 줄씩 대조해서 검수해줘.
+아래 표로만 답해줘.
+
+| 구분 | 회의록 표현 | 녹취 원문 근거(시각·발언자·문장) | 판정 |
+구분: 누락 / 왜곡 / 녹취에 없는 내용 / 발언자 불일치
+판정: 수정 필요 / 확인 필요 / 문제 없음</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>표로만 답했나요?</li><li>‘수정 필요’ 하나를 골라 녹취의 시각([00:00])을 찾아 직접 확인했나요?</li></ul></div></div><div class="step"><h4><span class="sn">4</span>한 곳만 고치기</h4><p>고칠 곳만 짚고 나머지는 건드리지 말라고 합니다. 파일명은 실제로 저장된 이름으로 바꿉니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게 · 색칠된 부분을 내 것으로</span><button class="copy" type="button">복사</button></div><pre><span class="slot">20261015_탄소중립자원순환체험행사_회의록.hwpx</span>에서 조치사항 2번 기한을
+<span class="slot">10월 31일</span>로 고쳐서 같은 이름으로 다시 저장해줘. 다른 부분은 건드리지 마.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>조치사항 2번 기한만 바뀌고, 나머지 내용과 파일 이름은 그대로인가요?</li></ul></div></div><div class="step"><h4><span class="sn">5</span>조치사항 안내 메일</h4><p>담당자별 할 일을 묶어 참석자 안내 메일 초안을 씁니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>회의록의 조치사항을 담당자별로 묶어서 참석자 전체에게 보낼 안내 메일 초안을 써줘.
+- 제목: [회의명] 결과 및 조치사항 안내
+- 본문은 5줄 이내 인사 + 담당자별 할 일 표
+- 회의록 파일 첨부 안내 문구 포함
+- 메일은 보내지 말고 초안만 화면에 보여줄 것</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>제목의 [회의명]이 실제 회의명으로 바뀌었나요?</li><li>담당자별 할 일이 회의록 조치사항과 같나요?</li><li>메일이 발송되지 않고 화면에만 나왔나요?</li></ul></div></div><div class="step"><h4><span class="sn">6</span>1쪽 결과보고</h4><p>과장님께 올릴 한 장짜리 결과보고로 줄입니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>이 회의 결과를 과장님께 올릴 1쪽짜리 결과보고로 만들어줘.
+□ 추진 배경(2줄) □ 주요 결정사항 □ 향후 계획 □ 건의·의사결정 필요사항
+순서로, □ ○ - 개조식으로 작성하고 결과보고로 저장해줘</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>한 쪽에 들어가고 네 항목 순서가 맞나요?</li><li>회의에서 결정하지 못한 것이 ‘건의·의사결정 필요사항’에 들어갔나요?</li></ul></div></div><div class="step"><h4><span class="sn">7</span>‘회의록 작성’ 스킬 만들기</h4><p>오늘 한 일을 통째로 스킬로 남깁니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>오늘 작업을 ‘회의록 작성’ 스킬로 만들어줘. 녹취 정리, 개조식 문체, 기한 환산, 서식 저장, 원문 대조 검수표를 포함해줘. 요청 시 메일 초안과 과장님 보고서도 작성하도록 해줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>스킬 탭에 ‘회의록 작성’이 생겼나요?</li><li>스킬 내용에 다섯 가지(녹취 정리, 개조식, 기한 환산, 서식 저장, 검수표)가 모두 들어 있나요?</li></ul></div><div class="caution"><strong>주의</strong><ul><li>스킬 설치 여부를 물으면 설치를 누릅니다. 만든 스킬은 사이드바의 ‘플러그인 → 스킬’ 탭에서 확인하고 고칠 수 있습니다.</li></ul></div></div><div class="step"><h4><span class="sn">8</span>새 대화에서 검증</h4><p>새 대화에서 두 번째 녹취(환경체험관 야간 개방 홍보 점검 회의)로 한 줄만 지시합니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>04_녹취원문2.txt로 회의록 만들어줘</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>긴 지시 없이도 첫 번째 회의록과 같은 형식으로 나오나요?</li><li>‘금요일까지’ 같은 기한이 날짜로 바뀌고, 정해지지 않은 일정은 ‘확인 필요’인가요?</li></ul></div></div><div class="step"><h4><span class="sn">9</span>스킬 다듬기</h4><p>규칙 하나를 더합니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>회의록 작성 스킬에 '참석자는 직급순으로 정렬' 규칙을 추가해줘</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>다시 만들면 참석자가 직급순으로 나오나요?</li></ul></div></div><div class="step"><h4><span class="sn">10</span>[보너스] 매주 예약 작업</h4><p>매주 정해진 시간에 새 녹취가 있으면 회의록 초안을 만들게 합니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게</span><button class="copy" type="button">복사</button></div><pre>매주 월요일 오후 5시에 회의록작성 폴더에 새로 들어온 녹취 텍스트가 있으면
+회의록 작성 스킬로 회의록 초안을 만들어 같은 폴더에 저장하고,
+결과를 나에게 알려줘. 새 파일이 없으면 아무것도 하지 마.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>예약 목록에 작업이 생겼고, 요일과 시간이 맞나요?</li></ul></div><div class="caution"><strong>주의</strong><ul><li>예약 작업은 PC가 켜져 있고 앱이 실행 중일 때만 동작합니다.</li></ul></div></div>
+  <h3>성공 기준</h3>
+  <div class="success"><div><b class="lv">기본 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab3d-s0"><span>서식에 맞는 회의록 .hwpx가 나왔고, 결정사항·후속조치·확인 필요가 구분됐다</span></label></li><li><label><input type="checkbox" data-key="lab3d-s1"><span>검수표의 ‘수정 필요’ 하나를 녹취와 직접 대조했다</span></label></li></ul></div><div><b class="lv lv2">도전 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab3d-c0"><span>‘회의록 작성’ 스킬을 만들었고, 새 대화에서 한 줄 지시로 두 번째 회의록이 나왔다</span></label></li><li><label><input type="checkbox" data-key="lab3d-c1"><span>매주 예약 작업을 걸었다</span></label></li></ul></div></div>
+  <h3>막힐 때</h3>
+  <div class="tablewrap"><table><tr><th>이럴 때</th><th>이렇게</th></tr><tr><td class="k">녹취에 없는 내용이 들어갔다</td><td>검수표의 ‘녹취에 없는 내용’ 행을 붙여 넣고 “이 행들을 회의록에서 지워줘.”라고 보냅니다.</td></tr><tr><td class="k">기한 날짜가 이상하다</td><td>“녹취에 적힌 회의 일자를 기준으로 기한을 다시 환산해줘.”라고 보냅니다.</td></tr></table></div>
+</section>
+<section id="lab3e">
+  <div class="mhead"><span class="clock">실습 3-E</span><h2 class="title">보고서로 발표자료 만들기</h2></div>
+  <div class="meta"><span class="tool tool-work">Work</span><span class="kind">DOCX → PPTX · 웹 발표자료</span></div>
+  <dl class="spec"><div><dt>목표</dt><dd>보고서로 10장 내외 발표자료를 만든다</dd></div><div><dt>재료</dt><dd>폴더의 보고서(.docx), 디자인레퍼런스.jpeg</dd></div><div><dt>결과물</dt><dd>PPT 발표자료 (도전: 인터랙티브 웹 발표자료)</dd></div><div><dt>핵심</dt><dd>디자인은 말보다 이미지 한 장과 폰트 주소로 전달하는 쪽이 정확하다</dd></div></dl>
+  <div class="preview"><div><strong>완성 예시 미리 보기</strong><span>같은 보고서로 Claude에서 만든 웹 발표자료입니다. 만들기 전에 열어 보고 목표 수준을 정합니다.</span></div><a class="ext go" href="https://claude.ai/artifact/XU3EqEYDU1oSZvaAoC9fT5" target="_blank" rel="noopener">열어 보기 ↗</a></div>
+  
+  <p class="folder"><span>실습 파일</span><code>3. 결과물 위임하기 / 발표자료만들기</code> · 사용 도구: ChatGPT · Work</p>
+  <h3>진행 단계</h3>
+  <div class="step"><h4><span class="sn">1</span>디자인 레퍼런스 고르기</h4><p>폴더의 디자인레퍼런스.jpeg를 그대로 써도 됩니다. 다른 디자인을 원하면 핀터레스트에서 마음에 드는 슬라이드 이미지를 저장해 폴더의 레퍼런스 파일과 바꿉니다.</p><p class="links"><a class="ext" href="https://www.pinterest.co.kr/search/pins/?q=PPT%20%EB%94%94%EC%9E%90%EC%9D%B8" target="_blank" rel="noopener">핀터레스트 · PPT 디자인 ↗</a><a class="ext" href="https://www.pinterest.co.kr/search/pins/?q=%EB%B0%9C%ED%91%9C%EC%9E%90%EB%A3%8C%20%EB%94%94%EC%9E%90%EC%9D%B8%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83" target="_blank" rel="noopener">핀터레스트 · 발표자료 레이아웃 ↗</a><a class="ext" href="https://notefolio.net/" target="_blank" rel="noopener">노트폴리오 · 국내 디자인 작업 ↗</a></p><div class="verify"><strong>확인할 것</strong><ul><li>레퍼런스 이미지가 한 장만 폴더에 있나요? 여러 장이면 어느 것을 따를지 헷갈립니다.</li></ul></div></div><div class="step"><h4><span class="sn">2</span>폰트 고르기</h4><p>눈누에서 무료 폰트를 고릅니다. 아래 링크는 OFL(자유 이용) 필터가 켜진 목록입니다. 고른 폰트 페이지의 주소를 복사해 둡니다.</p><p class="links"><a class="ext" href="https://noonnu.cc/index?locale=ko&category_use_ids=4&order_by=pd" target="_blank" rel="noopener">눈누 · OFL 무료 폰트 목록 ↗</a><a class="ext" href="https://noonnu.cc/font_page/366" target="_blank" rel="noopener">눈누 · 예시 폰트 페이지 ↗</a></p><div class="verify"><strong>확인할 것</strong><ul><li>폰트 페이지의 ‘라이선스 요약’에서 인쇄·영상·웹 사용이 허용되는지 봤나요?</li></ul></div></div><div class="step"><h4><span class="sn">3</span>PPT 만들기</h4><p>보고서, 레퍼런스, 분량, 폰트를 한 번에 전달합니다. 폰트 주소는 내가 고른 것으로 바꿉니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게 · 색칠된 부분을 내 것으로</span><button class="copy" type="button">복사</button></div><pre>폴더안에 있는 보고서를 기반으로 회사에서 발표할 때 쓸 PPT를 만들어줘 디자인은 폴더안의 디자인레퍼런스 파일을 참고하고 10장 내외로 만들어줘. 폰트는 <span class="slot">https://noonnu.cc/font_page/366</span></pre></div><div class="verify"><strong>확인할 것</strong><ul><li>PowerPoint에서 열리고 10장 내외인가요?</li><li>보고서의 숫자와 표현이 슬라이드에 그대로 옮겨졌나요? 두세 장을 골라 원문과 대조해 보세요.</li><li>레퍼런스의 색과 제목 위치를 따랐나요?</li></ul></div><div class="caution"><strong>주의</strong><ul><li>발표할 PC에 그 폰트가 없으면 다른 글꼴로 바뀌어 보입니다. 폰트를 설치하거나 PDF로도 저장해 둡니다.</li></ul></div></div><div class="step"><h4><span class="sn">4</span>[도전] 인터랙티브 웹 발표자료</h4><p>입력창에서 Sites를 선택하고, 같은 내용을 웹 발표자료로 만듭니다.</p><div class="prompt"><div class="bar"><span>ChatGPT에게 · 색칠된 부분을 내 것으로</span><button class="copy" type="button">복사</button></div><pre>폴더에 있는 보고서 내용을 기반으로 발표용 슬라이드를 만들어줘
+디자인은 폴더안에 있는 '디자인 레퍼런스'를 활용하고
+분량은 10장 내외로 해줘
+폰트는 이걸 사용해 <span class="slot">https://noonnu.cc/font_page/1053</span>
+
+마우스를 대면 애니메이션이 작동하고 차트나 도표가 채워지는
+인터랙티브형 발표자료로 만들어줘</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>마우스를 올리면 움직이고, 차트가 채워지나요?</li><li>공유 주소가 나왔다면 누가 볼 수 있는 주소인지 확인했나요?</li></ul></div></div>
+  <h3>성공 기준</h3>
+  <div class="success"><div><b class="lv">기본 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab3e-s0"><span>보고서 내용으로 10장 내외 PPT가 만들어졌고 숫자를 원문과 대조했다</span></label></li></ul></div><div><b class="lv lv2">도전 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab3e-c0"><span>같은 내용으로 인터랙티브 웹 발표자료를 만들었다</span></label></li></ul></div></div>
+  <h3>막힐 때</h3>
+  <div class="tablewrap"><table><tr><th>이럴 때</th><th>이렇게</th></tr><tr><td class="k">디자인이 레퍼런스와 다르다</td><td>“레퍼런스 이미지의 색, 제목 위치, 여백을 먼저 설명하고 그대로 맞춰서 다시 만들어줘.”라고 보냅니다.</td></tr><tr><td class="k">폰트가 적용되지 않았다</td><td>“폰트 이름을 슬라이드 마스터의 제목·본문 글꼴로 지정해줘.”라고 보냅니다.</td></tr></table></div>
+</section>
+<section id="lab4a">
+  <div class="mhead"><span class="clock">실습 4-A</span><h2 class="title">바이브 코딩 맛보기 · 자기소개 페이지 만들고 Vercel로 배포</h2></div>
+  <div class="meta"><span class="tool tool-codex">Codex</span><span class="kind">말로 설명 → 단일 HTML → VERCEL 주소</span></div>
+  <dl class="spec"><div><dt>목표</dt><dd>나를 소개하는 웹페이지를 만들어 Vercel로 배포한다</dd></div><div><dt>재료</dt><dd>내 소개 내용, (선택) 내 사진 photo.jpg, 참고하고 싶은 웹사이트 주소</dd></div><div><dt>결과물</dt><dd>index.html 한 파일, 누구나 접속할 수 있는 vercel.app 주소</dd></div><div><dt>핵심</dt><dd>코드를 몰라도 말로 설명하면 웹페이지가 된다. 배포까지 한 번 해 보면 4-B 대시보드도 같은 방법으로 공유할 수 있다</dd></div></dl>
+  
+  
+  <p class="folder"><span>실습 파일</span><code>바탕화면에 새로 만드는 my-intro 폴더</code> · 사용 도구: Codex 앱</p>
+  <h3>진행 단계</h3>
+  <div class="step"><h4><span class="sn">1</span>작업 폴더 만들고 Codex로 열기</h4><p>바탕화면에 my-intro 폴더를 만듭니다. 내 사진을 쓰려면 photo.jpg라는 이름으로 넣어 둡니다. Codex 앱에서 이 폴더를 프로젝트로 추가하고 새 대화를 엽니다.</p><div class="verify"><strong>확인할 것</strong><ul><li>Codex 화면 위쪽에 my-intro 폴더가 작업 위치로 보이나요?</li></ul></div></div><div class="step"><h4><span class="sn">2</span>프롬프트 조립하기</h4><p>아래에서 내 정보를 채우고 분위기·구성·효과를 고르면 프롬프트가 완성됩니다. 복사해서 Codex에 보냅니다.</p><p class="links"><a class="ext" href="https://dribbble.com/search/personal-website" target="_blank" rel="noopener">Dribbble · 개인 웹사이트 디자인 ↗</a><a class="ext" href="https://dribbble.com/" target="_blank" rel="noopener">Dribbble ↗</a><a class="ext" href="https://notefolio.net/" target="_blank" rel="noopener">노트폴리오 · 국내 창작자 포트폴리오 ↗</a><a class="ext" href="https://www.pinterest.co.kr/search/pins/?q=%EC%9B%B9%EB%94%94%EC%9E%90%EC%9D%B8%20%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4" target="_blank" rel="noopener">핀터레스트 · 웹디자인 포트폴리오 ↗</a><a class="ext" href="https://github.com/orioncactus/pretendard" target="_blank" rel="noopener">Pretendard · 한글 웹폰트 ↗</a><a class="ext" href="https://noonnu.cc/index?locale=ko&category_use_ids=4&order_by=pd" target="_blank" rel="noopener">눈누 · OFL 무료 한글 폰트 ↗</a></p><div class="tips"><strong>근사하게 만드는 요령</strong><ul><li>휴대폰에서 먼저 보기 좋아야 합니다. 화려한 효과보다 글자 크기, 여백, 버튼 크기가 중요합니다. 휴대폰에는 마우스가 없어서 ‘마우스를 올리면’ 효과는 보이지 않습니다.</li><li>분위기는 형용사 하나보다 장면으로 설명합니다. 예: “토스 앱처럼 제목이 아주 크고 단순한”, “배민처럼 문구가 재치 있는”</li><li>참고 사이트 주소를 주고 ‘무엇을’ 가져올지 적습니다. 화면 캡처 이미지를 함께 첨부하면 더 정확합니다.</li><li>색은 2~3개, 폰트는 1~2개만 정합니다. 많을수록 산만해집니다.</li><li>정보가 적어도 괜찮습니다. ‘풍부하게’나 ‘아주 창의적으로’를 고르면 AI가 주어진 정보로 문장과 섹션을 살려 씁니다. 연도·숫자 같은 사실만 지어내지 않게 합니다.</li></ul></div>
+<div class="ws pb" id="pb">
+  <div class="wsq"><span class="wl">① 내 정보</span>
+    <div class="two">
+      <input data-pb="name" type="text" placeholder="이름 (예: 홍길동)">
+      <input data-pb="role" type="text" placeholder="소속·직무 (예: 기후적응과 주무관)">
+    </div>
+    <input data-pb="line" type="text" placeholder="한 줄 소개 (예: 데이터로 기후위기 적응 정책을 설계합니다)">
+    <textarea data-pb="work" rows="2" placeholder="담당 업무·관심 분야 (예: 폭염 대응 계획, 지자체 적응계획 지원, 데이터 분석)"></textarea>
+    <input data-pb="mail" type="text" placeholder="연락처 이메일 (공개해도 되는 주소)">
+  </div>
+  <div class="wsq"><span class="wl">② 분위기 (하나)</span><div class="opts"><label><input type="radio" name="style" data-pb="style" value="토스 스타일" data-desc="토스 앱처럼 흰 배경, 아주 큼직하고 굵은 제목, 파란 포인트 색 하나, 둥근 카드, 짧고 친근한 말투로 단순하고 시원한 스타일" checked><span>토스 스타일</span></label><label><input type="radio" name="style" data-pb="style" value="당근 스타일" data-desc="당근 앱처럼 따뜻한 주황 포인트, 부드러운 둥근 모서리, 동네 이웃에게 말하듯 다정한 문구의 친근한 스타일"><span>당근 스타일</span></label><label><input type="radio" name="style" data-pb="style" value="카카오 스타일" data-desc="카카오처럼 노란 포인트, 말풍선 모양 카드, 귀여운 도형 일러스트, 대화하듯 가벼운 문구의 밝은 스타일"><span>카카오 스타일</span></label><label><input type="radio" name="style" data-pb="style" value="배민 스타일" data-desc="배달의민족처럼 손글씨 느낌의 큰 제목, 민트 포인트, 재치 있고 유머러스한 문구가 돋보이는 스타일"><span>배민 스타일</span></label><label><input type="radio" name="style" data-pb="style" value="29CM 매거진" data-desc="29CM처럼 흑백 위주에 아주 큰 타이포그래피, 넓은 여백, 감각적인 사진 배치의 잡지 같은 스타일"><span>29CM 매거진</span></label><label><input type="radio" name="style" data-pb="style" value="한국 전통 색감" data-desc="한지 같은 미색 배경에 쪽빛·먹색을 쓰고, 오방색은 작은 포인트로만 쓰는 차분한 한국적 스타일"><span>한국 전통 색감</span></label><label><input type="radio" name="style" data-pb="style" value="기후·자연" data-desc="초록과 하늘색, 부드러운 곡선과 자연스러운 여백, 맑고 가벼운 느낌"><span>기후·자연</span></label></div></div>
+  <div class="wsq"><span class="wl">③ 구성 (여러 개)</span><div class="opts"><label><input type="checkbox" name="sec" data-pb="sec" value="첫 화면" data-desc="이름·한 줄 소개·사진과 함께, 나를 한 문장으로 표현하는 인상적인 슬로건이 크게 보이는 첫 화면" checked><span>첫 화면</span></label><label><input type="checkbox" name="sec" data-pb="sec" value="자기소개" data-desc="내 정보를 바탕으로 풀어 쓴 4~5문장 자기소개" checked><span>자기소개</span></label><label><input type="checkbox" name="sec" data-pb="sec" value="나를 표현하는 키워드" data-desc="나를 표현하는 키워드 3개와 각각의 짧은 설명" checked><span>나를 표현하는 키워드</span></label><label><input type="checkbox" name="sec" data-pb="sec" value="담당 업무" data-desc="담당 업무 카드 3~4개, 카드마다 ‘어떤 문제를 어떻게 돕는지’ 2~3문장" checked><span>담당 업무</span></label><label><input type="checkbox" name="sec" data-pb="sec" value="일하는 방식" data-desc="내가 일할 때 지키는 원칙 3가지" checked><span>일하는 방식</span></label><label><input type="checkbox" name="sec" data-pb="sec" value="관심 분야 태그" data-desc="관심 분야를 알약 모양 태그로" checked><span>관심 분야 태그</span></label><label><input type="checkbox" name="sec" data-pb="sec" value="함께 일하면" data-desc="나와 함께 일하면 좋은 점 3가지"><span>함께 일하면</span></label><label><input type="checkbox" name="sec" data-pb="sec" value="경력 타임라인" data-desc="경력을 세로 타임라인으로"><span>경력 타임라인</span></label><label><input type="checkbox" name="sec" data-pb="sec" value="자주 묻는 질문" data-desc="나에게 자주 물어볼 만한 질문과 답 3개"><span>자주 묻는 질문</span></label><label><input type="checkbox" name="sec" data-pb="sec" value="연락하기" data-desc="이메일 연락 버튼과 짧은 마무리 인사" checked><span>연락하기</span></label></div></div>
+  <div class="wsq"><span class="wl">③-1 표현 수준 (하나)</span><div class="opts"><label><input type="radio" name="tone" data-pb="tone" value="풍부하게" data-desc="rich" checked><span>풍부하게</span></label><label><input type="radio" name="tone" data-pb="tone" value="아주 창의적으로" data-desc="bold"><span>아주 창의적으로</span></label><label><input type="radio" name="tone" data-pb="tone" value="담백하게" data-desc="plain"><span>담백하게</span></label></div>
+    <span class="note">정보를 조금만 넣어도 ‘풍부하게’를 고르면 AI가 문장과 섹션을 살려서 씁니다.</span></div>
+  <div class="wsq"><span class="wl">④ 효과 (선택 · 1~2개면 충분)</span><div class="opts"><label><input type="checkbox" name="fx" data-pb="fx" value="스크롤 등장" data-desc="스크롤하면 섹션이 부드럽게 나타나기" checked><span>스크롤 등장</span></label><label><input type="checkbox" name="fx" data-pb="fx" value="맨 위로 버튼" data-desc="오른쪽 아래 맨 위로 가기 버튼"><span>맨 위로 버튼</span></label><label><input type="checkbox" name="fx" data-pb="fx" value="다크 모드" data-desc="밝게·어둡게 전환 버튼"><span>다크 모드</span></label><label><input type="checkbox" name="fx" data-pb="fx" value="타이핑 효과" data-desc="첫 화면 한 줄 소개에 타이핑 효과"><span>타이핑 효과</span></label><label><input type="checkbox" name="fx" data-pb="fx" value="카드 떠오르기 (PC)" data-desc="PC에서 마우스를 올리면 카드가 살짝 떠오르기(휴대폰에서는 없어도 됨)"><span>카드 떠오르기 (PC)</span></label></div></div>
+  <div class="wsq"><span class="wl">④-1 재미있는 기능 (선택 · 2~3개 추천)</span><div class="opts"><label><input type="checkbox" name="fun" data-pb="fun" value="캐릭터 산책" data-desc="작은 캐릭터가 가끔 화면 아래를 걸어서 지나가고, 누르면 폴짝 뛰며 인사 말풍선 띄우기" checked><span>캐릭터 산책</span></label><label><input type="checkbox" name="fun" data-pb="fun" value="색종이 팡" data-desc="연락하기 버튼을 누르면 색종이가 팡 터지기"><span>색종이 팡</span></label><label><input type="checkbox" name="fun" data-pb="fun" value="시간대별 인사" data-desc="방문한 시간에 따라 첫 화면 인사가 바뀌기(아침·점심·저녁·밤)" checked><span>시간대별 인사</span></label><label><input type="checkbox" name="fun" data-pb="fun" value="오늘의 한마디" data-desc="새로고침할 때마다 나다운 한마디가 바뀌어 나오기"><span>오늘의 한마디</span></label><label><input type="checkbox" name="fun" data-pb="fun" value="키워드 카드 뒤집기" data-desc="키워드 카드를 누르면 뒤집히며 설명이 나오기" checked><span>키워드 카드 뒤집기</span></label><label><input type="checkbox" name="fun" data-pb="fun" value="나에 대한 OX 퀴즈" data-desc="나에 대한 가벼운 OX 퀴즈 3문제, 누르면 정답과 한 줄 설명"><span>나에 대한 OX 퀴즈</span></label><label><input type="checkbox" name="fun" data-pb="fun" value="계절 효과" data-desc="지금 계절에 맞게 낙엽·눈송이·꽃잎이 배경에 천천히 떨어지기"><span>계절 효과</span></label><label><input type="checkbox" name="fun" data-pb="fun" value="숨은 이스터에그" data-desc="이름을 다섯 번 누르면 숨겨 둔 메시지가 나타나기"><span>숨은 이스터에그</span></label><label><input type="checkbox" name="fun" data-pb="fun" value="스크롤 진행 막대" data-desc="화면 맨 위에 얼마나 읽었는지 보여주는 진행 막대"><span>스크롤 진행 막대</span></label></div>
+    <span class="note">모두 휴대폰에서 터치로 작동하게 만들어 달라고 프롬프트에 들어갑니다. 너무 많이 고르면 산만해집니다.</span></div>
+  <div class="wsq"><span class="wl">⑤ 색과 폰트</span>
+    <div class="two">
+      <label class="inl">주 색상 <input data-pb="color" type="color" value="#2f4bbf"></label>
+      <input data-pb="font" type="text" value="Pretendard" placeholder="폰트 이름 또는 눈누·Google Fonts 주소">
+    </div>
+  </div>
+  <div class="wsq"><span class="wl">⑥ 참고 사이트 (선택)</span>
+    <input data-pb="ref" type="text" placeholder="참고할 웹사이트 주소 (예: Dribbble·노트폴리오에서 찾은 페이지)">
+    <input data-pb="refnote" type="text" placeholder="그 사이트에서 가져올 점 (예: 첫 화면 배치, 카드 모양, 색감)">
+  </div>
+</div>
+<div class="prompt"><div class="bar"><span>Codex에게 · 위에서 고른 내용이 자동으로 들어갑니다</span><button class="copy" type="button">복사</button></div><pre id="pbout"></pre></div>
+<div class="verify"><strong>확인할 것</strong><ul><li>폴더에 index.html이 생겼고, 더블클릭하면 브라우저에서 열리나요?</li><li>연도·숫자·수상처럼 사실로 보이는 내용이 새로 지어지지 않았나요? [수정 필요] 자리가 있으면 내 정보로 채웁니다.</li><li>휴대폰 크기(브라우저 창을 좁게)에서도 깨지지 않나요?</li><li>재미있는 기능을 골랐다면, 휴대폰에서 터치로 작동하고 움직이는 요소가 글자를 가리지 않나요?</li></ul></div></div><div class="step"><h4><span class="sn">3</span>한 가지씩 다듬기</h4><p>마음에 안 드는 곳을 한 번에 하나씩 말로 고칩니다. 아래 예시를 골라 써도 됩니다.</p><div class="prompt"><div class="bar"><span>Codex에게 · 내용 더 풍부하게</span><button class="copy" type="button">복사</button></div><pre>지금 페이지가 너무 단순해. 내가 준 정보를 바탕으로 섹션마다 문장을 더 풍부하게 늘리고, ‘일하는 방식’과 ‘함께 일하면 좋은 점’ 섹션을 새로 만들어줘. 연도·숫자 같은 사실 정보는 지어내지 마.</pre></div><div class="prompt"><div class="bar"><span>Codex에게 · 콘셉트 입히기</span><button class="copy" type="button">복사</button></div><pre>나를 한마디로 표현하는 콘셉트(예: ‘기후 데이터 번역가’)를 3개 제안해줘. 내가 하나 고르면 그 콘셉트로 첫 화면 문구와 페이지 전체 분위기를 다시 꾸며줘.</pre></div><div class="prompt"><div class="bar"><span>Codex에게 · 재미 더하기</span><button class="copy" type="button">복사</button></div><pre>페이지에 재미있는 기능을 하나 더해줘. 오리지널 캐릭터가 가끔 화면 아래를 걸어 지나가고, 누르면 폴짝 뛰며 ‘반가워요!’ 말풍선을 띄워줘. 휴대폰에서도 터치로 되게 하고 글자는 가리지 마.</pre></div><div class="prompt"><div class="bar"><span>Codex에게 · 첫 화면 강조</span><button class="copy" type="button">복사</button></div><pre>첫 화면을 더 임팩트 있게 바꿔줘. 이름을 크게 하고, 배경에 은은하게 움직이는 그라데이션을 넣어줘.</pre></div><div class="prompt"><div class="bar"><span>Codex에게 · 사진 넣기</span><button class="copy" type="button">복사</button></div><pre>폴더의 photo.jpg를 사진 자리에 원형으로 넣어줘.</pre></div><div class="prompt"><div class="bar"><span>Codex에게 · 차분하게 정리</span><button class="copy" type="button">복사</button></div><pre>전체적으로 너무 화려해. 색은 2개만 남기고 차분하게 정리해줘.</pre></div><div class="prompt"><div class="bar"><span>Codex에게 · 참고 사이트 반영 · 색칠된 부분을 내 것으로</span><button class="copy" type="button">복사</button></div><pre><span class="slot">참고 사이트 주소</span>의 <span class="slot">레이아웃·색감·글꼴 중 가져올 점</span>을 참고해서 디자인을 바꿔줘. 내용은 그대로 둬.</pre></div><div class="prompt"><div class="bar"><span>Codex에게 · 모바일 점검</span><button class="copy" type="button">복사</button></div><pre>휴대폰 화면 크기에서 깨지거나 겹치는 곳이 없는지 확인하고 고쳐줘. 글자와 버튼이 작으면 키워줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>고친 곳 말고 다른 곳은 그대로인가요? Ctrl+F5로 새로고침해서 확인합니다.</li></ul></div></div><div class="step"><h4><span class="sn">4</span>Vercel 배포 스킬 설치</h4><p>Codex에는 OpenAI가 공개한 vercel-deploy 스킬이 있습니다. 플러그인을 따로 연결하지 않아도, 이 스킬을 설치하면 Codex가 Vercel에 바로 올려 줍니다. 2-B처럼 ‘다른 사람이 만든 스킬을 설치’하는 방법입니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>Vercel에 배포할 수 있게 OpenAI 스킬 카탈로그의 vercel-deploy 스킬을 설치해줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>Codex의 스킬 목록에 vercel-deploy가 보이나요?</li></ul></div><div class="caution"><strong>주의</strong><ul><li>설치 후 스킬이 바로 안 보이면 Codex 앱을 껐다가 다시 켭니다.</li></ul></div></div><div class="step"><h4><span class="sn">5</span>Vercel에 배포하기</h4><p>배포를 맡깁니다. Vercel 로그인 없이도 임시 주소(Preview URL)와, 내 계정으로 가져오는 주소(Claim URL)가 나옵니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>이 폴더의 자기소개 페이지를 vercel-deploy 스킬로 Vercel에 배포해줘.
+끝나면 Preview URL과 Claim URL을 알려줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>Preview URL을 휴대폰으로 열면 내 페이지가 보이나요?</li><li>옆 사람에게 주소를 보내 열리는지 확인했나요?</li></ul></div><div class="caution"><strong>주의</strong><ul><li>배포하려면 인터넷 접속 권한이 필요합니다. Codex가 권한을 물으면 승인합니다.</li><li>배포한 주소는 아는 사람 누구나 볼 수 있습니다. 집 주소, 개인 휴대폰 번호처럼 공개하면 안 되는 정보는 넣지 않습니다.</li></ul></div></div><div class="step"><h4><span class="sn">6</span>내 계정으로 가져오기</h4><p>Claim URL을 그냥 두면 임시 배포라 일정 기간 뒤 사라집니다. Claim URL을 열고 Vercel에 가입·로그인하면 내 프로젝트로 옮겨져 계속 유지됩니다.</p><p class="links"><a class="ext" href="https://vercel.com/signup" target="_blank" rel="noopener">Vercel 가입 (무료 Hobby) ↗</a><a class="ext" href="https://vercel.com/dashboard" target="_blank" rel="noopener">Vercel 대시보드 ↗</a></p><div class="verify"><strong>확인할 것</strong><ul><li>Vercel 대시보드에 내 프로젝트가 보이나요?</li></ul></div></div><div class="step"><h4><span class="sn">7</span>고치고 다시 배포</h4><p>페이지를 한 군데 고친 뒤 다시 배포합니다.</p><div class="prompt"><div class="bar"><span>Codex에게 · 색칠된 부분을 내 것으로</span><button class="copy" type="button">복사</button></div><pre><span class="slot">고칠 내용</span>을 고치고 Vercel에 다시 배포해줘. 새 주소를 알려줘.</pre></div><details class="fold"><summary>Codex 없이 직접 올리는 방법 · Vercel Drop</summary><div class="foldbody"><ol class="steps"><li>완성된 <code>index.html</code>이 든 my-intro 폴더를 준비합니다.</li><li><a href="https://vercel.com/drop" target="_blank" rel="noopener">vercel.com/drop</a>을 열고 폴더를 화면에 끌어다 놓습니다.</li><li>로그인돼 있으면 팀과 프로젝트 이름(영문)을 정하고 <b>Deploy</b>를 누릅니다. 로그인하지 않으면 바로 임시 배포됩니다.</li><li><code>https://프로젝트이름.vercel.app</code> 주소가 나오면 열어 확인합니다.</li></ol></div></details><div class="verify"><strong>확인할 것</strong><ul><li>새 주소에서 고친 내용이 보이나요?</li></ul></div></div>
+  <h3>성공 기준</h3>
+  <div class="success"><div><b class="lv">기본 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab4a-s0"><span>내 정보가 담긴 자기소개 페이지 index.html이 만들어졌다</span></label></li><li><label><input type="checkbox" data-key="lab4a-s1"><span>Vercel 주소를 휴대폰에서 열어 봤다</span></label></li></ul></div><div><b class="lv lv2">도전 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab4a-c0"><span>참고 사이트를 반영해 디자인을 다듬었다</span></label></li><li><label><input type="checkbox" data-key="lab4a-c1"><span>Claim URL로 내 Vercel 계정에 가져왔다</span></label></li></ul></div></div>
+  <h3>막힐 때</h3>
+  <div class="tablewrap"><table><tr><th>이럴 때</th><th>이렇게</th></tr><tr><td class="k">디자인이 평범하다</td><td>참고 사이트 주소와 캡처 이미지를 주고 “이 사이트의 <span class="slot">가져올 점</span>처럼 바꿔줘.”라고 보냅니다.</td></tr><tr><td class="k">배포 중 인증 오류가 난다</td><td>“Vercel 로그인 없이 배포하는 방법으로 다시 시도해줘.”라고 보냅니다. 그래도 안 되면 Vercel Drop으로 직접 올립니다.</td></tr><tr><td class="k">주소가 열리지 않는다</td><td>배포가 끝나기까지 1~2분 걸릴 수 있습니다. 잠시 뒤 새로고침합니다.</td></tr></table></div>
+</section>
+<section id="lab4b">
+  <div class="mhead"><span class="clock">실습 4-B</span><h2 class="title">지하수 이용현황 웹 대시보드 만들고 배포하기</h2></div>
+  <div class="meta"><span class="tool tool-codex">Codex</span><span class="kind">CSV → 단일 HTML 대시보드 → VERCEL 배포</span></div>
+  <dl class="spec"><div><dt>목표</dt><dd>지하수 데이터로 대시보드를 만들고 배포한다</dd></div><div><dt>재료</dt><dd>한국수자원공사_지하수이용정보_지역별_연도별_20241231.csv (전처리 엑셀도 있음)</dd></div><div><dt>결과물</dt><dd>더블클릭으로 열리는 대시보드 HTML, 누구나 접속할 수 있는 vercel.app 주소</dd></div><div><dt>핵심</dt><dd>“코드를 알려줘”가 아니라 “작동하는 도구를 만들어줘”. 기능은 한 번에 하나씩 더하고, 매번 “기존 기능은 변경하지 마”를 붙인다</dd></div></dl>
+  <div class="preview"><div><strong>결과물 예시 보기</strong><span>이번 실습으로 만들 지하수 대시보드의 완성본입니다. 필터, 지도, 업로드 기능을 먼저 눌러 보세요.</span></div><a class="ext go" href="https://water-sandy-eta.vercel.app/" target="_blank" rel="noopener">열어 보기 ↗</a></div>
+  
+  <p class="folder"><span>실습 파일</span><code>4. 업무도구만들기</code> · 사용 도구: Codex 앱</p>
+  <h3>진행 단계</h3>
+  <div class="step"><h4><span class="sn">1</span>STEP 1 · 데이터 확인과 설계</h4><p>대시보드를 만들기 전에 KPI와 분석 질문부터 받습니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>첨부한 한국수자원공사 지역별·연도별
+지하수 이용 데이터를 분석해줘.
+주요 컬럼을 분류하고 지하수 이용 현황을 파악하기 위한
+KPI 5개와 분석 질문을 제안해줘.
+아직 대시보드는 만들지 마.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>연도·시도·시군구·용도·이용량·개소수 같은 컬럼이 구분됐나요?</li><li>KPI 5개가 데이터에 실제로 있는 컬럼으로 계산되나요?</li><li>아직 HTML을 만들지 않았나요?</li></ul></div></div><div class="step"><h4><span class="sn">2</span>STEP 2 · 기본 대시보드</h4><p>필터·차트·표를 갖춘 1차 대시보드를 만듭니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>이 데이터를 이용해 단일 HTML 분석 대시보드를 만들어줘.
+연도, 시도, 용도 필터를 제공하고,
+KPI, 연도별 이용량 추이,
+지역별 비교 차트, 용도별 이용량,
+시군구 TOP10, 상세 데이터 표를 구성해줘.
+필터 변경 시 모든 항목이 자동 갱신되게 해줘.
+서버 없이 브라우저에서 실행되는 단일 HTML로 만들어줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>HTML을 더블클릭하면 열리나요?</li><li>시도 필터를 바꾸면 KPI·차트·TOP10·표가 모두 바뀌나요?</li><li>전체 기준 총 이용량을 CSV에서 직접 합계 내어 KPI와 비교해 보세요.</li></ul></div></div><div class="step"><h4><span class="sn">3</span>STEP 3 · 전국 지도</h4><p>시도 단위로 색칠되고, 클릭하면 필터가 바뀌는 지도를 넣습니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>전국 행정구역 지도를 추가해줘.
+시군구 경계를 포함한 SVG 또는 GeoJSON/TopoJSON을 사용하고,
+시군구 경계선은 항상 보이게 유지해줘.
+데이터 색상과 클릭은 시도 단위로 적용하되,
+같은 시도의 시군구는 동일한 색상으로 표시해줘.
+시도 외곽선은 시군구 경계보다 굵게 표현해줘.
+지도 클릭은 기존 시도 필터와 연동하고,
+지도 데이터는 HTML 내부에 포함해 서버 없이 실행되게 해줘.
+기존 대시보드의 다른 기능과 디자인은 변경하지 마.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>지도가 실제 한국 모양인가요? 네모·육각형으로 대체되지 않았나요?</li><li>지도를 클릭하면 시도 필터가 바뀌고, 다른 차트도 함께 바뀌나요?</li></ul></div></div><div class="step"><h4><span class="sn">4</span>STEP 3-2 · 지도가 이상하면 실제 경계로</h4><p>지도가 엉성하거나 비어 있으면 실제 시도 경계 데이터 주소를 주고 다시 넣게 합니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>아래 링크를 참고해서 전국 시도 지도를
+대시보드에 다시 반영해줘.
+GeoJSON은 외부 URL에서 fetch하지 말고
+HTML 내부 JavaScript 변수로 직접 포함해줘.
+기존 기능은 변경하지 마.
+https://github.com/southkorea/southkorea-maps/blob/master/kostat/2018/json/skorea-provinces-2018-geo.json</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>인터넷을 끊고 열어도 지도가 보이나요?</li><li>17개 시도가 모두 보이나요?</li></ul></div></div><div class="step"><h4><span class="sn">5</span>STEP 4 · Excel·CSV 업로드</h4><p>다른 연도 파일을 올려도 분석되도록 업로드 기능을 붙입니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>기존 대시보드에 Excel/CSV 업로드 기능을 추가해줘.
+업로드 시 기존 데이터를 교체하고
+모든 분석 결과를 자동 갱신해줘.
+파일은 브라우저 내부에서만 처리하고,
+필수 컬럼이 없으면 오류를 표시해줘.
+기존 기능과 디자인은 유지해줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>폴더의 지하수이용정보_분석용_전처리.xlsx를 올리면 화면이 갱신되나요?</li><li>월별 경비 엑셀처럼 관계없는 파일을 올리면 오류 안내가 나오고 기존 데이터가 유지되나요?</li></ul></div></div><div class="step"><h4><span class="sn">6</span>STEP 5 · PDF 저장</h4><p>A4로 깔끔하게 인쇄되도록 합니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>기존 대시보드에 PDF 저장 기능을 추가해줘.
+- @media print 적용
+- A4 규격에 맞게 출력
+- 인쇄 시 불필요한 버튼과 필터 숨김
+- KPI, 지도, 차트가 페이지 중간에서 잘리지 않게 구성
+- 상세표의 페이지 잘림 최소화
+- PDF 저장 버튼 제공
+기존 기능과 디자인은 수정하지 마.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>PDF 저장 버튼을 누른 인쇄 미리보기에서 필터·버튼이 숨겨지고, 차트가 잘리지 않나요?</li></ul></div></div><div class="step"><h4><span class="sn">7</span>STEP 6 · 상세 데이터 페이징</h4><p>긴 표를 나눠서 보여줍니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>상세 데이터 표에 페이징 기능을 추가해줘.
+기본 20행으로 표시하고
+20/50/100행 선택과 이전/다음 페이지 이동을 제공해줘.
+데이터 업로드·필터·검색 후에도 정상 작동하게 하고,
+기존 기능은 수정하지 마.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>필터를 바꾸면 1페이지로 돌아가나요?</li><li>업로드 후에도 페이징이 맞게 동작하나요?</li></ul></div></div><div class="step"><h4><span class="sn">8</span>STEP 7 · 디자인</h4><p>원하는 느낌을 말로 설명하거나, 참고 이미지를 주고 같은 톤으로 바꿉니다.</p><p class="links"><a class="ext" href="https://www.krds.go.kr/" target="_blank" rel="noopener">KRDS 정부 디자인 시스템 ↗</a><a class="ext" href="https://dribbble.com/" target="_blank" rel="noopener">Dribbble ↗</a><a class="ext" href="https://www.tableau.com/ko-kr/products/public" target="_blank" rel="noopener">Tableau Public ↗</a></p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>기존 대시보드의 기능은 유지하면서 전체 디자인을 개선해줘.
+흰색 배경과 충분한 여백을 사용하고,
+블루·민트 계열의 차분한 색상을 적용해줘.
+KPI는 카드형으로 구성하고
+차트와 표의 가독성을 높여줘.
+전체적으로 깔끔하고 전문적인
+공공기관 데이터 대시보드 느낌으로 만들어줘.
+기존 기능은 변경하지 마.</pre></div><details class="fold"><summary>참고 이미지로 바꿀 때</summary><div class="foldbody"><div class="prompt"><div class="bar"><span>참고</span><button class="copy" type="button">복사</button></div><pre>첨부한 참고 이미지와 같은 톤으로
+대시보드 디자인을 수정해줘.</pre></div></div></details><div class="verify"><strong>확인할 것</strong><ul><li>디자인을 바꾼 뒤에도 필터·지도·업로드·PDF·페이징이 모두 그대로 되나요?</li></ul></div></div><div class="step"><h4><span class="sn">9</span>STEP 8 · 결과 검증</h4><p>실제 업무에 쓰거나 배포하기 전에 정확성과 보안을 점검합니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>이 대시보드를 실제 업무에 사용하기 전에 확인해야 할 데이터 검증 및 보안 체크리스트를 만들어줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>KPI 합계·건수가 원본 CSV와 일치하나요?</li><li>시도·용도 필터를 바꿨을 때 결과가 맞게 연동되나요?</li><li>누락되거나 두 번 집계된 연도·지역은 없나요?</li><li>개인정보나 내부 자료가 화면에 없나요? 배포하면 누구나 볼 수 있습니다.</li></ul></div></div><div class="step"><h4><span class="sn">10</span>STEP 9 · Vercel로 배포하기</h4><p>4-A에서 설치한 vercel-deploy 스킬로 대시보드를 배포합니다. 이번에는 스킬 이름을 부르지 않아도 “배포해줘”라는 말에 스킬이 알아서 쓰입니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>이 대시보드를 Vercel에 배포해줘.
+대시보드 HTML 파일을 index.html로 맞춰서 배포하고,
+Preview URL과 Claim URL을 알려줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>Preview URL을 휴대폰에서 열면 대시보드가 보이나요?</li><li>배포된 화면에서도 필터와 지도가 동작하나요?</li><li>Claim URL로 내 Vercel 계정에 가져왔나요?</li></ul></div><div class="caution"><strong>주의</strong><ul><li>배포한 주소는 아는 사람 누구나 볼 수 있습니다. 공개 데이터만 올리고, 내부 자료나 개인정보가 담긴 대시보드는 배포하지 않습니다.</li></ul></div></div>
+  <h3>성공 기준</h3>
+  <div class="success"><div><b class="lv">기본 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab4b-s0"><span>더블클릭으로 열리는 대시보드에서 필터를 바꾸면 KPI·지도·차트·표가 함께 바뀐다</span></label></li><li><label><input type="checkbox" data-key="lab4b-s1"><span>KPI 하나를 원본 CSV와 직접 대조했다</span></label></li></ul></div><div><b class="lv lv2">도전 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab4b-c0"><span>업로드, PDF 저장, 페이징까지 모두 동작한다</span></label></li><li><label><input type="checkbox" data-key="lab4b-c1"><span>Vercel로 배포해 휴대폰에서 주소로 열어 봤다</span></label></li></ul></div></div>
+  <h3>막힐 때</h3>
+  <div class="tablewrap"><table><tr><th>이럴 때</th><th>이렇게</th></tr><tr><td class="k">기능을 더했더니 예전 기능이 망가졌다</td><td>“<span class="slot">망가진 기능</span>이 STEP <span class="slot">번호</span> 이후로 안 돼. 이번 변경 전 동작으로 되돌리고, 새 기능은 유지해줘.”라고 보냅니다.</td></tr><tr><td class="k">HTML이 하얗게만 나온다</td><td>브라우저에서 F12 → Console의 빨간 오류를 복사해 그대로 보냅니다.</td></tr><tr><td class="k">차트 일부가 안 나온다</td><td>“Excel을 업로드했는데 일부 차트가 표시되지 않아. 현재 코드와 오류 화면을 분석해서 원인을 찾고 수정해줘.”라고 보냅니다.</td></tr></table></div>
+</section>
+      <section id="help">
+        <div class="mhead"><span class="clock">부록</span><h2 class="title">자주 막히는 곳</h2></div>
+        <div class="tablewrap"><table>
+          <tr><th>이럴 때</th><th>이렇게</th></tr>
+          <tr><td class="k">스킬 탭이 안 보인다</td><td>무료 계정입니다. 스킬 탭은 Plus·Team·Enterprise 등 유료 플랜에서 보입니다.</td></tr>
+          <tr><td class="k">파일을 못 찾는다고 한다</td><td>ChatGPT는 파일을 대화나 프로젝트에 올렸는지, Codex는 실습 폴더를 프로젝트로 열었는지 확인합니다. 파일 이름을 그대로 복사해 지시합니다.</td></tr>
+          <tr><td class="k">원본이 바뀌었다</td><td>“방금 바꾼 원본 파일을 작업 전 상태로 되돌려줘.”라고 보냅니다. 다음부터는 “원본은 유지하고 새 파일로 저장해줘.”를 붙입니다.</td></tr>
+          <tr><td class="k">결과가 기대와 다르다</td><td>아래 틀로 무엇이 나왔고 무엇이 나와야 하는지 적어 보냅니다.</td></tr>
+          <tr><td class="k">답이 점점 엉뚱해진다</td><td>대화가 길어진 것입니다. “지금까지 한 일을 요약해줘.”로 요약을 받고, 새 대화에 붙여 이어 갑니다.</td></tr>
+          <tr><td class="k">한글·엑셀 파일이 안 열린다</td><td>“저장한 파일이 열리지 않아. 파일 구조를 검사하고 고쳐서 다시 저장해줘.”라고 보냅니다.</td></tr>
+          <tr><td class="k">변경이 화면에 안 보인다</td><td>HTML은 브라우저에서 Ctrl+F5로 새로고침합니다. 엑셀·한글은 파일을 닫았다가 다시 엽니다.</td></tr>
+        </table></div>
+        <h3>기대와 다른 결과가 나왔을 때</h3>
+        <div class="prompt"><div class="bar"><span>ChatGPT·Codex에게 · 색칠된 부분을 내 것으로</span><button class="copy" type="button">복사</button></div><pre><span class="slot">무엇을 시켰는지</span> 했더니 <span class="slot">실제로 나온 결과</span>가 나왔어.
+<span class="slot">기대한 결과</span>가 나와야 해.
+원인을 확인하고 고친 뒤, 다시 실행해서 결과를 보여줘.</pre></div>
+        <h3>지하수 대시보드를 한 번에 만드는 통합 프롬프트</h3>
+        <p>실습 4를 단계별로 해 본 뒤, 요구사항을 한 번에 다 적으면 어떻게 되는지 비교할 때 씁니다. Codex 새 대화에서 CSV를 첨부하고 보냅니다.</p>
+        <div class="prompt"><div class="bar"><span>Codex에게 · 통합 프롬프트</span><button class="copy" type="button">복사</button></div><pre>아래 요구사항을 모두 만족하는 단일 HTML 파일 기반 인터랙티브 대시보드를 만들어줘.
+데이터는 첨부한 한국수자원공사 지역별·연도별 지하수 이용정보야.
+목표는 “엑셀·CSV 파일(수만~수십만 행)을 업로드하면 즉시 브라우저에서 분석 가능한 지하수 이용현황 대시보드”야.
+외부 서버 연결 없이, 모든 처리는 브라우저 내에서만 수행해야 해.
+1. 공통
+ㆍ기본 데이터·CSS·JavaScript·전국 시도 GeoJSON을 HTML 내부에 포함
+ㆍ연도, 시도, 시군구, 용도 필터 제공 및 AND 조건 적용
+ㆍ필터 변경 시 KPI·지도·차트·TOP10·상세표 모두 즉시 갱신
+ㆍ흰 배경, 블루·민트 계열의 차분한 공공기관 스타일
+2. 분석
+ㆍKPI: 총 지하수 이용량, 총 이용 개소수, 개소당 평균 이용량, 최대 이용 용도, 분석 지역 수
+ㆍ연도별 이용량 추이, 시도별 비교 차트, 용도별 이용량 구성
+ㆍ시군구 이용량 TOP10
+3. 전국 지도
+ㆍ전국 17개 시도 실제 GeoJSON 행정경계를 사용
+ㆍ원본: https://github.com/southkorea/southkorea-maps/blob/master/kostat/2018/json/skorea-provinces-2018-geo.json
+ㆍ위 실제 경계 좌표를 사용하되 최종 실행 시 외부 fetch 금지
+ㆍGeoJSON 전체를 HTML 내부 JavaScript 변수로 포함
+ㆍ임의 폴리곤·타일맵·육각형으로 대체 금지
+ㆍ시도별 지하수 이용량을 Choropleth로 표현
+ㆍ클릭 시 이용량, 이용 개소수, 개소당 평균 이용량, 주 이용 용도 표시
+ㆍ지도 ↔ 시도 필터 양방향 연동
+4. 데이터 업로드
+ㆍExcel/CSV 업로드 및 Drag&amp;Drop 지원
+ㆍ파일은 서버 전송 없이 브라우저에서만 처리
+ㆍ모든 시트를 검사해 분석 시트 자동 선택
+ㆍ1행 헤더와 다중 헤더 모두 인식
+ㆍ필수 컬럼 검증 후 기존 데이터를 새 데이터로 완전히 교체
+ㆍ업로드 후 필터·KPI·지도·차트·TOP10·상세표 자동 갱신
+ㆍ오류 시 기존 데이터 유지
+ㆍ기본 데이터 복원 기능
+ㆍ현재 파일명·시트명·건수 표시
+5. 상세 데이터
+ㆍ검색·컬럼 정렬 지원
+ㆍ20/50/100행 페이징
+ㆍ처음/이전/페이지번호/다음/끝 제공
+ㆍ필터·검색·정렬·업로드 시 1페이지로 초기화
+ㆍ전체 건수와 현재 표시 범위 표시
+6. 성능
+ㆍ원본 데이터는 브라우저 메모리에 저장
+ㆍ필터 이벤트 debounce 적용
+ㆍ집계는 가능한 단일 pass
+ㆍ불필요한 전체 재계산과 DOM 렌더링 최소화
+7. 인쇄/PDF
+ㆍPDF 저장 버튼(window.print) 제공
+ㆍ@media print 및 A4 세로 규격 적용
+ㆍ인쇄 시 업로드·필터·페이징 UI 숨김
+ㆍKPI·지도·차트·TOP10·표의 페이지 잘림 최소화
+ㆍ상세표는 필터 결과 전체 출력
+ㆍ표 헤더 반복
+8. 검증
+ㆍ업로드 → 데이터 교체 → 필터 → KPI → 지도 → 차트 → TOP10 → 상세표 → 페이징 → PDF까지 연속 테스트
+ㆍJavaScript 오류가 없는지 확인
+ㆍ최종 결과는 실행 가능한 단일 HTML 파일로 제공
+ㆍHTML을 더블클릭해서 브라우저에서 바로 실행 가능해야 함
+ㆍ서버나 별도 설치 없이 동작해야 함
+ㆍ코드 내 주요 영역과 함수에는 주석을 작성
+ㆍ데이터 컬럼명 매핑 영역은 JavaScript 상단에 따로 두어 쉽게 수정 가능하게 구성</pre></div>
+      </section>
+      <section id="wrap">
+        <div class="mhead"><span class="clock">마무리</span><h2 class="title">내 업무 자동화 설계</h2></div>
+        <p class="goal">오늘 배운 것 중 내 업무에 하나만 적용한다면 어디에 맞을까요? 작게 시작하고, 검증한 뒤 범위를 넓힙니다.</p>
+        <h3>업무에 따른 적절한 AI 활용</h3>
+        <div class="tablewrap"><table><tr><th>업무 상황</th><th>예</th><th>추천</th></tr><tr><td>한 번 작성하면 되는 업무</td><td>메일 초안 · 요약 · 문장 작성</td><td><span class="tool tool-chat">ChatGPT</span></td></tr><tr><td>같은 업무의 자료와 대화를 계속 이어가야 함</td><td>특정 사업 운영 · 연간 교육과정 관리 · 정책 연구</td><td><span class="tool tool-project">Project</span></td></tr><tr><td>여러 문서에 같은 검수방법을 반복 적용</td><td>숫자 검수 · 개인정보 점검 · 공문서 형식 적용</td><td><span class="tool tool-skill">Skill</span></td></tr><tr><td>여러 단계의 업무를 이번 한 번 통째로 맡기고 싶음</td><td>회의자료 검토 → 회의록 작성 → 후속조치 정리</td><td><span class="tool tool-work">Work</span></td></tr><tr><td>앞으로 반복해서 사용할 도구가 필요함</td><td>실적 분석 대시보드 · 파일 자동점검 프로그램</td><td><span class="tool tool-codex">Codex</span></td></tr></table></div>
+        <h3>내 업무 하나를 골라 설계해 보기</h3>
+        <p class="note">입력한 내용은 이 브라우저에만 저장됩니다. 다 쓰면 맨 아래 프롬프트를 복사해 ChatGPT에 보내 자동화 방법을 상의합니다.</p>
+        
+<div class="ws" id="ws">
+  <div class="wsq"><label for="ws1">1. 내가 자동화하고 싶은 업무는?</label><input id="ws1" data-ws="q1" type="text" placeholder="예: 매월 지하수 이용 실적 집계 보고"></div>
+  <div class="wsq"><span class="wl">2. 이 업무를 얼마나 자주 하는가?</span><div class="opts"><label><input type="checkbox" data-ws="q2" value="매일"><span>매일</span></label><label><input type="checkbox" data-ws="q2" value="매주"><span>매주</span></label><label><input type="checkbox" data-ws="q2" value="매월"><span>매월</span></label><label><input type="checkbox" data-ws="q2" value="사업마다"><span>사업마다</span></label><label><input type="checkbox" data-ws="q2" value="비정기"><span>비정기</span></label></div></div>
+  <div class="wsq"><span class="wl">3. 이 업무에서 반복하는 단계는?</span>
+    <div class="four"><input data-ws="q3_0" type="text" placeholder="①"><input data-ws="q3_1" type="text" placeholder="②"><input data-ws="q3_2" type="text" placeholder="③"><input data-ws="q3_3" type="text" placeholder="④"></div></div>
+  <div class="wsq"><span class="wl">4. AI에게 제공해야 할 자료는?</span><div class="opts"><label><input type="checkbox" data-ws="q4" value="문서"><span>문서</span></label><label><input type="checkbox" data-ws="q4" value="Excel"><span>Excel</span></label><label><input type="checkbox" data-ws="q4" value="매뉴얼"><span>매뉴얼</span></label><label><input type="checkbox" data-ws="q4" value="규정"><span>규정</span></label><label><input type="checkbox" data-ws="q4" value="기존 사례"><span>기존 사례</span></label><label><input type="checkbox" data-ws="q4" value="웹정보"><span>웹정보</span></label><label><input type="checkbox" data-ws="q4" value="기타"><span>기타</span></label></div></div>
+  <div class="wsq"><label for="ws5">5. 반드시 지켜야 할 업무규칙은?</label><textarea id="ws5" data-ws="q5" rows="2" placeholder="예: 원본 수치는 수정하지 않는다, 개인정보는 넣지 않는다"></textarea></div>
+  <div class="wsq"><label for="ws6">6. 사람이 반드시 확인해야 할 부분은?</label><textarea id="ws6" data-ws="q6" rows="2" placeholder="예: 최종 합계, 보고 문구"></textarea></div>
+  <div class="wsq"><span class="wl">7. 원하는 최종 결과물은?</span><div class="opts"><label><input type="checkbox" data-ws="q7" value="문서"><span>문서</span></label><label><input type="checkbox" data-ws="q7" value="분석결과"><span>분석결과</span></label><label><input type="checkbox" data-ws="q7" value="회의록"><span>회의록</span></label><label><input type="checkbox" data-ws="q7" value="대시보드"><span>대시보드</span></label><label><input type="checkbox" data-ws="q7" value="챗봇"><span>챗봇</span></label><label><input type="checkbox" data-ws="q7" value="업무도구"><span>업무도구</span></label><label><input type="checkbox" data-ws="q7" value="기타"><span>기타</span></label></div></div>
+  <div class="wsq"><span class="wl">8. 이 업무는 어디에 가장 적합한가?</span><div class="opts"><label><input type="checkbox" data-ws="q8" value="ChatGPT"><span>ChatGPT</span></label><label><input type="checkbox" data-ws="q8" value="Project"><span>Project</span></label><label><input type="checkbox" data-ws="q8" value="Skill"><span>Skill</span></label><label><input type="checkbox" data-ws="q8" value="Work"><span>Work</span></label><label><input type="checkbox" data-ws="q8" value="Codex"><span>Codex</span></label></div></div>
+</div>
+<div class="prompt"><div class="bar"><span>ChatGPT에게 · 내가 쓴 설계가 자동으로 들어갑니다</span><button class="copy" type="button">복사</button></div><pre id="wsout"></pre></div>
+
+        <div class="caution"><strong>사람이 책임질 일</strong><ul><li>최종 승인, 정책·행정 판단, 민감정보 판단, 인사·평가 결정, 법적 책임이 큰 결정은 사람의 검토와 승인 체계를 유지합니다.</li></ul></div>
+      </section>
+    </main>
+  </div>
+  <aside class="instructor" aria-label="강사 소개">
+    <div class="who"><strong>조미정</strong><span>네모공장(주) 대표 · 공공기관 AI 교육·컨설팅</span></div>
+    <ul class="work"><li>데이터 분석</li><li>AI 업무자동화</li><li>AI 프로젝트</li></ul>
+    <div class="contact"><span class="label">문의</span><span class="mail" id="mail">mjcho7@naver.com</span><button class="copy" type="button" id="mailcopy">주소 복사</button><span class="mail" id="tel">010-9365-5638</span></div>
+  </aside>
+  <footer>실습 자료의 회의·인물·사업은 실습용 가상 설정입니다. 실제 업무에 쓸 때는 원본 자료와 대조해 확인합니다.</footer>
+</div>
+<script>// 복사 버튼: 실패하면 글자를 선택해 Ctrl+C로 복사할 수 있게 한다
+function wireCopy(btn, source, idle) {
+  btn.addEventListener("click", function () {
+    var done = function (label) {
+      btn.textContent = label; btn.classList.add("done");
+      setTimeout(function () { btn.textContent = idle; btn.classList.remove("done"); }, 1800);
+    };
+    var selectText = function () {
+      var r = document.createRange(); r.selectNodeContents(source);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      done("선택됨 · Ctrl+C");
+    };
+    try { navigator.clipboard.writeText(source.textContent.trim()).then(function () { done("복사됨"); }, selectText); }
+    catch (e) { selectText(); }
+  });
+}
+document.querySelectorAll(".prompt").forEach(function (box) {
+  wireCopy(box.querySelector("button.copy"), box.querySelector("pre"), "복사");
+});
+wireCopy(document.getElementById("mailcopy"), document.getElementById("mail"), "주소 복사");
+
+// 체크 항목: 이 브라우저에만 저장 (저장이 안 되는 환경에서도 그대로 동작)
+(function () {
+  var KEY = "moe-day2-codex-checks", saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) {}
+  var prep = Array.prototype.slice.call(document.querySelectorAll("#checks input"));
+  var progress = document.getElementById("progress");
+  var refresh = function () { progress.textContent = prep.filter(function (b) { return b.checked; }).length + " / " + prep.length + " 완료"; };
+  document.querySelectorAll(".checks input[data-key]").forEach(function (b) {
+    var k = b.getAttribute("data-key");
+    if (saved[k]) b.checked = true;
+    b.addEventListener("change", function () { saved[k] = b.checked; try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {} refresh(); });
+  });
+  refresh();
+})();
+
+// 내 업무 자동화 설계: 입력하면 아래 프롬프트에 바로 들어가고, 이 브라우저에만 저장된다
+(function () {
+  var KEY = "moe-day2-worksheet", saved = {}, out = document.getElementById("wsout");
+  if (!out) return;
+  try { saved = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) {}
+  var fields = Array.prototype.slice.call(document.querySelectorAll("#ws [data-ws]"));
+  fields.forEach(function (f) {
+    var k = f.getAttribute("data-ws") + (f.type === "checkbox" ? ":" + f.value : "");
+    if (saved[k] !== undefined) { if (f.type === "checkbox") f.checked = !!saved[k]; else f.value = saved[k]; }
+  });
+  var val = function (n) { var f = document.querySelector('#ws [data-ws="' + n + '"]'); return f ? f.value.trim() : ""; };
+  var picks = function (n) { return Array.prototype.slice.call(document.querySelectorAll('#ws input[data-ws="' + n + '"]:checked')).map(function (x) { return x.value; }).join(", "); };
+  var blank = function (v) { return v || "(미정)"; };
+  function update() {
+    fields.forEach(function (f) { var k = f.getAttribute("data-ws") + (f.type === "checkbox" ? ":" + f.value : ""); saved[k] = f.type === "checkbox" ? f.checked : f.value; });
+    try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
+    var steps = [0, 1, 2, 3].map(function (i) { return val("q3_" + i); }).filter(Boolean);
+    out.textContent = "내 업무 하나를 AI로 자동화하려고 해. 아래 설계를 보고 도와줘.\n"
+      + "1. 자동화하고 싶은 업무: " + blank(val("q1")) + "\n"
+      + "2. 빈도: " + blank(picks("q2")) + "\n"
+      + "3. 반복 단계: " + blank(steps.join(" → ")) + "\n"
+      + "4. 제공할 자료: " + blank(picks("q4")) + "\n"
+      + "5. 지켜야 할 업무규칙: " + blank(val("q5")) + "\n"
+      + "6. 사람이 확인할 부분: " + blank(val("q6")) + "\n"
+      + "7. 원하는 결과물: " + blank(picks("q7")) + "\n"
+      + "8. 내가 생각한 도구: " + blank(picks("q8")) + "\n\n"
+      + "ChatGPT, Project, Skill, Work, Codex 중 어떤 방식이 가장 적합한지 이유와 함께 알려주고,\n"
+      + "작게 시작할 수 있는 첫 실험 단계와 그때 쓸 프롬프트를 만들어줘.";
+  }
+  fields.forEach(function (f) { f.addEventListener("input", update); f.addEventListener("change", update); });
+  update();
+})();
+
+// 자기소개 페이지 프롬프트 조립: 고른 항목이 바로 프롬프트에 들어간다
+(function () {
+  var out = document.getElementById("pbout"); if (!out) return;
+  var KEY = "moe-day2-intro-builder", saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) {}
+  var fields = Array.prototype.slice.call(document.querySelectorAll("#pb [data-pb]"));
+  var keyOf = function (f) { return f.getAttribute("data-pb") + ((f.type === "checkbox" || f.type === "radio") ? ":" + f.value : ""); };
+  fields.forEach(function (f) { var k = keyOf(f); if (saved[k] !== undefined) { if (f.type === "checkbox" || f.type === "radio") f.checked = !!saved[k]; else f.value = saved[k]; } });
+  var v = function (n) { var f = document.querySelector('#pb [data-pb="' + n + '"]'); return f ? f.value.trim() : ""; };
+  var picked = function (n) { return Array.prototype.slice.call(document.querySelectorAll('#pb input[data-pb="' + n + '"]:checked')).map(function (x) { return x.getAttribute("data-desc"); }); };
+  var or = function (x, d) { return x || d; };
+  function update() {
+    fields.forEach(function (f) { saved[keyOf(f)] = (f.type === "checkbox" || f.type === "radio") ? f.checked : f.value; });
+    try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
+    var fun = picked("fun");
+    var secs = picked("sec"), fx = picked("fx"), style = picked("style")[0] || "깔끔하고 정돈된 스타일";
+    var tone = picked("tone")[0] || "rich";
+    var TONE = {
+      plain: "[내용 작성]\n- 내가 적은 정보를 담백하고 간결하게 정리해줘\n",
+      rich: "[내용 작성]\n- 내가 준 정보는 초안이야. 이 정보를 바탕으로 문장을 풍부하게 살려서 써줘\n"
+        + "- 업무와 관심 분야는 ‘어떤 문제를, 어떻게 돕는지’가 보이게 풀어서 설명해줘\n"
+        + "- 첫 화면 슬로건, 섹션 제목, 짧은 소개 문구는 흔하지 않게 직접 지어줘\n"
+        + "- 섹션마다 어울리는 아이콘(이모지 대신 간단한 SVG)을 넣어 지루하지 않게 해줘\n",
+      bold: "[내용 작성]\n- 내가 준 정보는 초안이야. 이 정보를 바탕으로 아주 창의적이고 풍성하게 표현해줘\n"
+        + "- 업무를 이야기처럼 풀고, 나를 한마디로 표현하는 비유나 콘셉트를 하나 정해서 페이지 전체를 그 콘셉트로 꾸며줘\n"
+        + "- 첫 화면은 흔한 템플릿처럼 보이지 않게, 큰 문구와 나만의 시각 요소(도형·패턴·SVG 일러스트)로 인상적으로 만들어줘\n"
+        + "- 섹션 제목과 문구는 딱딱하지 않게 직접 지어줘\n"
+    }[tone];
+    var t = "나를 소개하는 웹페이지를 단일 HTML 파일로 만들어줘.\n\n"
+      + "[내 정보]\n"
+      + "이름: " + or(v("name"), "(이름)") + "\n"
+      + "소속·직무: " + or(v("role"), "(소속·직무)") + "\n"
+      + "한 줄 소개: " + or(v("line"), "(비어 있음 · 다른 정보를 바탕으로 지어줘)") + "\n"
+      + "담당 업무·관심 분야: " + or(v("work"), "(비어 있음 · 소속·직무에 어울리게 지어주되 [수정 필요] 표시)") + "\n"
+      + "연락처: " + or(v("mail"), "(이메일)") + "\n\n"
+      + "[구성] 아래 순서로 배치해줘.\n" + (secs.length ? secs.map(function (x, i) { return (i + 1) + ". " + x; }).join("\n") : "1. 첫 화면\n2. 자기소개\n3. 연락하기") + "\n\n"
+      + TONE + "- 단, 연도·숫자·수상·학력처럼 사실로 보이는 정보는 새로 만들지 말고, 꼭 필요하면 [수정 필요]로 자리만 남겨줘\n\n"
+      + "[디자인]\n"
+      + "- 분위기: " + style + " (해당 서비스의 로고·이름·문구는 쓰지 말고 분위기만 참고해줘)\n"
+      + "- 주 색상: " + v("color") + " (분위기와 어울리지 않으면 분위기 쪽 색을 우선하고, 보조색은 1~2개만)\n"
+      + "- 폰트: " + or(v("font"), "Pretendard") + " (웹폰트로 불러와 줘)\n"
+      + (fx.length ? "- 효과: " + fx.join(", ") + "\n" : "")
+      + (fun.length ? "\n[재미있는 기능]\n" + fun.map(function (x) { return "- " + x; }).join("\n") + "\n"
+          + "- 캐릭터와 일러스트는 기존 유명 캐릭터를 따라 하지 말고, 내 분위기에 맞는 오리지널 캐릭터를 SVG로 직접 그려줘\n"
+          + "- 휴대폰에서는 터치로 작동하게 하고, 움직이는 요소는 글자를 가리지 않게 해줘\n"
+          + "- 움직임을 끌 수 있는 작은 버튼을 하나 두고, ‘동작 줄이기’ 설정을 켠 사용자에게는 움직임을 멈춰줘\n" : "")
+      + (v("ref") ? "- 참고 사이트: " + v("ref") + (v("refnote") ? " — " + v("refnote") + "을(를) 참고해줘" : "") + "\n" : "")
+      + "\n[조건]\n"
+      + "- HTML·CSS·JavaScript를 한 파일에 넣고, 더블클릭으로 바로 열리게 해줘\n"
+      + "- 휴대폰 화면을 먼저 기준으로 만들고(모바일 우선), PC에서는 넓게 펼쳐지게 해줘\n"
+      + "- 휴대폰에서 글자는 16px 이상, 버튼은 손가락으로 누르기 쉬운 크기로 해줘\n"
+      + "- 효과는 가볍게 쓰고, 휴대폰에서 느려지거나 마우스가 있어야만 보이는 기능은 넣지 마\n"
+      + "- 사진 자리는 원형으로 두고, 폴더에 photo.jpg가 있으면 그 사진을 써줘\n"
+      + "- 파일 이름은 index.html로 저장해줘\n"
+      + "완성 후 브라우저에서 열어 깨지는 곳이 없는지 확인해줘.";
+    out.textContent = t;
+  }
+  fields.forEach(function (f) { f.addEventListener("input", update); f.addEventListener("change", update); });
+  update();
+})();
+
+// 한 단계씩 보기: 진행표에서 고른 실습만 보여주고, 아래에 이전/다음 버튼을 둔다
+(function () {
+  var sections = Array.prototype.slice.call(document.querySelectorAll("main > section"));
+  var links = Array.prototype.slice.call(document.querySelectorAll(".rail a"));
+  var toggle = document.getElementById("viewtoggle");
+  var ids = sections.map(function (x) { return x.id; });
+  var SKEY = "moe-day2-codex-step", paged = true, current = ids[0], seen = {};
+  var title = function (sec) { return sec.querySelector("h2.title").textContent; };
+  var label = function (sec) { return sec.querySelector(".clock").textContent; };
+  sections.forEach(function (sec, i) {
+    var where = document.createElement("span"); where.className = "where";
+    where.textContent = (i + 1) + " / " + sections.length; sec.querySelector(".mhead").appendChild(where);
+    var pager = document.createElement("div"); pager.className = "pager";
+    if (i > 0) {
+      var prev = document.createElement("button"); prev.type = "button"; prev.className = "prev";
+      prev.innerHTML = "<small>이전</small>"; prev.appendChild(document.createTextNode("← " + title(sections[i - 1])));
+      prev.addEventListener("click", function () { show(ids[i - 1], true); }); pager.appendChild(prev);
+    }
+    if (i < sections.length - 1) {
+      var next = document.createElement("button"); next.type = "button"; next.className = "next";
+      var small = document.createElement("small"); small.textContent = "다음 · " + label(sections[i + 1]); next.appendChild(small);
+      next.appendChild(document.createTextNode(title(sections[i + 1]) + " →"));
+      next.addEventListener("click", function () { show(ids[i + 1], true); }); pager.appendChild(next);
+    }
+    sec.appendChild(pager);
+  });
+  function render() {
+    sections.forEach(function (sec) { sec.hidden = paged && sec.id !== current; sec.querySelector(".pager").hidden = !paged; });
+    links.forEach(function (a) {
+      var id = a.getAttribute("href").slice(1);
+      if (id === current) a.setAttribute("aria-current", "step"); else a.removeAttribute("aria-current");
+      a.classList.toggle("seen", !!seen[id]);
+    });
+    toggle.textContent = paged ? "전체 펼쳐 보기" : "한 단계씩 보기";
+    var active = document.querySelector('.rail a[aria-current="step"]');
+    if (active && window.matchMedia("(max-width: 860px)").matches) {
+      try { active.scrollIntoView({ block: "nearest", inline: "center" }); } catch (e) {}
+    }
+  }
+  function show(id, scroll) {
+    if (ids.indexOf(id) < 0) return;
+    seen[current] = true; current = id;
+    try { sessionStorage.setItem(SKEY, id); } catch (e) {}
+    try { history.replaceState(null, "", "#" + id); } catch (e) {}
+    render();
+    if (scroll) {
+      var t = document.getElementById(id);
+      try { t.scrollIntoView({ block: "start", behavior: "instant" }); } catch (e) { try { t.scrollIntoView(true); } catch (e2) {} }
+    }
+  }
+  links.forEach(function (a) { a.addEventListener("click", function (e) { e.preventDefault(); show(a.getAttribute("href").slice(1), true); }); });
+  toggle.hidden = false;
+  toggle.addEventListener("click", function () { paged = !paged; render(); if (!paged) { try { document.getElementById(current).scrollIntoView({ block: "start" }); } catch (e) {} } });
+  window.addEventListener("hashchange", function () { show(location.hash.slice(1), true); });
+  var start = location.hash.slice(1);
+  if (ids.indexOf(start) < 0) { try { start = sessionStorage.getItem(SKEY) || ""; } catch (e) { start = ""; } }
+  current = ids.indexOf(start) >= 0 ? start : ids[0];
+  render();
+})();
+</script>
+</body></html>
