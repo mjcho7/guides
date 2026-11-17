@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="네모공장 교육">
+<meta property="og:title" content="엑셀 데이터로 웹 대시보드 만들기 · 실습 교재">
+<meta property="og:description" content="말로 설명해 웹페이지를 만들고, 판매 데이터 엑셀로 영업관리 대시보드를 만들어 Vercel로 배포하는 실습 교재입니다.">
+<meta property="og:url" content="https://edu.nemofactory.kr/dashboard/">
+<meta property="og:image" content="https://edu.nemofactory.kr/dashboard/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="description" content="말로 설명해 웹페이지를 만들고, 판매 데이터 엑셀로 영업관리 대시보드를 만들어 Vercel로 배포하는 실습 교재입니다.">
+<title>엑셀 데이터로 웹 대시보드 만들기 · 실습 교재</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>:root {
+  --bg: #f5f6f8; --surface: #ffffff; --ink: #1b2230; --muted: #5d6676; --line: #dfe3ea;
+  --accent: #2f4bbf; --accent-soft: #e8ecfb; --check: #0f7a5a; --check-soft: #e2f4ee;
+  --warn: #9a5b00; --warn-soft: #fdf1dc; --code-bg: #eef0f5; --accent-ink: #ffffff;
+  --t1: #2f4bbf; --t1s: #e8ecfb; --t2: #0f7a5a; --t2s: #e2f4ee; --t3: #8a4fb0; --t3s: #f3eafa;
+  --sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", "D2Coding", Consolas, "Courier New", monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14171d; --surface: #1c2029; --ink: #e6e9ef; --muted: #9aa3b2; --line: #2e3440;
+    --accent: #8ea2ff; --accent-soft: #232b4a; --check: #5fd0a8; --check-soft: #17332b;
+    --warn: #f0b458; --warn-soft: #3a2c12; --code-bg: #12151b; --accent-ink: #14171d;
+    --t1: #8ea2ff; --t1s: #232b4a; --t2: #5fd0a8; --t2s: #17332b; --t3: #d2a6f0; --t3s: #2e2338;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.7 var(--sans); padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+[hidden] { display: none !important; }
+.page { max-width: 1120px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 64px; }
+a { color: var(--accent); }
+code { font-family: var(--mono); font-size: .92em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+header.top { display: grid; gap: 10px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+.eyebrow { font: 500 13px/1.4 var(--mono); color: var(--accent); letter-spacing: .04em; }
+h1 { margin: 0; font-size: clamp(26px, 4.2vw, 38px); line-height: 1.25; font-weight: 700; text-wrap: balance; letter-spacing: -.01em; }
+.sub { margin: -4px 0 2px; font-size: 18px; font-weight: 500; color: var(--accent); }
+.lede { margin: 0; color: var(--muted); max-width: 64ch; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 6px 0 0; padding: 0; list-style: none; font-size: 14.5px; }
+.facts b { font-weight: 600; }
+.layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 40px; margin-top: 28px; align-items: start; }
+nav.rail { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
+.rail h2 { margin: 0 0 10px; font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: .03em; }
+.rail ol { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--line); }
+.rail li a { display: grid; grid-template-columns: 50px 14px 1fr; gap: 6px; padding: 7px 8px 7px 12px; margin-left: -2px; border-left: 2px solid transparent; color: var(--ink); text-decoration: none; font-size: 14.5px; line-height: 1.45; }
+.rail li a:hover { border-left-color: var(--accent); color: var(--accent); }
+.rail li a[aria-current="step"] { border-left-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; border-radius: 0 6px 6px 0; }
+.rail li a[aria-current="step"] time { color: var(--accent); }
+.rail li a::after { content: ""; order: 1; font: 600 13px/1.6 var(--mono); color: var(--check); text-align: center; }
+.rail li a time { order: 0; } .rail li a span { order: 2; }
+.rail li a.seen:not([aria-current])::after { content: "✓"; }
+.rail time { font: 400 12.5px/1.6 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.railbtns { display: grid; gap: 6px; margin-top: 14px; }
+.viewtoggle { font: 500 13px/1.2 var(--sans); color: var(--accent); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 8px 11px; cursor: pointer; width: 100%; }
+.viewtoggle:hover { border-color: var(--accent); }
+.viewtoggle[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+main { display: grid; gap: 28px; min-width: 0; }
+section { display: grid; gap: 14px; min-width: 0; scroll-margin-top: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 0 26px 26px; }
+.mhead { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0 -26px 4px; padding: 16px 26px; background: var(--accent-soft); border-bottom: 1px solid var(--line); border-radius: 10px 10px 0 0; }
+.clock { font: 600 13px/1.4 var(--mono); color: var(--accent-ink); background: var(--accent); padding: 4px 11px; border-radius: 999px; white-space: nowrap; }
+.mins { font: 500 13px/1.4 var(--mono); color: var(--accent); border: 1px solid var(--accent); padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+h2.title { margin: 0; font-size: 23px; line-height: 1.35; font-weight: 700; text-wrap: balance; }
+.where { font: 500 13px/1.4 var(--mono); color: var(--muted); margin-left: auto; white-space: nowrap; }
+h3 { margin: 14px 0 0; padding-top: 18px; border-top: 1px solid var(--line); font-size: 17px; font-weight: 700; }
+.mhead + .goal + h3, .mhead + h3 { border-top: 0; padding-top: 0; margin-top: 6px; }
+p { margin: 0; max-width: 70ch; }
+.goal { color: var(--muted); }
+.note { color: var(--muted); font-size: 14px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
+.kind { font: 500 12.5px/1.4 var(--mono); color: var(--muted); letter-spacing: .03em; margin-right: 4px; }
+.tag { font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+.t-out { color: var(--t1); background: var(--t1s); }
+.t-skill { color: var(--t2); background: var(--t2s); }
+.t-auto { color: var(--t3); background: var(--t3s); }
+td .tag { margin: 0 4px 4px 0; display: inline-block; }
+dl.spec { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; }
+dl.spec div { border: 1px solid var(--line); border-radius: 8px; padding: 11px 14px; background: var(--bg); min-width: 0; }
+dl.spec dt { font: 600 12.5px/1.4 var(--mono); color: var(--accent); letter-spacing: .03em; }
+dl.spec dd { margin: 3px 0 0; font-size: 15px; overflow-wrap: anywhere; }
+.folder { font-size: 14.5px; color: var(--muted); max-width: none; }
+.folder span { font-weight: 600; color: var(--ink); margin-right: 6px; }
+.step { display: grid; gap: 10px; padding: 16px 0 4px; border-top: 1px dashed var(--line); min-width: 0; }
+h3 + .step { border-top: 0; padding-top: 4px; }
+.step h4 { margin: 0; font-size: 16.5px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.sn { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--ink); color: var(--surface); font: 600 13px/26px var(--mono); text-align: center; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.chipl { font: 500 12.5px/1.4 var(--mono); color: var(--muted); margin-right: 2px; }
+.chip { font-size: 13.5px; padding: 2px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); }
+.links { font-size: 14.5px; }
+ol.steps { margin: 0; padding-left: 22px; display: grid; gap: 6px; max-width: 70ch; }
+.prompt { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; min-width: 0; background: var(--bg); }
+.prompt .bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 7px 8px 7px 14px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+.prompt pre { margin: 0; padding: 14px; background: var(--code-bg); font: 400 14px/1.75 var(--mono); white-space: pre-wrap; word-break: keep-all; overflow-wrap: anywhere; }
+button.copy { font: 500 13px/1 var(--sans); color: var(--accent); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 7px 11px; cursor: pointer; white-space: nowrap; }
+button.copy:hover { border-color: var(--accent); }
+button.copy.done { color: var(--check); border-color: var(--check); }
+.slot { background: var(--warn-soft); color: var(--warn); border-radius: 4px; padding: 1px 5px; font-weight: 500; }
+.verify, .caution { border-radius: 8px; padding: 12px 16px; display: grid; gap: 4px; }
+.verify { background: var(--check-soft); }
+.caution { background: var(--warn-soft); }
+.verify strong, .caution strong { font-size: 13.5px; letter-spacing: .02em; }
+.verify strong { color: var(--check); }
+.caution strong { color: var(--warn); }
+.verify ul, .caution ul { margin: 0; padding-left: 20px; display: grid; gap: 3px; }
+details.fold { border: 1px solid var(--line); border-radius: 8px; min-width: 0; }
+details.fold summary { cursor: pointer; padding: 10px 14px; font-weight: 600; font-size: 15px; list-style: none; display: flex; align-items: center; gap: 10px; }
+details.fold summary::-webkit-details-marker { display: none; }
+details.fold summary::before { content: "+"; font: 600 16px/1 var(--mono); color: var(--accent); width: 1em; text-align: center; }
+details.fold[open] summary::before { content: "−"; }
+details.fold[open] summary { border-bottom: 1px solid var(--line); }
+details.fold summary:hover { color: var(--accent); }
+.sumnote { margin-left: auto; font: 400 12.5px/1.4 var(--mono); color: var(--muted); }
+.foldbody { display: grid; gap: 14px; padding: 14px; min-width: 0; }
+.success { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.success > div { border: 1px solid var(--line); border-radius: 8px; padding: 10px 8px 8px; }
+.lv { display: inline-block; margin: 0 0 4px 10px; font-size: 13px; color: var(--check); }
+.lv2 { color: var(--t3); }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+th, td { text-align: left; vertical-align: top; padding: 9px 13px; border-bottom: 1px solid var(--line); }
+th { font-weight: 600; color: var(--muted); font-size: 13px; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.k { font-weight: 600; min-width: 9em; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.checks label { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; padding: 7px 10px; border-radius: 6px; cursor: pointer; }
+.checks label:hover { background: var(--bg); }
+.checks input { width: 18px; height: 18px; margin: 4px 0 0; accent-color: var(--check); }
+.checks input:checked + span { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line); }
+.progress { font: 400 13px/1.4 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.flow li { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; background: var(--bg); display: grid; gap: 2px; align-content: start; }
+.flow li:nth-child(1) { border-top: 3px solid var(--t1); }
+.flow li:nth-child(2) { border-top: 3px solid var(--t2); }
+.flow li:nth-child(3) { border-top: 3px solid var(--t3); }
+.flow b { font-weight: 700; font-size: 17px; }
+.flow span { color: var(--muted); font-size: 14px; }
+.flow em { font: 500 12.5px/1.5 var(--mono); font-style: normal; color: var(--muted); }
+.pager { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; margin-top: 10px; padding-top: 18px; border-top: 1px solid var(--line); }
+.pager button { font: 500 15px/1.3 var(--sans); padding: 11px 16px; border-radius: 8px; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-align: left; max-width: 100%; }
+.pager button small { display: block; font-size: 12.5px; color: var(--muted); font-weight: 400; }
+.pager button.next { margin-left: auto; background: var(--accent); border-color: var(--accent); color: var(--accent-ink); text-align: right; }
+.pager button.next small { color: var(--accent-ink); opacity: .8; }
+.pager button:hover { border-color: var(--accent); }
+.instructor { margin-top: 56px; padding: 22px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; display: flex; flex-wrap: wrap; gap: 16px 40px; align-items: center; justify-content: space-between; }
+.instructor .who { display: grid; gap: 2px; }
+.instructor .who strong { font-size: 19px; font-weight: 700; }
+.instructor .who span:last-child { color: var(--muted); }
+.instructor .work { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 8px; }
+.instructor .work li { font-size: 14px; padding: 4px 11px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+.instructor .contact { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.instructor .label { font-size: 13px; color: var(--muted); }
+.instructor .mail { font: 500 15px/1.4 var(--mono); user-select: all; }
+footer { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13.5px; }
+@media (max-width: 860px) {
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  nav.rail { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); margin-inline: -20px; padding: 8px 20px; border-bottom: 1px solid var(--line); }
+  .rail h2 { display: none; }
+  .rail ol { display: flex; gap: 6px; border-left: 0; overflow-x: auto; scrollbar-width: none; }
+  .rail ol::-webkit-scrollbar { display: none; }
+  .rail li { flex: none; }
+  .rail li a { display: flex; gap: 6px; align-items: center; border: 1px solid var(--line); border-radius: 999px; margin-left: 0; padding: 6px 12px; background: var(--surface); white-space: nowrap; }
+  .rail li a[aria-current="step"] { border-radius: 999px; border-color: var(--accent); }
+  .rail li a:not(.seen)::after, .rail li a[aria-current]::after { display: none; }
+  .railbtns { display: flex; gap: 6px; margin-top: 8px; }
+  .viewtoggle { width: auto; }
+  section { padding: 0 16px 20px; scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 120px); }
+  .mhead { margin: 0 -16px 4px; padding: 14px 16px; }
+  .where { margin-left: 0; }
+}
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+/* 도구 배지: PPT의 5단계 흐름 색 */
+:root { --c-chat:#5d6676; --c-chat-s:#eceef2; --c-project:#2f4bbf; --c-project-s:#e8ecfb; --c-skill:#0f7a5a; --c-skill-s:#e2f4ee; --c-work:#9a5b00; --c-work-s:#fdf1dc; --c-codex:#8a4fb0; --c-codex-s:#f3eafa; }
+@media (prefers-color-scheme: dark) { :root { --c-chat:#9aa3b2; --c-chat-s:#262b35; --c-project:#8ea2ff; --c-project-s:#232b4a; --c-skill:#5fd0a8; --c-skill-s:#17332b; --c-work:#f0b458; --c-work-s:#3a2c12; --c-codex:#d2a6f0; --c-codex-s:#2e2338; } }
+.tool { display:inline-block; font:600 13px/1.4 var(--sans); padding:3px 11px; border-radius:999px; white-space:nowrap; }
+.tool-chat { color:var(--c-chat); background:var(--c-chat-s); }
+.tool-project { color:var(--c-project); background:var(--c-project-s); }
+.tool-skill { color:var(--c-skill); background:var(--c-skill-s); }
+.tool-work { color:var(--c-work); background:var(--c-work-s); }
+.tool-codex { color:var(--c-codex); background:var(--c-codex-s); }
+.ladder { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; }
+@media (max-width:860px){ .ladder { grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); } }
+.ladder li { border:1px solid var(--line); border-radius:8px; padding:12px 14px; background:var(--bg); display:grid; gap:2px; align-content:start; border-top-width:3px; }
+.ladder em { font:500 12.5px/1.5 var(--mono); font-style:normal; color:var(--muted); }
+.ladder b { font-size:17px; }
+.ladder span { font-size:14px; }
+.ladder i { font-style:normal; font-size:13px; color:var(--muted); }
+.l-chat { border-top-color:var(--c-chat)!important; } .l-project { border-top-color:var(--c-project)!important; } .l-skill { border-top-color:var(--c-skill)!important; } .l-work { border-top-color:var(--c-work)!important; } .l-codex { border-top-color:var(--c-codex)!important; }
+.l-chat b { color:var(--c-chat); } .l-project b { color:var(--c-project); } .l-skill b { color:var(--c-skill); } .l-work b { color:var(--c-work); } .l-codex b { color:var(--c-codex); }
+.links { display:flex; flex-wrap:wrap; gap:8px; max-width:none; }
+a.ext { font-size:14px; text-decoration:none; padding:6px 12px; border:1px solid var(--line); border-radius:6px; background:var(--surface); }
+a.ext:hover { border-color:var(--accent); }
+ol.how { background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:14px 16px 14px 36px; max-width:none; }
+.ws { display:grid; gap:14px; border:1px solid var(--line); border-radius:8px; padding:16px; background:var(--bg); }
+.wsq { display:grid; gap:6px; }
+.wsq label, .wl { font-weight:600; font-size:15px; }
+.ws input[type=text], .ws textarea { font:400 15px/1.5 var(--sans); padding:9px 11px; border:1px solid var(--line); border-radius:6px; background:var(--surface); color:var(--ink); width:100%; min-width:0; resize:vertical; }
+.four { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:8px; }
+.opts { display:flex; flex-wrap:wrap; gap:6px; }
+.opts label { display:flex; align-items:center; gap:6px; font-weight:400; font-size:14.5px; padding:5px 11px; border:1px solid var(--line); border-radius:999px; background:var(--surface); cursor:pointer; }
+.opts input { accent-color:var(--accent); margin:0; }
+.opts label:has(input:checked) { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); }
+.intro { border:1px solid var(--c-skill); background:var(--c-skill-s); border-radius:8px; padding:12px 16px; display:grid; gap:6px; }
+.intro strong { color:var(--c-skill); font-size:15px; }
+.intro ul { margin:0; padding-left:20px; display:grid; gap:5px; }
+.tips { border:1px dashed var(--line); border-radius:8px; padding:12px 16px; display:grid; gap:4px; }
+.tips strong { font-size:13.5px; color:var(--accent); }
+.tips ul { margin:0; padding-left:20px; display:grid; gap:3px; }
+.two { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px; }
+.inl { display:flex; align-items:center; gap:8px; font-weight:400!important; font-size:14.5px!important; }
+.inl input[type=color] { width:52px; height:34px; border:1px solid var(--line); border-radius:6px; background:var(--surface); padding:2px; }
+.pb .wsq { gap:8px; }
+.preview { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 16px; border:1px solid var(--accent); background:var(--accent-soft); border-radius:8px; padding:12px 16px; }
+.preview div { display:grid; gap:2px; min-width:0; flex:1 1 280px; }
+.preview strong { color:var(--accent); font-size:15px; }
+.preview span { font-size:14px; color:var(--muted); }
+a.ext.go { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); font-weight:600; }
+.cases { display:grid; gap:8px; }
+.cases .ct { font-size:15px; color:var(--c-codex); }
+.cases ul { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:10px; }
+.cases li { border:1px solid var(--line); border-top:3px solid var(--c-codex); border-radius:8px; padding:12px 14px; background:var(--bg); display:grid; gap:8px; align-content:start; }
+.cases .ch { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 10px; }
+.cases .ch strong { font-size:16px; }
+.cases .who { font-size:12.5px; color:var(--c-codex); background:var(--c-codex-s); padding:1px 8px; border-radius:999px; }
+.cases p { font-size:14.5px; }
+.cases a.ext { justify-self:start; }
+
+:root { --c-claude:#b5532f; --c-claude-s:#fbece5; }
+@media (prefers-color-scheme: dark) { :root { --c-claude:#f0a07f; --c-claude-s:#3a241b; } }
+.tool-ai { color:var(--c-claude); background:var(--c-claude-s); }
+.howset { border:1px solid var(--line); border-radius:8px; padding:12px 16px; background:var(--bg); display:grid; gap:6px; }
+.howset > b { font-size:14.5px; color:var(--c-claude); }
+.howset ol.steps { max-width:none; }
+.toolpick td:first-child { font-weight:600; white-space:nowrap; }
+.cases .ct { color:var(--c-claude); }
+.cases li { border-top-color:var(--c-claude); }
+.cases .who { color:var(--c-claude); background:var(--c-claude-s); }
+</style></head><body>
+<div class="page">
+  <header class="top">
+    <div class="eyebrow">엑셀 전문가 과정 · AI 웹 대시보드 실습</div>
+    <h1>엑셀 데이터로 웹 대시보드 만들기</h1>
+    <p class="sub">말로 설명하면 작동하는 도구가 됩니다</p>
+    <p class="lede">먼저 자기소개 페이지로 바이브 코딩과 배포를 맛보고, 판매 데이터 엑셀로 영업관리자용 대시보드를 만들어 주소로 공유합니다. 기능은 한 번에 하나씩 더하고, 숫자는 엑셀과 직접 대조합니다.</p>
+    <ul class="facts">
+      <li><b>강사</b> 조미정</li>
+      <li><b>도구</b> ChatGPT · Claude · Gemini (웹·데스크톱), Vercel</li>
+      <li><b>자료</b> 판매 데이터.xlsx</li>
+    </ul>
+  </header>
+  <div class="layout">
+    <nav class="rail" aria-label="진행표">
+      <h2>진행표</h2>
+      <ol><li><a href="#prep"><time>준비</time><span>시작 전 확인</span></a></li><li><a href="#lab4a"><time>4-A</time><span>바이브 코딩 맛보기</span></a></li><li><a href="#lab4b"><time>4-B</time><span>판매 데이터 대시보드</span></a></li><li><a href="#help"><time>부록</time><span>자주 막히는 곳</span></a></li><li><a href="#wrap"><time>마무리</time><span>내 업무에 적용하기</span></a></li></ol>
+      <div class="railbtns"><button class="viewtoggle" type="button" id="viewtoggle" hidden>전체 펼쳐 보기</button></div>
+    </nav>
+    <main>
+      <section id="prep">
+        <div class="mhead"><span class="clock">준비</span><h2 class="title">시작 전 확인</h2><span class="progress" id="progress"></span></div>
+        <div class="preview dlbox"><div><strong>실습 데이터 내려받기</strong><span>판매 데이터.xlsx · 2025년 1월~2026년 12월, 532행 × 20열</span></div><a class="ext go" href="%ED%8C%90%EB%A7%A4%20%EB%8D%B0%EC%9D%B4%ED%84%B0.xlsx" download>내려받기 ↓</a></div>
+        <p class="goal">아래 항목을 확인하고 시작합니다. 체크한 내용은 이 브라우저에만 저장됩니다.</p>
+        <ul class="checks" id="checks">
+          <li><label><input type="checkbox" data-key="p1"><span>아래 표에서 쓸 도구를 정하고 로그인했다</span></label></li>
+          <li><label><input type="checkbox" data-key="p2"><span>위에서 <code>판매 데이터.xlsx</code>를 내려받아 내 PC의 폴더 하나에 넣어 두었다</span></label></li>
+          <li><label><input type="checkbox" data-key="p3"><span><a href="https://vercel.com/signup" target="_blank" rel="noopener">Vercel</a> 무료 계정을 만들었다 (배포용)</span></label></li>
+          <li><label><input type="checkbox" data-key="p4"><span>Chrome이나 Edge 브라우저가 있다</span></label></li>
+        </ul>
+        <h3>만드는 도구 고르기</h3>
+        <p>웹과 데스크톱 어느 쪽으로도 만들 수 있습니다. 프롬프트는 같고, <b>파일이 어디에 생기는지</b>와 <b>배포 방법</b>이 다릅니다.</p>
+        <div class="tablewrap toolpick"><table>
+          <tr><th>구분</th><th>도구</th><th>파일은 어디에</th><th>배포</th></tr>
+          <tr><td>웹</td><td><a href="https://chatgpt.com/" target="_blank" rel="noopener">ChatGPT</a> · <a href="https://claude.ai/" target="_blank" rel="noopener">Claude</a> · <a href="https://gemini.google.com/" target="_blank" rel="noopener">Gemini</a></td><td>대화창에 코드와 미리보기(캔버스·아티팩트)가 나옵니다. 파일은 <b>내려받아</b> 내 PC에 저장합니다.</td><td>Vercel Drop에 직접 끌어다 놓기</td></tr>
+          <tr><td>데스크톱</td><td>ChatGPT 데스크톱 앱(Codex) · Claude 데스크톱 앱(Claude Code)</td><td>작업 폴더를 고르면 <b>내 PC 폴더에 파일이 직접 생기고</b> 바로 고쳐집니다.</td><td>“버셀에 올려줘”로 AI에게 맡기기</td></tr>
+        </table></div>
+        <p class="note">처음이라면 웹으로 빠르게 맛보고, 파일이 길어지고 고칠 곳이 많아지는 대시보드는 데스크톱을 권합니다. 웹에서는 답이 길면 코드가 중간에 끊길 수 있습니다.</p>
+        <h3>오늘의 흐름</h3>
+        <ol class="ladder">
+          <li class="l-chat"><em>4-A</em><b>맛보기</b><span>말로 설명해 웹페이지 만들기</span><i>자기소개 페이지</i></li>
+          <li class="l-project"><em>4-B · 1~3</em><b>설계</b><span>데이터 이해, KPI, 화면 배치</span><i>코드는 아직</i></li>
+          <li class="l-skill"><em>4-B · 4~7</em><b>구현</b><span>화면, 필터, 비교표, PDF</span><i>한 번에 하나씩</i></li>
+          <li class="l-work"><em>4-B · 8</em><b>디자인</b><span>참고 이미지로 톤 맞추기</span><i>기능은 그대로</i></li>
+          <li class="l-codex"><em>4-B · 9</em><b>배포</b><span>Vercel 주소로 공유</span><i>휴대폰에서 확인</i></li>
+        </ol>
+        <h3>진행 규칙</h3>
+        <ol class="steps">
+          <li><b>한 번에 하나씩</b> 지시하고, 결과를 확인한 뒤 다음 단계로 넘어갑니다.</li>
+          <li>프롬프트는 복사해서 써도 되고, 내 말로 바꿔 써도 됩니다. <b>색칠된 부분</b>은 내 내용으로 바꿉니다.</li>
+          <li>단계마다 있는 <b>‘확인할 것’</b>은 꼭 직접 확인합니다. 숫자는 엑셀에서 같은 조건으로 계산해 대조합니다.</li>
+          <li>데스크톱 앱이 파일 변경이나 명령 실행 허용을 물으면 <b>내용을 읽고</b> 허용합니다. 원본 엑셀 삭제·수정은 허용하지 않습니다.</li>
+        </ol>
+      </section>
+      
+<section id="lab4a">
+  <div class="mhead"><span class="clock">실습 4-A</span><h2 class="title">바이브 코딩 맛보기 · 자기소개 페이지 만들고 Vercel로 배포</h2></div>
+  <div class="meta"><span class="tool tool-ai">웹 · 데스크톱</span><span class="kind">말로 설명 → 단일 HTML → VERCEL 주소</span></div>
+  <dl class="spec"><div><dt>목표</dt><dd>나를 소개하는 웹페이지를 만들어 Vercel로 배포한다</dd></div><div><dt>재료</dt><dd>내 소개 내용, (선택) 내 사진 photo.jpg, 참고하고 싶은 웹사이트 주소</dd></div><div><dt>결과물</dt><dd>index.html 한 파일, 누구나 접속할 수 있는 vercel.app 주소</dd></div><div><dt>핵심</dt><dd>코드를 몰라도 말로 설명하면 웹페이지가 된다. 배포까지 한 번 해 보면 4-B 대시보드도 같은 방법으로 공유할 수 있다</dd></div></dl>
+  
+  <div class="cases"><strong class="ct">바이브 코딩으로 만든 실제 사례</strong><p class="note">코드를 직접 짜지 않고 말로 설명해 만든 업무 도구입니다. 만들기 전에 열어 보고 “나는 무엇을 만들 수 있을까” 떠올려 봅니다.</p><ul><li><div class="ch"><strong>엑셀 한눈에</strong><span class="who">강사 제작</span></div><p>엑셀 표를 올리면 결론 문장, 핵심 숫자 카드, 그래프로 정리해 줍니다. 병합 셀·소계가 있어도 읽고, 기간·항목 필터, 원본 확인, 엑셀·PDF 저장까지 됩니다. 모든 처리는 브라우저 안에서만 이루어집니다.</p><a class="ext" href="https://excelchart.vercel.app/" target="_blank" rel="noopener">사이트 열어 보기 ↗</a></li></ul></div>
+  
+  <p class="folder"><span>실습 파일</span><code>바탕화면에 새로 만드는 my-intro 폴더</code> · 사용 도구: 웹(ChatGPT·Claude·Gemini) 또는 데스크톱(ChatGPT·Claude Code)</p>
+  <h3>진행 단계</h3>
+  <div class="step"><h4><span class="sn">1</span>작업 폴더 만들고 시작하기</h4><p>바탕화면에 my-intro 폴더를 만듭니다. 내 사진을 쓰려면 photo.jpg라는 이름으로 넣어 둡니다. 그다음 쓰는 도구에 따라 시작합니다.</p><div class="howset"><b>웹 (ChatGPT·Claude·Gemini)</b><ol class="steps"><li>브라우저에서 쓰는 AI의 새 대화를 엽니다.</li><li>사진을 쓰려면 photo.jpg를 대화에 첨부합니다.</li><li>결과 HTML은 대화창의 미리보기(캔버스·아티팩트)로 보고, 내려받아 my-intro 폴더에 <code>index.html</code>로 저장합니다.</li></ol></div><div class="howset"><b>데스크톱 (ChatGPT 앱·Claude Code)</b><ol class="steps"><li>앱에서 작업 폴더로 my-intro를 선택하고 새 대화(세션)를 엽니다.</li><li>AI가 my-intro 폴더 안에 파일을 직접 만들고 고칩니다. 따로 내려받을 필요가 없습니다.</li></ol></div><div class="verify"><strong>확인할 것</strong><ul><li>웹이면 새 대화를, 데스크톱이면 my-intro 폴더를 작업 위치로 열었나요?</li></ul></div></div><div class="step"><h4><span class="sn">2</span>프롬프트 조립하기</h4><p>아래에서 내 정보를 채우고 분위기·구성·효과를 고르면 프롬프트가 완성됩니다. 복사해서 AI에 보냅니다.</p><p class="links"><a class="ext" href="https://dribbble.com/search/personal-website" target="_blank" rel="noopener">Dribbble · 개인 웹사이트 디자인 ↗</a><a class="ext" href="https://dribbble.com/" target="_blank" rel="noopener">Dribbble ↗</a><a class="ext" href="https://notefolio.net/" target="_blank" rel="noopener">노트폴리오 · 국내 창작자 포트폴리오 ↗</a><a class="ext" href="https://www.pinterest.co.kr/search/pins/?q=%EC%9B%B9%EB%94%94%EC%9E%90%EC%9D%B8%20%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4" target="_blank" rel="noopener">핀터레스트 · 웹디자인 포트폴리오 ↗</a><a class="ext" href="https://github.com/orioncactus/pretendard" target="_blank" rel="noopener">Pretendard · 한글 웹폰트 ↗</a><a class="ext" href="https://noonnu.cc/index?locale=ko&category_use_ids=4&order_by=pd" target="_blank" rel="noopener">눈누 · OFL 무료 한글 폰트 ↗</a></p><div class="tips"><strong>근사하게 만드는 요령</strong><ul><li>휴대폰에서 먼저 보기 좋아야 합니다. 화려한 효과보다 글자 크기, 여백, 버튼 크기가 중요합니다. 휴대폰에는 마우스가 없어서 ‘마우스를 올리면’ 효과는 보이지 않습니다.</li><li>분위기는 형용사 하나보다 장면으로 설명합니다. 예: “토스 앱처럼 제목이 아주 크고 단순한”, “배민처럼 문구가 재치 있는”</li><li>참고 사이트 주소를 주고 ‘무엇을’ 가져올지 적습니다. 화면 캡처 이미지를 함께 첨부하면 더 정확합니다.</li><li>색은 2~3개, 폰트는 1~2개만 정합니다. 많을수록 산만해집니다.</li><li>정보가 적어도 괜찮습니다. ‘풍부하게’나 ‘아주 창의적으로’를 고르면 AI가 주어진 정보로 문장과 섹션을 살려 씁니다. 연도·숫자 같은 사실만 지어내지 않게 합니다.</li></ul></div>
+<div class="ws pb" id="pb">
+  <div class="wsq"><span class="wl">① 내 정보</span>
+    <div class="two">
+      <input data-pb="name" type="text" placeholder="이름 (예: 홍길동)">
+      <input data-pb="role" type="text" placeholder="소속·직무 (예: 기후적응과 주무관)">
+    </div>
+    <input data-pb="line" type="text" placeholder="한 줄 소개 (예: 데이터로 기후위기 적응 정책을 설계합니다)">
+    <textarea data-pb="work" rows="2" placeholder="담당 업무·관심 분야 (예: 폭염 대응 계획, 지자체 적응계획 지원, 데이터 분석)"></textarea>
+    <input data-pb="mail" type="text" placeholder="연락처 이메일 (공개해도 되는 주소)">
+  </div>
+  <div class="wsq"><span class="wl">② 분위기 (하나)</span><div class="opts"><label><input type="radio" name="style" data-pb="style" value="토스 스타일" data-desc="토스 앱처럼 흰 배경, 아주 큼직하고 굵은 제목, 파란 포인트 색 하나, 둥근 카드, 짧고 친근한 말투로 단순하고 시원한 스타일" checked><span>토스 스타일</span></label><label><input type="radio" name="style" data-pb="style" value="당근 스타일" data-desc="당근 앱처럼 따뜻한 주황 포인트, 부드러운 둥근 모서리, 동네 이웃에게 말하듯 다정한 문구의 친근한 스타일"><span>당근 스타일</span></label><label><input type="radio" name="style" data-pb="style" value="카카오 스타일" data-desc="카카오처럼 노란 포인트, 말풍선 모양 카드, 귀여운 도형 일러스트, 대화하듯 가벼운 문구의 밝은 스타일"><span>카카오 스타일</span></label><label><input type="radio" name="style" data-pb="style" value="배민 스타일" data-desc="배달의민족처럼 손글씨 느낌의 큰 제목, 민트 포인트, 재치 있고 유머러스한 문구가 돋보이는 스타일"><span>배민 스타일</span></label><label><input type="radio" name="style" data-pb="style" value="29CM 매거진" data-desc="29CM처럼 흑백 위주에 아주 큰 타이포그래피, 넓은 여백, 감각적인 사진 배치의 잡지 같은 스타일"><span>29CM 매거진</span></label><label><input type="radio" name="style" data-pb="style" value="한국 전통 색감" data-desc="한지 같은 미색 배경에 쪽빛·먹색을 쓰고, 오방색은 작은 포인트로만 쓰는 차분한 한국적 스타일"><span>한국 전통 색감</span></label><label><input type="radio" name="style" data-pb="style" value="기후·자연" data-desc="초록과 하늘색, 부드러운 곡선과 자연스러운 여백, 맑고 가벼운 느낌"><span>기후·자연</span></label></div></div>
+  <div class="wsq"><span class="wl">③ 구성 (여러 개)</span><div class="opts"><label><input type="checkbox" name="sec" data-pb="sec" value="첫 화면" data-desc="이름·한 줄 소개·사진과 함께, 나를 한 문장으로 표현하는 인상적인 슬로건이 크게 보이는 첫 화면" checked><span>첫 화면</span></label><label><input type="checkbox" name="sec" data-pb="sec" value="자기소개" data-desc="내 정보를 바탕으로 풀어 쓴 4~5문장 자기소개" checked><span>자기소개</span></label><label><input type="checkbox" name="sec" data-pb="sec" value="나를 표현하는 키워드" data-desc="나를 표현하는 키워드 3개와 각각의 짧은 설명" checked><span>나를 표현하는 키워드</span></label><label><input type="checkbox" name="sec" data-pb="sec" value="담당 업무" data-desc="담당 업무 카드 3~4개, 카드마다 ‘어떤 문제를 어떻게 돕는지’ 2~3문장" checked><span>담당 업무</span></label><label><input type="checkbox" name="sec" data-pb="sec" value="일하는 방식" data-desc="내가 일할 때 지키는 원칙 3가지" checked><span>일하는 방식</span></label><label><input type="checkbox" name="sec" data-pb="sec" value="관심 분야 태그" data-desc="관심 분야를 알약 모양 태그로" checked><span>관심 분야 태그</span></label><label><input type="checkbox" name="sec" data-pb="sec" value="함께 일하면" data-desc="나와 함께 일하면 좋은 점 3가지"><span>함께 일하면</span></label><label><input type="checkbox" name="sec" data-pb="sec" value="경력 타임라인" data-desc="경력을 세로 타임라인으로"><span>경력 타임라인</span></label><label><input type="checkbox" name="sec" data-pb="sec" value="자주 묻는 질문" data-desc="나에게 자주 물어볼 만한 질문과 답 3개"><span>자주 묻는 질문</span></label><label><input type="checkbox" name="sec" data-pb="sec" value="연락하기" data-desc="이메일 연락 버튼과 짧은 마무리 인사" checked><span>연락하기</span></label></div></div>
+  <div class="wsq"><span class="wl">③-1 표현 수준 (하나)</span><div class="opts"><label><input type="radio" name="tone" data-pb="tone" value="풍부하게" data-desc="rich" checked><span>풍부하게</span></label><label><input type="radio" name="tone" data-pb="tone" value="아주 창의적으로" data-desc="bold"><span>아주 창의적으로</span></label><label><input type="radio" name="tone" data-pb="tone" value="담백하게" data-desc="plain"><span>담백하게</span></label></div>
+    <span class="note">정보를 조금만 넣어도 ‘풍부하게’를 고르면 AI가 문장과 섹션을 살려서 씁니다.</span></div>
+  <div class="wsq"><span class="wl">④ 효과 (선택 · 1~2개면 충분)</span><div class="opts"><label><input type="checkbox" name="fx" data-pb="fx" value="스크롤 등장" data-desc="스크롤하면 섹션이 부드럽게 나타나기" checked><span>스크롤 등장</span></label><label><input type="checkbox" name="fx" data-pb="fx" value="맨 위로 버튼" data-desc="오른쪽 아래 맨 위로 가기 버튼"><span>맨 위로 버튼</span></label><label><input type="checkbox" name="fx" data-pb="fx" value="다크 모드" data-desc="밝게·어둡게 전환 버튼"><span>다크 모드</span></label><label><input type="checkbox" name="fx" data-pb="fx" value="타이핑 효과" data-desc="첫 화면 한 줄 소개에 타이핑 효과"><span>타이핑 효과</span></label><label><input type="checkbox" name="fx" data-pb="fx" value="카드 떠오르기 (PC)" data-desc="PC에서 마우스를 올리면 카드가 살짝 떠오르기(휴대폰에서는 없어도 됨)"><span>카드 떠오르기 (PC)</span></label></div></div>
+  <div class="wsq"><span class="wl">④-1 재미있는 기능 (선택 · 2~3개 추천)</span><div class="opts"><label><input type="checkbox" name="fun" data-pb="fun" value="캐릭터 산책" data-desc="작은 캐릭터가 가끔 화면 아래를 걸어서 지나가고, 누르면 폴짝 뛰며 인사 말풍선 띄우기" checked><span>캐릭터 산책</span></label><label><input type="checkbox" name="fun" data-pb="fun" value="색종이 팡" data-desc="연락하기 버튼을 누르면 색종이가 팡 터지기"><span>색종이 팡</span></label><label><input type="checkbox" name="fun" data-pb="fun" value="시간대별 인사" data-desc="방문한 시간에 따라 첫 화면 인사가 바뀌기(아침·점심·저녁·밤)" checked><span>시간대별 인사</span></label><label><input type="checkbox" name="fun" data-pb="fun" value="오늘의 한마디" data-desc="새로고침할 때마다 나다운 한마디가 바뀌어 나오기"><span>오늘의 한마디</span></label><label><input type="checkbox" name="fun" data-pb="fun" value="키워드 카드 뒤집기" data-desc="키워드 카드를 누르면 뒤집히며 설명이 나오기" checked><span>키워드 카드 뒤집기</span></label><label><input type="checkbox" name="fun" data-pb="fun" value="나에 대한 OX 퀴즈" data-desc="나에 대한 가벼운 OX 퀴즈 3문제, 누르면 정답과 한 줄 설명"><span>나에 대한 OX 퀴즈</span></label><label><input type="checkbox" name="fun" data-pb="fun" value="계절 효과" data-desc="지금 계절에 맞게 낙엽·눈송이·꽃잎이 배경에 천천히 떨어지기"><span>계절 효과</span></label><label><input type="checkbox" name="fun" data-pb="fun" value="숨은 이스터에그" data-desc="이름을 다섯 번 누르면 숨겨 둔 메시지가 나타나기"><span>숨은 이스터에그</span></label><label><input type="checkbox" name="fun" data-pb="fun" value="스크롤 진행 막대" data-desc="화면 맨 위에 얼마나 읽었는지 보여주는 진행 막대"><span>스크롤 진행 막대</span></label></div>
+    <span class="note">모두 휴대폰에서 터치로 작동하게 만들어 달라고 프롬프트에 들어갑니다. 너무 많이 고르면 산만해집니다.</span></div>
+  <div class="wsq"><span class="wl">⑤ 색과 폰트</span>
+    <div class="two">
+      <label class="inl">주 색상 <input data-pb="color" type="color" value="#2f4bbf"></label>
+      <input data-pb="font" type="text" value="Pretendard" placeholder="폰트 이름 또는 눈누·Google Fonts 주소">
+    </div>
+  </div>
+  <div class="wsq"><span class="wl">⑥ 참고 사이트 (선택)</span>
+    <input data-pb="ref" type="text" placeholder="참고할 웹사이트 주소 (예: Dribbble·노트폴리오에서 찾은 페이지)">
+    <input data-pb="refnote" type="text" placeholder="그 사이트에서 가져올 점 (예: 첫 화면 배치, 카드 모양, 색감)">
+  </div>
+</div>
+<div class="prompt"><div class="bar"><span>AI에게 · 위에서 고른 내용이 자동으로 들어갑니다</span><button class="copy" type="button">복사</button></div><pre id="pbout"></pre></div>
+<div class="verify"><strong>확인할 것</strong><ul><li>my-intro 폴더에 index.html이 있고(웹은 내려받아 저장), 더블클릭하면 브라우저에서 열리나요?</li><li>연도·숫자·수상처럼 사실로 보이는 내용이 새로 지어지지 않았나요? [수정 필요] 자리가 있으면 내 정보로 채웁니다.</li><li>휴대폰 크기(브라우저 창을 좁게)에서도 깨지지 않나요?</li><li>재미있는 기능을 골랐다면, 휴대폰에서 터치로 작동하고 움직이는 요소가 글자를 가리지 않나요?</li></ul></div></div><div class="step"><h4><span class="sn">3</span>한 가지씩 다듬기</h4><p>마음에 안 드는 곳을 한 번에 하나씩 말로 고칩니다. 아래 예시를 골라 써도 됩니다.</p><div class="prompt"><div class="bar"><span>AI에게 · 내용 더 풍부하게</span><button class="copy" type="button">복사</button></div><pre>지금 페이지가 너무 단순해. 내가 준 정보를 바탕으로 섹션마다 문장을 더 풍부하게 늘리고, ‘일하는 방식’과 ‘함께 일하면 좋은 점’ 섹션을 새로 만들어줘. 연도·숫자 같은 사실 정보는 지어내지 마.</pre></div><div class="prompt"><div class="bar"><span>AI에게 · 콘셉트 입히기</span><button class="copy" type="button">복사</button></div><pre>나를 한마디로 표현하는 콘셉트(예: ‘엑셀로 숫자를 이야기로 바꾸는 사람’)를 3개 제안해줘. 내가 하나 고르면 그 콘셉트로 첫 화면 문구와 페이지 전체 분위기를 다시 꾸며줘.</pre></div><div class="prompt"><div class="bar"><span>AI에게 · 재미 더하기</span><button class="copy" type="button">복사</button></div><pre>페이지에 재미있는 기능을 하나 더해줘. 오리지널 캐릭터가 가끔 화면 아래를 걸어 지나가고, 누르면 폴짝 뛰며 ‘반가워요!’ 말풍선을 띄워줘. 휴대폰에서도 터치로 되게 하고 글자는 가리지 마.</pre></div><div class="prompt"><div class="bar"><span>AI에게 · 첫 화면 강조</span><button class="copy" type="button">복사</button></div><pre>첫 화면을 더 임팩트 있게 바꿔줘. 이름을 크게 하고, 배경에 은은하게 움직이는 그라데이션을 넣어줘.</pre></div><div class="prompt"><div class="bar"><span>AI에게 · 사진 넣기</span><button class="copy" type="button">복사</button></div><pre>폴더의 photo.jpg를 사진 자리에 원형으로 넣어줘.</pre></div><div class="prompt"><div class="bar"><span>AI에게 · 참고 사이트 반영 · 색칠된 부분을 내 것으로</span><button class="copy" type="button">복사</button></div><pre><span class="slot">참고 사이트 주소</span>의 <span class="slot">레이아웃·색감·글꼴 중 가져올 점</span>을 참고해서 디자인을 바꿔줘. 내용은 그대로 둬.</pre></div><div class="prompt"><div class="bar"><span>AI에게 · 모바일 점검</span><button class="copy" type="button">복사</button></div><pre>휴대폰 화면 크기에서 깨지거나 겹치는 곳이 없는지 확인하고 고쳐줘. 글자와 버튼이 작으면 키워줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>고친 곳 말고 다른 곳은 그대로인가요? 웹은 새로 받은 파일로 바꿔 저장하고, 데스크톱은 Ctrl+F5로 새로고침해서 확인합니다.</li></ul></div></div><div class="step"><h4><span class="sn">4</span>Vercel에 배포하기</h4><p>자기소개 페이지를 인터넷에 올려 주소로 공유합니다. 웹에서 만들었다면 Vercel Drop으로 직접 올리고, 데스크톱이라면 AI에게 맡길 수 있습니다.</p><div class="howset"><b>웹에서 만든 경우 · Vercel Drop으로 직접 올리기</b><ol class="steps"><li>완성된 HTML 파일 하나를 새 폴더에 넣고, 파일 이름을 <code>index.html</code>로 바꿉니다.</li><li><a href="https://vercel.com/drop" target="_blank" rel="noopener">vercel.com/drop</a>을 열고 그 폴더를 화면에 끌어다 놓습니다.</li><li>프로젝트 이름(영문)을 정하고 <b>Deploy</b>를 누릅니다. 로그인하지 않고 올리면 임시 배포라 일정 기간 뒤 사라집니다.</li><li><code>https://프로젝트이름.vercel.app</code> 주소가 나오면 열어 확인합니다.</li></ol></div><div class="howset"><b>데스크톱인 경우 · AI에게 맡기기</b><ol class="steps"><li>수업 전에 <a href="https://vercel.com/signup" target="_blank" rel="noopener">vercel.com/signup</a>에서 무료(Hobby) 계정을 만들어 둡니다. 이메일이나 GitHub 계정으로 가입할 수 있습니다.</li><li>아래 프롬프트를 보내면 AI가 Vercel 배포 도구를 실행해도 되는지 묻습니다. 내용을 읽고 <b>허용</b>을 누릅니다.</li><li>처음 배포할 때는 브라우저에 Vercel 로그인·승인 화면이 뜹니다. 가입한 계정으로 로그인하고 승인합니다.</li><li>배포가 끝나면 <code>https://프로젝트이름.vercel.app</code> 형태의 주소가 나옵니다. 휴대폰으로 열어 확인합니다.</li></ol></div><div class="prompt"><div class="bar"><span>데스크톱 · AI에게</span><button class="copy" type="button">복사</button></div><pre>이 폴더의 자기소개 페이지를 Vercel에 배포해줘.
+처음이면 로그인 방법을 안내해 주고, 끝나면 접속 주소를 알려줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>vercel.app 주소를 휴대폰으로 열면 내 페이지가 보이나요?</li><li>옆 사람에게 주소를 보내 열리는지 확인했나요?</li></ul></div><div class="caution"><strong>주의</strong><ul><li>배포한 주소는 아는 사람 누구나 볼 수 있습니다. 개인 휴대폰 번호처럼 공개하면 안 되는 정보는 넣지 않습니다.</li><li>데스크톱에서 Codex를 쓴다면 먼저 “Vercel에 배포할 수 있게 vercel-deploy 스킬을 설치해줘.”라고 보낸 뒤 배포를 맡깁니다.</li></ul></div></div><div class="step"><h4><span class="sn">5</span>고치고 다시 배포</h4><p>페이지를 한 군데 고친 뒤 다시 배포합니다. 웹은 고친 파일로 Vercel Drop에 다시 올립니다.</p><div class="prompt"><div class="bar"><span>AI에게 · 색칠된 부분을 내 것으로</span><button class="copy" type="button">복사</button></div><pre><span class="slot">고칠 내용</span>을 고치고 Vercel에 다시 배포해줘. 주소를 알려줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>같은 주소에서 고친 내용이 보이나요? 주소가 바뀌었다면 새 주소를 확인합니다.</li></ul></div></div>
+  <h3>성공 기준</h3>
+  <div class="success"><div><b class="lv">기본 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab4a-s0"><span>내 정보가 담긴 자기소개 페이지 index.html이 만들어졌다</span></label></li><li><label><input type="checkbox" data-key="lab4a-s1"><span>Vercel 주소를 휴대폰에서 열어 봤다</span></label></li></ul></div><div><b class="lv lv2">도전 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab4a-c0"><span>참고 사이트나 콘셉트를 반영해 디자인을 다듬었다</span></label></li><li><label><input type="checkbox" data-key="lab4a-c1"><span>고친 뒤 다시 배포했다</span></label></li></ul></div></div>
+  <h3>막힐 때</h3>
+  <div class="tablewrap"><table><tr><th>이럴 때</th><th>이렇게</th></tr><tr><td class="k">디자인이 평범하다</td><td>참고 사이트 주소와 캡처 이미지를 주고 “이 사이트의 <span class="slot">가져올 점</span>처럼 바꿔줘.”라고 보냅니다.</td></tr><tr><td class="k">배포 중 로그인 오류가 난다</td><td>“Vercel 로그인이 안 돼. 로그인 방법을 다시 안내해줘.”라고 보냅니다. 그래도 안 되면 Vercel Drop으로 직접 올립니다.</td></tr><tr><td class="k">주소가 열리지 않는다</td><td>배포가 끝나기까지 1~2분 걸릴 수 있습니다. 잠시 뒤 새로고침합니다.</td></tr></table></div>
+</section>
+<section id="lab4b">
+  <div class="mhead"><span class="clock">실습 4-B</span><h2 class="title">판매 데이터로 영업관리 대시보드 만들고 배포하기</h2></div>
+  <div class="meta"><span class="tool tool-ai">웹 · 데스크톱</span><span class="kind">EXCEL → 단일 HTML 대시보드 → VERCEL 배포</span></div>
+  <dl class="spec"><div><dt>목표</dt><dd>판매 데이터로 영업관리자용 대시보드를 만들고 배포한다</dd></div><div><dt>재료</dt><dd>판매 데이터.xlsx (2025년 1월~2026년 12월, 532행 × 20열)</dd></div><div><dt>결과물</dt><dd>엑셀을 올리면 분석되는 단일 HTML 대시보드, vercel.app 주소</dd></div><div><dt>핵심</dt><dd>데이터 이해 → KPI → 화면 설계를 먼저 하고, 코드는 그다음에. 기능은 한 번에 하나씩 더하고 매번 확인한다</dd></div></dl>
+  <div class="preview"><div><strong>결과물 예시 보기</strong><span>이번 실습으로 만들 판매 분석 대시보드의 완성본입니다. 필터, 탭, PDF 저장을 먼저 눌러 보세요.</span></div><a class="ext go" href="https://saleschart-pearl.vercel.app/" target="_blank" rel="noopener">열어 보기 ↗</a></div>
+  
+  
+  <p class="folder"><span>실습 파일</span><code>판매 데이터.xlsx (시작 전 확인에서 내려받기)</code> · 사용 도구: 웹(ChatGPT·Claude·Gemini) 또는 데스크톱(ChatGPT·Claude Code)</p>
+  <h3>진행 단계</h3>
+  <div class="step"><h4><span class="sn">1</span>데이터 이해</h4><p>웹은 새 대화에 판매 데이터.xlsx를 첨부하고, 데스크톱은 판매 데이터.xlsx가 든 폴더를 작업 폴더로 열고 시작합니다. 먼저 데이터 구조를 파악합니다.</p><div class="prompt"><div class="bar"><span>AI에게</span><button class="copy" type="button">복사</button></div><pre>판매 데이터 엑셀 파일의 시트, 열 이름, 데이터 기간, 계산 열을 분석해 줘. 대시보드 제작에 필요한 핵심 열을 정리해 줘. 파일은 수정하지 마.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>데이터 기간이 엑셀의 첫 판매일자·마지막 판매일자와 맞나요?</li><li>엑셀 수식으로 계산된 열(할인후단가, 실적매출액, 계획매출액 등)을 따로 구분했나요?</li><li>원본 엑셀 파일이 바뀌지 않았나요?</li></ul></div></div><div class="step"><h4><span class="sn">2</span>KPI 정하기</h4><p>영업관리자가 볼 핵심 지표 4개를 정합니다.</p><div class="prompt"><div class="bar"><span>AI에게</span><button class="copy" type="button">복사</button></div><pre>영업관리자가 월별 판매 실적과 계획 달성 현황을 확인하기 위한 KPI 4개를 제안해 줘. KPI는 실적매출액, 계획달성률, 계획 대비 차이, 매출총이익률을 포함해 줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>KPI마다 계산식이 붙어 있나요?</li><li>전체 계획달성률을 행별 달성률의 평균이 아니라 ‘실적매출액 합계 ÷ 계획매출액 합계’로 계산하나요? 평균을 내면 값이 달라집니다.</li><li>매출총이익률은 ‘매출총이익 합계 ÷ 실적매출액 합계’인가요?</li></ul></div></div><div class="step"><h4><span class="sn">3</span>화면 설계</h4><p>코드를 쓰기 전에 한 페이지 배치부터 정합니다.</p><div class="prompt"><div class="bar"><span>AI에게</span><button class="copy" type="button">복사</button></div><pre>영업관리자용 판매 분석 대시보드를 한 페이지로 설계해 줘. 상단에는 필터, 중간에는 KPI와 월별 차트, 하단에는 제품·채널·지역별 성과 비교와 상세 데이터표를 배치해 줘. 아직 코드는 작성하지 마.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>필터 → KPI·월별 차트 → 비교·상세표 순서로 설계됐나요?</li><li>아직 HTML 파일을 만들지 않았나요?</li></ul></div></div><div class="step"><h4><span class="sn">4</span>기본 화면 구현</h4><p>설계대로 단일 HTML 대시보드를 만듭니다. 웹은 결과 HTML을 내려받아 열고, 데스크톱은 폴더에 생긴 HTML 파일을 엽니다.</p><div class="prompt"><div class="bar"><span>AI에게</span><button class="copy" type="button">복사</button></div><pre>방금 설계한 한 페이지 판매 대시보드를 단일 HTML 파일로 구현해 줘. 엑셀 파일 업로드, KPI 4개, 월별 실적·계획 비교 차트, 계획달성률 차트를 포함해 줘. 서버 없이 브라우저에서 실행되게 해 줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>HTML을 더블클릭해 열고, 판매 데이터.xlsx를 올리면 KPI와 차트가 나오나요?</li><li>실적매출액 KPI를 엑셀에서 =SUM()으로 직접 계산한 값과 비교해 보세요.</li><li>월별 차트의 막대 개수가 데이터 기간의 달 수와 맞나요?</li></ul></div></div><div class="step"><h4><span class="sn">5</span>조건 선택 기능</h4><p>필터를 붙이고, 대분류에 따라 제품명이 좁혀지게 합니다.</p><div class="prompt"><div class="bar"><span>AI에게</span><button class="copy" type="button">복사</button></div><pre>대시보드 상단에 기간, 대분류, 제품명, 채널명, 지역을 선택하는 조건 선택 기능을 추가해 줘. 사용자가 조건을 바꾸면 KPI, 차트, 비교표, 상세 데이터표가 선택한 조건에 맞게 자동으로 바뀌게 해 줘. 대분류를 선택하면 해당 대분류의 제품명만 선택할 수 있게 해 줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>대분류를 고르면 제품명 목록이 그 대분류 제품만 남나요?</li><li>조건 하나를 고르고, 엑셀에서 같은 조건으로 필터한 합계와 KPI를 비교해 보세요.</li><li>조건을 바꿀 때 KPI·차트·비교표·상세표가 모두 함께 바뀌나요?</li></ul></div></div><div class="step"><h4><span class="sn">6</span>비교·상세표 기능</h4><p>제품·채널·지역별 비교와 상세표 기능을 더합니다.</p><div class="prompt"><div class="bar"><span>AI에게</span><button class="copy" type="button">복사</button></div><pre>제품별, 채널별, 지역별 탭으로 계획 대비 차이를 비교하는 막대 차트와 비교표를 추가해 줘. 상세 데이터표에는 검색, 20·50·100행 선택, 이전·다음 페이지 기능을 추가해 줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>탭을 바꾸면 차트와 비교표가 함께 바뀌나요?</li><li>계획에 못 미친(음수) 항목이 눈에 띄게 표시되나요?</li><li>검색하거나 필터를 바꾸면 상세표가 1페이지로 돌아가나요?</li></ul></div></div><div class="step"><h4><span class="sn">7</span>PDF 저장 기능</h4><p>보고용으로 A4 가로 PDF를 뽑을 수 있게 합니다.</p><div class="prompt"><div class="bar"><span>AI에게</span><button class="copy" type="button">복사</button></div><pre>PDF 저장 버튼을 추가해 줘. A4 가로 인쇄에 맞게 구성하고, 인쇄 시 필터와 버튼은 숨겨 줘. KPI, 차트, 비교표가 페이지 중간에서 잘리지 않게 하고, 상세표는 페이지가 넘어가도 헤더가 반복되게 해 줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>인쇄 미리보기가 A4 가로이고, 필터와 버튼이 숨겨지나요?</li><li>차트가 페이지 중간에서 잘리지 않고, 상세표 헤더가 페이지마다 반복되나요?</li></ul></div></div><div class="step"><h4><span class="sn">8</span>디자인</h4><p>참고 이미지를 저장해 첨부하고 같은 톤으로 바꿉니다. 아래 사이트에서 마음에 드는 대시보드를 찾아 캡처합니다.</p><p class="links"><a class="ext" href="https://dribbble.com/" target="_blank" rel="noopener">Dribbble ↗</a><a class="ext" href="https://dribbble.com/search/sales-dashboard" target="_blank" rel="noopener">Dribbble · 대시보드 디자인 ↗</a><a class="ext" href="https://www.tableau.com/ko-kr/products/public" target="_blank" rel="noopener">Tableau Public ↗</a></p><div class="prompt"><div class="bar"><span>AI에게</span><button class="copy" type="button">복사</button></div><pre>첨부한 참고 이미지와 같은 톤으로 대시보드 디자인을 수정해줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>디자인을 바꾼 뒤에도 업로드·필터·탭·PDF 저장이 모두 그대로 되나요?</li></ul></div></div><div class="step"><h4><span class="sn">9</span>배포</h4><p>완성한 대시보드를 Vercel에 올립니다. 4-A에서 해 본 방법과 같습니다. 웹은 Vercel Drop으로 직접 올리고, 데스크톱은 AI에게 맡깁니다.</p><div class="howset"><b>웹에서 만든 경우 · Vercel Drop으로 직접 올리기</b><ol class="steps"><li>완성된 HTML 파일 하나를 새 폴더에 넣고, 파일 이름을 <code>index.html</code>로 바꿉니다.</li><li><a href="https://vercel.com/drop" target="_blank" rel="noopener">vercel.com/drop</a>을 열고 그 폴더를 화면에 끌어다 놓습니다.</li><li>프로젝트 이름(영문)을 정하고 <b>Deploy</b>를 누릅니다. 로그인하지 않고 올리면 임시 배포라 일정 기간 뒤 사라집니다.</li><li><code>https://프로젝트이름.vercel.app</code> 주소가 나오면 열어 확인합니다.</li></ol></div><div class="prompt"><div class="bar"><span>데스크톱 · AI에게</span><button class="copy" type="button">복사</button></div><pre>버셀에 올려줘</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>vercel.app 주소를 휴대폰으로 열면 대시보드가 보이나요?</li><li>배포된 화면에서 판매 데이터.xlsx를 올리면 분석되나요?</li></ul></div><div class="caution"><strong>주의</strong><ul><li>배포한 주소는 누구나 볼 수 있습니다. 판매 데이터를 HTML 안에 넣어 두었다면 그 데이터도 공개됩니다. 배포 전에 “HTML 안에 데이터가 들어 있는지 확인하고, 있으면 빼고 업로드 방식으로만 동작하게 해줘.”라고 확인합니다.</li><li>회사 실제 데이터가 담긴 대시보드는 사내 규정을 먼저 확인합니다.</li></ul></div></div><div class="step"><h4><span class="sn">10</span>[선택 미션] 대시보드 개선</h4><p>시간이 남으면 하나씩 골라 더합니다. 하나를 끝내고 확인한 뒤 다음으로 넘어갑니다.</p><div class="prompt"><div class="bar"><span>AI에게 · 디자인 개선</span><button class="copy" type="button">복사</button></div><pre>현재 대시보드의 기능은 유지하고, 삼성전자 느낌의 블루·화이트 색상과 더 읽기 쉬운 여백·글꼴을 적용해 줘.</pre></div><div class="prompt"><div class="bar"><span>AI에게 · 반응형 화면</span><button class="copy" type="button">복사</button></div><pre>현재 대시보드가 노트북과 모바일 화면에서도 보기 좋게 반응형으로 동작하도록 개선해 줘.</pre></div><div class="prompt"><div class="bar"><span>AI에게 · 데이터 오류 안내</span><button class="copy" type="button">복사</button></div><pre>엑셀 업로드 시 필수 열이 없거나 데이터 형식이 잘못된 경우, 사용자가 이해하기 쉬운 오류 메시지를 보여 줘.</pre></div><div class="prompt"><div class="bar"><span>AI에게 · 빈 데이터 처리</span><button class="copy" type="button">복사</button></div><pre>필터 결과가 없을 때 빈 차트나 표 대신 ‘조건에 맞는 데이터가 없습니다’라는 안내를 보여 줘.</pre></div><div class="prompt"><div class="bar"><span>AI에게 · 차트 개선</span><button class="copy" type="button">복사</button></div><pre>월별 실적·계획 차트에 데이터 레이블과 툴팁을 추가해, 마우스를 올리면 실적·계획·달성률을 확인할 수 있게 해 줘.</pre></div><div class="prompt"><div class="bar"><span>AI에게 · 정렬 기능</span><button class="copy" type="button">복사</button></div><pre>제품·채널·지역 비교표에서 실적매출액, 계획달성률, 계획 대비 차이 열을 클릭해 정렬할 수 있게 해 줘.</pre></div><div class="prompt"><div class="bar"><span>AI에게 · 다운로드 기능</span><button class="copy" type="button">복사</button></div><pre>현재 필터와 검색 조건이 적용된 상세 데이터표를 CSV 파일로 다운로드하는 기능을 추가해 줘.</pre></div><div class="prompt"><div class="bar"><span>AI에게 · 사용 안내</span><button class="copy" type="button">복사</button></div><pre>대시보드 처음 화면에 짧은 사용 방법을 추가해 줘. 파일 업로드, 필터 선택, 비교표 확인 순서로 설명해 줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>새 기능을 더한 뒤에도 기존 기능이 그대로 되나요?</li><li>다운로드한 CSV를 엑셀로 열었을 때 한글이 깨지지 않나요?</li></ul></div></div>
+  <h3>성공 기준</h3>
+  <div class="success"><div><b class="lv">기본 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab4b-s0"><span>판매 데이터.xlsx를 올리면 KPI 4개와 월별 차트가 나오고, 실적매출액을 엑셀 합계와 대조했다</span></label></li><li><label><input type="checkbox" data-key="lab4b-s1"><span>조건을 바꾸면 KPI·차트·비교표·상세표가 함께 바뀐다</span></label></li></ul></div><div><b class="lv lv2">도전 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="lab4b-c0"><span>비교 탭, 상세표 검색·페이징, PDF 저장까지 동작한다</span></label></li><li><label><input type="checkbox" data-key="lab4b-c1"><span>Vercel로 배포해 휴대폰에서 주소로 열어 봤다</span></label></li><li><label><input type="checkbox" data-key="lab4b-c2"><span>선택 미션을 하나 이상 더했다</span></label></li></ul></div></div>
+  <h3>막힐 때</h3>
+  <div class="tablewrap"><table><tr><th>이럴 때</th><th>이렇게</th></tr><tr><td class="k">엑셀을 올려도 아무것도 안 나온다</td><td>브라우저에서 F12 → Console의 빨간 오류를 복사해 “엑셀 업로드 후 화면이 안 바뀌어. 이 오류를 보고 고쳐줘.”라고 보냅니다.</td></tr><tr><td class="k">KPI가 엑셀 계산과 다르다</td><td>“<span class="slot">KPI 이름</span>이 대시보드에는 <span class="slot">대시보드 값</span>, 엑셀 계산은 <span class="slot">내 계산 값</span>이야. 계산식을 보여주고 원본 기준으로 고쳐줘.”라고 보냅니다.</td></tr><tr><td class="k">기능을 더했더니 예전 기능이 망가졌다</td><td>“<span class="slot">망가진 기능</span>이 이번 변경 이후 안 돼. 이전 동작으로 되돌리고, 새 기능은 유지해줘.”라고 보냅니다.</td></tr><tr><td class="k">인터넷이 안 되는 곳에서 업로드가 안 된다</td><td>엑셀을 읽는 도구를 인터넷에서 불러오기 때문입니다. “엑셀 읽기·차트 라이브러리를 HTML 안에 포함해서 인터넷 없이도 동작하게 해줘.”라고 보냅니다.</td></tr></table></div>
+</section>
+      <section id="help">
+        <div class="mhead"><span class="clock">부록</span><h2 class="title">자주 막히는 곳</h2></div>
+        <div class="tablewrap"><table>
+          <tr><th>이럴 때</th><th>이렇게</th></tr>
+          <tr><td class="k">웹에서 코드가 중간에 끊긴다</td><td>“이어서 써줘”라고 보냅니다. 자주 끊기면 데스크톱 앱으로 옮겨 작업합니다.</td></tr>
+          <tr><td class="k">웹에서 고친 내용이 반영이 안 된다</td><td>새로 받은 HTML 파일로 바꿔 저장했는지 확인합니다. 예전 파일을 열고 있는 경우가 많습니다.</td></tr>
+          <tr><td class="k">파일을 못 찾는다고 한다</td><td>웹은 대화에 파일을 첨부했는지, 데스크톱은 작업 폴더가 파일이 든 폴더인지 확인합니다.</td></tr>
+          <tr><td class="k">데스크톱에서 허용 창이 계속 뜬다</td><td>파일을 만들거나 명령을 실행할 때마다 확인을 받습니다. 내용을 읽고 허용합니다.</td></tr>
+          <tr><td class="k">결과가 기대와 다르다</td><td>아래 틀로 무엇이 나왔고 무엇이 나와야 하는지 적어 보냅니다.</td></tr>
+          <tr><td class="k">답이 점점 엉뚱해진다</td><td>대화가 길어진 것입니다. “지금까지 한 일을 요약해줘.”로 요약을 받고, 새 대화에 붙여 이어 갑니다.</td></tr>
+          <tr><td class="k">변경이 화면에 안 보인다</td><td>브라우저에서 Ctrl+F5로 새로고침합니다.</td></tr>
+        </table></div>
+        <h3>기대와 다른 결과가 나왔을 때</h3>
+        <div class="prompt"><div class="bar"><span>AI에게 · 색칠된 부분을 내 것으로</span><button class="copy" type="button">복사</button></div><pre><span class="slot">무엇을 시켰는지</span> 했더니 <span class="slot">실제로 나온 결과</span>가 나왔어.
+<span class="slot">기대한 결과</span>가 나와야 해.
+원인을 확인하고 고친 뒤, 다시 실행해서 결과를 보여줘.</pre></div>
+      </section>
+      <section id="wrap">
+        <div class="mhead"><span class="clock">마무리</span><h2 class="title">내 업무에 적용하기</h2></div>
+        <p class="goal">오늘 해 본 것에 체크합니다.</p>
+        <ul class="checks">
+          <li><label><input type="checkbox" data-key="w1"><span>말로 설명해 웹페이지를 만들고 배포했다</span></label></li>
+          <li><label><input type="checkbox" data-key="w2"><span>코드를 쓰기 전에 데이터 이해, KPI, 화면 설계를 먼저 했다</span></label></li>
+          <li><label><input type="checkbox" data-key="w3"><span>대시보드 숫자를 엑셀에서 직접 계산한 값과 대조했다</span></label></li>
+          <li><label><input type="checkbox" data-key="w4"><span>기능을 한 번에 하나씩 더하며 확인했다</span></label></li>
+        </ul>
+        <h3>내 업무 데이터로 바꿔 보기</h3>
+        <p>오늘 만든 대시보드를 내 업무 엑셀에 맞게 바꿀 때 씁니다. 실제 회사 데이터는 사내 규정을 먼저 확인하고, 배포하지 않고 내 PC에서만 씁니다.</p>
+        <div class="prompt"><div class="bar"><span>AI에게 · 색칠된 부분을 내 것으로</span><button class="copy" type="button">복사</button></div><pre>오늘 만든 판매 대시보드를 <span class="slot">내 업무 엑셀 파일 이름</span>에 맞게 바꾸고 싶어.
+먼저 이 파일의 열 구조를 분석하고, 판매 데이터와 대응되는 열을 표로 정리해줘.
+<span class="slot">이 대시보드를 볼 사람</span>이 확인할 KPI 4개를 제안하고, 내가 고르면 그때 대시보드를 고쳐줘.
+파일은 수정하지 마.</pre></div>
+      </section>
+    </main>
+  </div>
+  <aside class="instructor" aria-label="강사 소개">
+    <div class="who"><strong>조미정</strong><span>네모공장(주) 대표 · AI 교육·컨설팅</span></div>
+    <ul class="work"><li>데이터 분석</li><li>AI 업무자동화</li><li>AI 프로젝트</li></ul>
+    <div class="contact"><span class="label">문의</span><span class="mail" id="mail">mjcho7@naver.com</span><button class="copy" type="button" id="mailcopy">주소 복사</button><span class="mail" id="tel">010-9365-5638</span></div>
+  </aside>
+  <footer>실습용 판매 데이터는 교육용 예시입니다. 실제 업무에 쓸 때는 원본 자료와 대조해 확인합니다.</footer>
+</div>
+<script>// 복사 버튼: 실패하면 글자를 선택해 Ctrl+C로 복사할 수 있게 한다
+function wireCopy(btn, source, idle) {
+  btn.addEventListener("click", function () {
+    var done = function (label) {
+      btn.textContent = label; btn.classList.add("done");
+      setTimeout(function () { btn.textContent = idle; btn.classList.remove("done"); }, 1800);
+    };
+    var selectText = function () {
+      var r = document.createRange(); r.selectNodeContents(source);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      done("선택됨 · Ctrl+C");
+    };
+    try { navigator.clipboard.writeText(source.textContent.trim()).then(function () { done("복사됨"); }, selectText); }
+    catch (e) { selectText(); }
+  });
+}
+document.querySelectorAll(".prompt").forEach(function (box) {
+  wireCopy(box.querySelector("button.copy"), box.querySelector("pre"), "복사");
+});
+wireCopy(document.getElementById("mailcopy"), document.getElementById("mail"), "주소 복사");
+
+// 체크 항목: 이 브라우저에만 저장 (저장이 안 되는 환경에서도 그대로 동작)
+(function () {
+  var KEY = "moe-day2-codex-checks", saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) {}
+  var prep = Array.prototype.slice.call(document.querySelectorAll("#checks input"));
+  var progress = document.getElementById("progress");
+  var refresh = function () { progress.textContent = prep.filter(function (b) { return b.checked; }).length + " / " + prep.length + " 완료"; };
+  document.querySelectorAll(".checks input[data-key]").forEach(function (b) {
+    var k = b.getAttribute("data-key");
+    if (saved[k]) b.checked = true;
+    b.addEventListener("change", function () { saved[k] = b.checked; try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {} refresh(); });
+  });
+  refresh();
+})();
+
+// 내 업무 자동화 설계: 입력하면 아래 프롬프트에 바로 들어가고, 이 브라우저에만 저장된다
+(function () {
+  var KEY = "moe-day2-worksheet", saved = {}, out = document.getElementById("wsout");
+  if (!out) return;
+  try { saved = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) {}
+  var fields = Array.prototype.slice.call(document.querySelectorAll("#ws [data-ws]"));
+  fields.forEach(function (f) {
+    var k = f.getAttribute("data-ws") + (f.type === "checkbox" ? ":" + f.value : "");
+    if (saved[k] !== undefined) { if (f.type === "checkbox") f.checked = !!saved[k]; else f.value = saved[k]; }
+  });
+  var val = function (n) { var f = document.querySelector('#ws [data-ws="' + n + '"]'); return f ? f.value.trim() : ""; };
+  var picks = function (n) { return Array.prototype.slice.call(document.querySelectorAll('#ws input[data-ws="' + n + '"]:checked')).map(function (x) { return x.value; }).join(", "); };
+  var blank = function (v) { return v || "(미정)"; };
+  function update() {
+    fields.forEach(function (f) { var k = f.getAttribute("data-ws") + (f.type === "checkbox" ? ":" + f.value : ""); saved[k] = f.type === "checkbox" ? f.checked : f.value; });
+    try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
+    var steps = [0, 1, 2, 3].map(function (i) { return val("q3_" + i); }).filter(Boolean);
+    out.textContent = "내 업무 하나를 AI로 자동화하려고 해. 아래 설계를 보고 도와줘.\n"
+      + "1. 자동화하고 싶은 업무: " + blank(val("q1")) + "\n"
+      + "2. 빈도: " + blank(picks("q2")) + "\n"
+      + "3. 반복 단계: " + blank(steps.join(" → ")) + "\n"
+      + "4. 제공할 자료: " + blank(picks("q4")) + "\n"
+      + "5. 지켜야 할 업무규칙: " + blank(val("q5")) + "\n"
+      + "6. 사람이 확인할 부분: " + blank(val("q6")) + "\n"
+      + "7. 원하는 결과물: " + blank(picks("q7")) + "\n"
+      + "8. 내가 생각한 도구: " + blank(picks("q8")) + "\n\n"
+      + "ChatGPT, Project, Skill, Work, Codex 중 어떤 방식이 가장 적합한지 이유와 함께 알려주고,\n"
+      + "작게 시작할 수 있는 첫 실험 단계와 그때 쓸 프롬프트를 만들어줘.";
+  }
+  fields.forEach(function (f) { f.addEventListener("input", update); f.addEventListener("change", update); });
+  update();
+})();
+
+// 자기소개 페이지 프롬프트 조립: 고른 항목이 바로 프롬프트에 들어간다
+(function () {
+  var out = document.getElementById("pbout"); if (!out) return;
+  var KEY = "moe-day2-intro-builder", saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) {}
+  var fields = Array.prototype.slice.call(document.querySelectorAll("#pb [data-pb]"));
+  var keyOf = function (f) { return f.getAttribute("data-pb") + ((f.type === "checkbox" || f.type === "radio") ? ":" + f.value : ""); };
+  fields.forEach(function (f) { var k = keyOf(f); if (saved[k] !== undefined) { if (f.type === "checkbox" || f.type === "radio") f.checked = !!saved[k]; else f.value = saved[k]; } });
+  var v = function (n) { var f = document.querySelector('#pb [data-pb="' + n + '"]'); return f ? f.value.trim() : ""; };
+  var picked = function (n) { return Array.prototype.slice.call(document.querySelectorAll('#pb input[data-pb="' + n + '"]:checked')).map(function (x) { return x.getAttribute("data-desc"); }); };
+  var or = function (x, d) { return x || d; };
+  function update() {
+    fields.forEach(function (f) { saved[keyOf(f)] = (f.type === "checkbox" || f.type === "radio") ? f.checked : f.value; });
+    try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
+    var fun = picked("fun");
+    var secs = picked("sec"), fx = picked("fx"), style = picked("style")[0] || "깔끔하고 정돈된 스타일";
+    var tone = picked("tone")[0] || "rich";
+    var TONE = {
+      plain: "[내용 작성]\n- 내가 적은 정보를 담백하고 간결하게 정리해줘\n",
+      rich: "[내용 작성]\n- 내가 준 정보는 초안이야. 이 정보를 바탕으로 문장을 풍부하게 살려서 써줘\n"
+        + "- 업무와 관심 분야는 ‘어떤 문제를, 어떻게 돕는지’가 보이게 풀어서 설명해줘\n"
+        + "- 첫 화면 슬로건, 섹션 제목, 짧은 소개 문구는 흔하지 않게 직접 지어줘\n"
+        + "- 섹션마다 어울리는 아이콘(이모지 대신 간단한 SVG)을 넣어 지루하지 않게 해줘\n",
+      bold: "[내용 작성]\n- 내가 준 정보는 초안이야. 이 정보를 바탕으로 아주 창의적이고 풍성하게 표현해줘\n"
+        + "- 업무를 이야기처럼 풀고, 나를 한마디로 표현하는 비유나 콘셉트를 하나 정해서 페이지 전체를 그 콘셉트로 꾸며줘\n"
+        + "- 첫 화면은 흔한 템플릿처럼 보이지 않게, 큰 문구와 나만의 시각 요소(도형·패턴·SVG 일러스트)로 인상적으로 만들어줘\n"
+        + "- 섹션 제목과 문구는 딱딱하지 않게 직접 지어줘\n"
+    }[tone];
+    var t = "나를 소개하는 웹페이지를 단일 HTML 파일로 만들어줘.\n\n"
+      + "[내 정보]\n"
+      + "이름: " + or(v("name"), "(이름)") + "\n"
+      + "소속·직무: " + or(v("role"), "(소속·직무)") + "\n"
+      + "한 줄 소개: " + or(v("line"), "(비어 있음 · 다른 정보를 바탕으로 지어줘)") + "\n"
+      + "담당 업무·관심 분야: " + or(v("work"), "(비어 있음 · 소속·직무에 어울리게 지어주되 [수정 필요] 표시)") + "\n"
+      + "연락처: " + or(v("mail"), "(이메일)") + "\n\n"
+      + "[구성] 아래 순서로 배치해줘.\n" + (secs.length ? secs.map(function (x, i) { return (i + 1) + ". " + x; }).join("\n") : "1. 첫 화면\n2. 자기소개\n3. 연락하기") + "\n\n"
+      + TONE + "- 단, 연도·숫자·수상·학력처럼 사실로 보이는 정보는 새로 만들지 말고, 꼭 필요하면 [수정 필요]로 자리만 남겨줘\n\n"
+      + "[디자인]\n"
+      + "- 분위기: " + style + " (해당 서비스의 로고·이름·문구는 쓰지 말고 분위기만 참고해줘)\n"
+      + "- 주 색상: " + v("color") + " (분위기와 어울리지 않으면 분위기 쪽 색을 우선하고, 보조색은 1~2개만)\n"
+      + "- 폰트: " + or(v("font"), "Pretendard") + " (웹폰트로 불러와 줘)\n"
+      + (fx.length ? "- 효과: " + fx.join(", ") + "\n" : "")
+      + (fun.length ? "\n[재미있는 기능]\n" + fun.map(function (x) { return "- " + x; }).join("\n") + "\n"
+          + "- 캐릭터와 일러스트는 기존 유명 캐릭터를 따라 하지 말고, 내 분위기에 맞는 오리지널 캐릭터를 SVG로 직접 그려줘\n"
+          + "- 휴대폰에서는 터치로 작동하게 하고, 움직이는 요소는 글자를 가리지 않게 해줘\n"
+          + "- 움직임을 끌 수 있는 작은 버튼을 하나 두고, ‘동작 줄이기’ 설정을 켠 사용자에게는 움직임을 멈춰줘\n" : "")
+      + (v("ref") ? "- 참고 사이트: " + v("ref") + (v("refnote") ? " — " + v("refnote") + "을(를) 참고해줘" : "") + "\n" : "")
+      + "\n[조건]\n"
+      + "- HTML·CSS·JavaScript를 한 파일에 넣고, 더블클릭으로 바로 열리게 해줘\n"
+      + "- 휴대폰 화면을 먼저 기준으로 만들고(모바일 우선), PC에서는 넓게 펼쳐지게 해줘\n"
+      + "- 휴대폰에서 글자는 16px 이상, 버튼은 손가락으로 누르기 쉬운 크기로 해줘\n"
+      + "- 효과는 가볍게 쓰고, 휴대폰에서 느려지거나 마우스가 있어야만 보이는 기능은 넣지 마\n"
+      + "- 사진 자리는 원형으로 두고, 폴더에 photo.jpg가 있으면 그 사진을 써줘\n"
+      + "- 파일 이름은 index.html로 저장해줘\n"
+      + "완성 후 브라우저에서 열어 깨지는 곳이 없는지 확인해줘.";
+    out.textContent = t;
+  }
+  fields.forEach(function (f) { f.addEventListener("input", update); f.addEventListener("change", update); });
+  update();
+})();
+
+// 한 단계씩 보기: 진행표에서 고른 실습만 보여주고, 아래에 이전/다음 버튼을 둔다
+(function () {
+  var sections = Array.prototype.slice.call(document.querySelectorAll("main > section"));
+  var links = Array.prototype.slice.call(document.querySelectorAll(".rail a"));
+  var toggle = document.getElementById("viewtoggle");
+  var ids = sections.map(function (x) { return x.id; });
+  var SKEY = "moe-day2-codex-step", paged = true, current = ids[0], seen = {};
+  var title = function (sec) { return sec.querySelector("h2.title").textContent; };
+  var label = function (sec) { return sec.querySelector(".clock").textContent; };
+  sections.forEach(function (sec, i) {
+    var where = document.createElement("span"); where.className = "where";
+    where.textContent = (i + 1) + " / " + sections.length; sec.querySelector(".mhead").appendChild(where);
+    var pager = document.createElement("div"); pager.className = "pager";
+    if (i > 0) {
+      var prev = document.createElement("button"); prev.type = "button"; prev.className = "prev";
+      prev.innerHTML = "<small>이전</small>"; prev.appendChild(document.createTextNode("← " + title(sections[i - 1])));
+      prev.addEventListener("click", function () { show(ids[i - 1], true); }); pager.appendChild(prev);
+    }
+    if (i < sections.length - 1) {
+      var next = document.createElement("button"); next.type = "button"; next.className = "next";
+      var small = document.createElement("small"); small.textContent = "다음 · " + label(sections[i + 1]); next.appendChild(small);
+      next.appendChild(document.createTextNode(title(sections[i + 1]) + " →"));
+      next.addEventListener("click", function () { show(ids[i + 1], true); }); pager.appendChild(next);
+    }
+    sec.appendChild(pager);
+  });
+  function render() {
+    sections.forEach(function (sec) { sec.hidden = paged && sec.id !== current; sec.querySelector(".pager").hidden = !paged; });
+    links.forEach(function (a) {
+      var id = a.getAttribute("href").slice(1);
+      if (id === current) a.setAttribute("aria-current", "step"); else a.removeAttribute("aria-current");
+      a.classList.toggle("seen", !!seen[id]);
+    });
+    toggle.textContent = paged ? "전체 펼쳐 보기" : "한 단계씩 보기";
+    var active = document.querySelector('.rail a[aria-current="step"]');
+    if (active && window.matchMedia("(max-width: 860px)").matches) {
+      try { active.scrollIntoView({ block: "nearest", inline: "center" }); } catch (e) {}
+    }
+  }
+  function show(id, scroll) {
+    if (ids.indexOf(id) < 0) return;
+    seen[current] = true; current = id;
+    try { sessionStorage.setItem(SKEY, id); } catch (e) {}
+    try { history.replaceState(null, "", "#" + id); } catch (e) {}
+    render();
+    if (scroll) {
+      var t = document.getElementById(id);
+      try { t.scrollIntoView({ block: "start", behavior: "instant" }); } catch (e) { try { t.scrollIntoView(true); } catch (e2) {} }
+    }
+  }
+  links.forEach(function (a) { a.addEventListener("click", function (e) { e.preventDefault(); show(a.getAttribute("href").slice(1), true); }); });
+  toggle.hidden = false;
+  toggle.addEventListener("click", function () { paged = !paged; render(); if (!paged) { try { document.getElementById(current).scrollIntoView({ block: "start" }); } catch (e) {} } });
+  window.addEventListener("hashchange", function () { show(location.hash.slice(1), true); });
+  var start = location.hash.slice(1);
+  if (ids.indexOf(start) < 0) { try { start = sessionStorage.getItem(SKEY) || ""; } catch (e) { start = ""; } }
+  current = ids.indexOf(start) >= 0 ? start : ids[0];
+  render();
+})();
+</script>
+</body></html>

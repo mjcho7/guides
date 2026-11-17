@@ -10,6 +10,7 @@
 | `rag/` | RAG 기반 LLM 서비스 제작 실습 |
 | `sac/` | 예술의전당 AI 업무자동화 교육 제안(사례 선택) — `edu.nemofactory.kr/sac/` |
 | `automation/` | AI 업무자동화 실습 교재(`index.html`)와 실습파일(`실습파일_자동화.zip`) — `edu.nemofactory.kr/automation/` |
+| `dashboard/` | 엑셀 데이터로 웹 대시보드 만들기 실습 교재(`index.html`)와 실습 데이터(`판매 데이터.xlsx`) — `edu.nemofactory.kr/dashboard/` |
 | `tips/index.html` | AI 활용꿀팁 메인(전체 모음) — `edu.nemofactory.kr/tips/` |
 | `tips/01/` | #01 프로젝트 지침 — 같은 요청, 매번 다시 설명하고 계신가요? |
 | `tips/02/` | #02 규정 도우미 — 같은 문의, 매번 규정 찾아 답하고 계신가요? |
