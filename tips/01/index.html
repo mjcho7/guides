@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI 활용꿀팁 #01 · 프로젝트 지침으로 반복 업무 자동화하기</title>
-<meta name="description" content="프로젝트 지침으로 반복 업무 자동화하기 — 규칙은 한 번만 정해 두고 내용만 입력하는 실습">
+<title>AI 활용꿀팁 #01 · 보도자료, 기자처럼 쓰고 싶으신가요?</title>
+<meta name="description" content="프로젝트 지침으로 보도자료 제목·부제목 쓰기 — 작성 원칙과 참고 보도자료를 저장해 두고 행사 정보만 넣는 실습">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -47,12 +47,6 @@
   ol.how li{margin:4px 0}
   .ui{display:inline-block;font-size:13.5px;font-weight:700;background:#fff;border:1px solid var(--line);border-radius:6px;padding:0 7px;white-space:nowrap}
 
-  .mock{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;min-height:150px}
-  .mock-side{width:42%;max-width:220px;background:#FAFAFB;border-right:1px solid var(--line);padding:12px;display:flex;flex-direction:column;gap:8px}
-  .mock-row{height:10px;border-radius:5px;background:#E6E8EC}
-  .mock-btn{font-size:12.5px;font-weight:700;color:var(--coral-ink);background:var(--coral-soft);border:2px solid var(--coral);border-radius:8px;padding:6px 8px}
-  .mock-main{flex:1;padding:12px;display:flex;flex-direction:column;gap:8px}
-  .mock-cap{font-size:12px;color:var(--muted);text-align:center;margin-top:6px}
 
   .copybox{position:relative;margin-top:14px;background:#fff;border:1.5px solid var(--coral-line);border-radius:12px}
   .copybox pre{margin:0;padding:16px 16px 60px;font:inherit;font-size:14.5px;line-height:1.75;white-space:pre-wrap;word-break:keep-all;color:var(--ink)}
@@ -116,6 +110,10 @@
   .topnav a{color:#A94C36;background:none;border:none;padding:6px 2px;min-height:40px}
   .topnav a:hover{color:#8E3E2B;text-decoration:underline;text-underline-offset:3px;background:none}
   @media (max-width:600px){.topnav a{font-size:13px}}
+  .dl{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px 12px 12px 16px;margin-top:12px}
+  .dl b{display:block;font-size:16px}
+  .dl span{display:block;font-size:13.5px;color:var(--muted)}
+  .dl a{flex:none;font-size:14px;font-weight:700;text-decoration:none;color:#fff;background:var(--ink);border-radius:10px;padding:10px 16px;min-height:44px;display:inline-flex;align-items:center}
 </style>
 </head>
 <body>
@@ -126,15 +124,27 @@
     <a href="/tips/"><span aria-hidden="true">←</span> 전체 꿀팁 보기</a>
   </nav>
 
-  <div class="chiprow"><span class="ep">#01</span><span class="chip">AI 활용꿀팁 실습 · 반복 업무 자동화</span></div>
-  <h1>같은 요청,<br>매번 <em>다시 설명</em>하고 계신가요?</h1>
-  <p class="subt">프로젝트 지침으로 반복 업무 자동화하기</p>
-  <p class="meta">2026년 10월 화면 기준</p>
+  <div class="chiprow"><span class="ep">#01</span><span class="chip">AI 활용꿀팁 실습 · 보도자료 작성</span></div>
+  <h1>보도자료,<br><em>기자처럼</em> 쓰고 싶으신가요?</h1>
+  <p class="subt">프로젝트 지침으로 보도자료 제목·부제목 쓰기</p>
+  <p class="meta">2026년 11월 화면 기준</p>
 
   <div class="what">
     <b>프로젝트란?</b>
-    <p>규칙(지침)을 저장해 두는 AI 작업 공간이에요. 그 안에서 여는 대화는 저장한 규칙을 늘 따라요.</p>
+    <p>규칙(지침)과 참고 자료를 저장해 두는 AI 작업 공간이에요. 그 안에서 여는 대화는 저장한 규칙과 자료를 늘 따라요.</p>
   </div>
+
+  <section class="step" aria-labelledby="s0">
+    <div class="step-head"><span class="num" style="background:var(--ink)">0</span><h2 id="s0">실습 자료 내려받기</h2></div>
+    <div class="card">
+      <p style="margin:0;font-size:15px">이번 실습은 AI가 참고할 <b>보도자료 한 편</b>으로 해요. 먼저 내 컴퓨터에 저장해 두세요.</p>
+      <div class="dl">
+        <div><b>참고 보도자료(겨울숭어축제)</b><span>PDF · 1쪽 · 실습용 가상 자료</span></div>
+        <a href="press-release-sample.pdf" download="참고 보도자료(겨울숭어축제).pdf">내려받기</a>
+      </div>
+      <p class="tip" style="margin-top:12px">제목 <b>"숭어는 추울 때 먹어야 제맛!"</b>, 부제목 <b>"'2026 한빛 겨울숭어축제' 12월 24일 한빛항 일원서 개막"</b>처럼 쓰인 보도자료예요. AI가 이 방식을 따라 써요.</p>
+    </div>
+  </section>
 
   <div class="tabs" role="tablist" aria-label="사용할 AI 고르기">
     <button class="tab" role="tab" id="tab-gpt" aria-selected="true" aria-controls="panel" data-ai="gpt">ChatGPT</button>
@@ -148,64 +158,67 @@
       <div class="step-head"><span class="num">1</span><h2 id="s1">새 프로젝트 만들기</h2></div>
       <div class="card">
         <ol class="how" data-for="gpt">
-          <li>왼쪽 메뉴에서 <span class="ui">New project (새 프로젝트)</span>를 눌러요.</li>
-          <li>이름을 <b>보도자료 첫 문단</b>으로 적고 만들어요.</li>
+          <li>왼쪽 메뉴에서 <span class="ui">새 프로젝트</span>를 눌러요.</li>
+          <li>이름을 <b>보도자료 작성</b>으로 적고 만들어요.</li>
         </ol>
         <ol class="how" data-for="claude" hidden>
           <li>왼쪽 메뉴에서 <span class="ui">Projects (프로젝트)</span>를 눌러요.</li>
           <li>오른쪽 위 <span class="ui">+ New Project (새 프로젝트)</span>를 눌러요.</li>
-          <li>이름을 <b>보도자료 첫 문단</b>으로 적고 만들어요.</li>
+          <li>이름을 <b>보도자료 작성</b>으로 적고 만들어요.</li>
         </ol>
-        <div class="mock" aria-hidden="true">
-          <div class="mock-side">
-            <div class="mock-btn" data-for="gpt">+ New project</div>
-            <div class="mock-btn" data-for="claude" hidden>Projects</div>
-            <div class="mock-row"></div><div class="mock-row" style="width:80%"></div><div class="mock-row" style="width:65%"></div>
-          </div>
-          <div class="mock-main">
-            <div class="mock-row" style="width:55%"></div><div class="mock-row" style="width:85%"></div><div class="mock-row" style="width:70%"></div>
-          </div>
-        </div>
-        <p class="mock-cap">주황 테두리 버튼을 찾으세요</p>
       </div>
     </section>
 
     <section class="step" aria-labelledby="s2">
-      <div class="step-head"><span class="num">2</span><h2 id="s2">지침에 업무 규칙 넣기</h2></div>
+      <div class="step-head"><span class="num">2</span><h2 id="s2">지침에 제목 작성 원칙 넣기</h2></div>
       <div class="card">
         <ol class="how" data-for="gpt">
-          <li>프로젝트 안에서 오른쪽 위 <span class="ui">•••</span> → <span class="ui">Project settings (프로젝트 설정)</span>을 눌러요.</li>
-          <li><b>지침(Instructions)</b> 칸에 아래 업무 규칙을 붙여넣고 저장해요.</li>
+          <li>프로젝트 화면 오른쪽 위 <span class="ui">•••</span> → <span class="ui">프로젝트 설정</span>을 눌러요.</li>
+          <li><b>지침</b> 칸에 아래 내용을 붙여넣어요.</li>
         </ol>
         <ol class="how" data-for="claude" hidden>
           <li>프로젝트 안에서 <span class="ui">Set project instructions (프로젝트 지침 설정)</span>을 눌러요.</li>
-          <li>아래 업무 규칙을 붙여넣고 <span class="ui">Save instructions (저장)</span>을 눌러요.</li>
+          <li>아래 내용을 붙여넣고 <span class="ui">Save instructions (저장)</span>을 눌러요.</li>
         </ol>
         <div class="copybox">
-          <pre id="rule-press">사용자가 행사명과 날짜를 입력하면 한빛시 보도자료의 첫 문단을 작성한다.
-- 첫 문장은 반드시 "한빛시는 [날짜] '[행사명]'을(를) 개최한다고 밝혔다."로 쓴다.
-- 이어서 행사 취지를 1~2문장 더해 전체 2~3문장으로 쓴다.
-- 입력하지 않은 장소, 수치, 프로그램, 인용문, 관계자 발언은 만들지 않는다.
-- 객관적이고 간결한 보도자료 문체를 쓴다.
-- 제목, 목록, 별도 설명은 덧붙이지 않는다.</pre>
+          <pre id="rule-press">너는 10년 차 기자 출신 홍보 담당자다.
+사용자가 행사명, 날짜, 장소를 입력하면 보도자료의 제목과 부제목을 쓴다.
+
+[제목]
+- 비유나 대구를 살려 짧고 인상적으로 쓴다. 15자 안팎.
+- 행사의 성격이나 의미가 한눈에 떠오르게 쓴다.
+- 예: 숭어는 추울 때 먹어야 제맛!
+
+[부제목]
+- 한 줄로 쓴다.
+- 입력한 행사명·날짜·장소를 모두 넣어 "'[행사명]' [날짜] [장소]서 개막" 형식으로 쓴다.
+- 예: '2026 한빛 겨울숭어축제' 12월 24일 한빛항 일원서 개막
+
+[공통 원칙]
+- 문체와 형식은 첨부한 보도자료를 참고한다.
+- 입력하지 않은 날짜, 장소, 숫자, 프로그램은 지어내지 않는다.
+- 홍보성 과장 표현("최고의", "역대급")은 쓰지 않는다.
+
+[출력 형식] 아래 두 줄만 쓰고, 설명은 덧붙이지 않는다.
+제목: ...
+부제목: ...</pre>
           <button class="copy" type="button" data-copy="rule-press">지침 복사</button>
         </div>
       </div>
     </section>
 
     <section class="step" aria-labelledby="s2b">
-      <div class="step-head"><span class="num">3</span><h2 id="s2b">예시 자료 올리기</h2></div>
+      <div class="step-head"><span class="num">3</span><h2 id="s2b">참고 보도자료 올리기</h2></div>
       <div class="card">
-        <p style="margin:0 0 10px;font-size:15px">우리 기관의 지난 보도자료 1~2건을 프로젝트 파일로 올려 두면, 문체와 형식을 더 정확하게 따라요.</p>
         <ol class="how" data-for="gpt">
-          <li>프로젝트 화면에서 <span class="ui">Add files (파일 추가)</span>를 눌러요.</li>
-          <li>지난 보도자료 파일(PDF·한글 변환 문서 등)을 올려요.</li>
+          <li>프로젝트 화면에서 <span class="ui">소스</span> 탭을 눌러요.</li>
+          <li><span class="ui">+ 소스 추가</span>를 누르고, 0단계에서 받은 PDF를 올려요.</li>
         </ol>
         <ol class="how" data-for="claude" hidden>
           <li>프로젝트 화면 오른쪽 <span class="ui">Files (파일)</span>의 <span class="ui">+</span>를 눌러요.</li>
-          <li>지난 보도자료 파일(PDF·한글 변환 문서 등)을 올려요.</li>
+          <li>0단계에서 받은 PDF를 올려요.</li>
         </ol>
-        <p class="tip" style="margin-top:12px"><b>지침에 한 줄 더!</b> "올린 예시 보도자료의 문체를 따른다"를 지침 마지막에 추가하면 더 좋아요. 예시 자료가 없으면 이 단계는 건너뛰어도 돼요.</p>
+        <p class="tip" style="margin-top:12px"><b>내 업무에서는?</b> 기사로 잘 실렸던 우리 기관의 지난 보도자료 1~2건을 올리세요. AI가 그 문체를 따라 써요.</p>
       </div>
     </section>
 
@@ -214,31 +227,31 @@
   <section class="step" aria-labelledby="s3">
     <div class="step-head"><span class="num">4</span><h2 id="s3">질문하고 다듬기</h2></div>
     <div class="card">
-      <p style="margin:0;font-size:15px">프로젝트 안에서 <b>새 대화</b>를 열고, 아래 중 하나를 복사해 보내 보세요. 규칙은 다시 쓰지 않아도 돼요.</p>
+      <p style="margin:0;font-size:15px">프로젝트 안에서 <b>새 대화</b>를 열고, 행사명·날짜·장소만 보내 보세요. 규칙은 다시 쓰지 않아도 돼요.</p>
       <div class="inputs">
-        <div class="input-row"><span id="in1">가을 독서축제, 11월 8일</span><button class="copy" type="button" data-copy="in1">복사</button></div>
-        <div class="input-row"><span id="in2">청소년 영화제, 11월 22일</span><button class="copy" type="button" data-copy="in2">복사</button></div>
-        <div class="input-row"><span id="in3">겨울 음악회, 12월 13일</span><button class="copy" type="button" data-copy="in3">복사</button></div>
+        <div class="input-row"><span id="in1">국제탈춤페스티벌, 9월 26일, 탈춤공원</span><button class="copy" type="button" data-copy="in1">복사</button></div>
+        <div class="input-row"><span id="in2">국악한마당, 10월 17일, 한빛문화예술관</span><button class="copy" type="button" data-copy="in2">복사</button></div>
       </div>
 
       <div class="result">
         <span class="result-label">이런 형태로 나오면 성공</span>
-        <p><b>한빛시는 11월 8일 '가을 독서축제'를 개최한다고 밝혔다.</b> 이번 축제는 독서의 계절을 맞아 시민들이 책과 더 가까워질 수 있도록 마련됐다.</p>
+        <p><b>제목: 탈 쓰고, 흥을 잇다!</b><br>부제목: '국제탈춤페스티벌' 9월 26일 탈춤공원서 개막</p>
+        <p style="margin-top:10px"><b>제목: 우리 가락, 흥을 돋우다!</b><br>부제목: '국악한마당' 10월 17일 한빛문화예술관서 개막</p>
         <ul class="checks" aria-label="결과 확인하기">
-          <li><label><input type="checkbox"> 정해진 첫 문장</label></li>
-          <li><label><input type="checkbox"> 2~3문장</label></li>
-          <li><label><input type="checkbox"> 지어낸 숫자 없음</label></li>
-          <li><label><input type="checkbox"> 제목·목록 없음</label></li>
+          <li><label><input type="checkbox"> 짧고 인상적인 제목</label></li>
+          <li><label><input type="checkbox"> 부제목 한 줄</label></li>
+          <li><label><input type="checkbox"> 행사명·날짜·장소 포함</label></li>
+          <li><label><input type="checkbox"> 설명 없이 두 줄</label></li>
         </ul>
       </div>
-      <p class="tip"><b>다른 행사도 보내서 형식이 같은지 확인하세요.</b> 세 개를 모두 보내 보면 첫 문장이 늘 같은 틀로 나오는지 바로 보여요.</p>
-      <p class="tip"><b>결과가 어긋나면?</b> 대화가 아니라 <b>지침</b>을 고치세요. 예: "마지막 문장은 '자세한 내용은 [담당부서]로 문의하면 된다'로 끝낸다"를 한 줄 추가하면 다음부터 계속 적용돼요. 이렇게 질문 → 확인 → 지침 고치기를 반복하면 우리 업무에 꼭 맞는 지침이 돼요.</p>
+      <p class="tip"><b>제목은 매번 조금씩 달라져요.</b> 마음에 들 때까지 "다른 제목으로 다시"라고 보내 보세요. 부제목 형식은 그대로 유지돼요.</p>
+      <p class="tip"><b>결과가 어긋나면?</b> 대화가 아니라 <b>지침</b>을 고치세요. 예: "제목에 기관명을 넣는다"를 한 줄 추가하면 다음부터 계속 적용돼요.</p>
     </div>
   </section>
 
-    <section class="step" aria-labelledby="s4">
+  <section class="step" aria-labelledby="s4">
     <div class="step-head"><span class="num" style="background:var(--green)">+</span><h2 id="s4">내 업무에 써 보기</h2></div>
-    <p style="margin:-4px 0 12px;font-size:15px;color:var(--body)">업무마다 프로젝트를 하나씩 만들고, 지침만 바꿔 넣으면 돼요. [ ] 부분은 우리 기관에 맞게 고쳐 주세요.</p>
+    <p style="margin:-4px 0 12px;font-size:15px;color:var(--body)">글마다 프로젝트를 하나씩 만들고, 지침과 참고 자료만 바꿔 넣으면 돼요. [ ] 부분은 우리 기관에 맞게 고쳐 주세요.</p>
     <div class="apply">
       <details>
         <summary><span><span class="t">행사 홍보글</span><span class="s">행사명·날짜만 넣으면 SNS 게시글 완성</span></span><span class="arrow">▼</span></summary>
@@ -252,25 +265,25 @@
         </div>
       </details>
       <details>
-        <summary><span><span class="t">회의 안내 문자</span><span class="s">회의명·일시만 넣으면 안내 문자 완성</span></span><span class="arrow">▼</span></summary>
+        <summary><span><span class="t">기관 소식지 기사</span><span class="s">메모만 넣으면 소식지 기사 완성</span></span><span class="arrow">▼</span></summary>
         <div class="copybox">
-          <pre id="rule-meeting">사용자가 회의명과 일시를 입력하면 참석자에게 보낼 안내 문자를 작성한다.
-- 90자 이내로 작성한다.
-- 회의명, 일시, 장소, 준비물 순서로 쓴다.
-- 입력하지 않은 정보는 [ ]로 비워 둔다.
-- 정중하고 간결한 문체를 쓴다.</pre>
-          <button class="copy" type="button" data-copy="rule-meeting">지침 복사</button>
+          <pre id="rule-news">사용자가 행사·사업 메모를 입력하면 [기관명] 소식지 기사를 작성한다.
+- 제목은 짧고 인상적으로, 부제목은 핵심 사실을 한 줄로 쓴다.
+- 본문은 3문단 이내, 중요한 내용부터 쓴다.
+- 메모에 없는 수치, 프로그램, 관계자 발언은 만들지 않는다.
+- 문체는 첨부한 지난 소식지 기사를 참고한다.</pre>
+          <button class="copy" type="button" data-copy="rule-news">지침 복사</button>
         </div>
       </details>
       <details>
-        <summary><span><span class="t">출장 결과 보고</span><span class="s">메모만 넣으면 □○ 개조식 요약</span></span><span class="arrow">▼</span></summary>
+        <summary><span><span class="t">카드뉴스 문구</span><span class="s">알릴 내용만 넣으면 5장 문구 완성</span></span><span class="arrow">▼</span></summary>
         <div class="copybox">
-          <pre id="rule-trip">사용자가 출장 메모를 입력하면 출장 결과 보고를 작성한다.
-- □(대제목), ○(세부 내용) 개조식으로 쓴다.
-- 출장 개요 / 주요 내용 / 향후 계획 순서로 정리한다.
-- A4 반 페이지 이내로 쓴다.
-- 메모에 없는 내용은 추가하지 않는다.</pre>
-          <button class="copy" type="button" data-copy="rule-trip">지침 복사</button>
+          <pre id="rule-card">사용자가 알릴 내용을 입력하면 카드뉴스 5장 문구를 작성한다.
+- 1장: 눈길을 끄는 제목 한 줄
+- 2~4장: 한 장에 한 가지 핵심, 2줄 이내
+- 5장: 일시, 장소, 문의처
+- 입력하지 않은 정보는 [ ]로 비워 둔다.</pre>
+          <button class="copy" type="button" data-copy="rule-card">지침 복사</button>
         </div>
       </details>
     </div>
