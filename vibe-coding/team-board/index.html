@@ -204,23 +204,8 @@ footer.foot{width:min(1180px,calc(100% - 40px));margin:auto;padding:24px 0 48px;
       </div>
 
       <div class="demo">
-        <div class="lbl"><small>강사 시연</small>완성본을 외부 공유 주소로 먼저 보여 주기</div>
-        <p>실습을 시작하기 전에, 완성된 현황판을 <b>10 외부 공유</b> 방식(Cloudflare Tunnel)으로 띄워 수강생이 자기 휴대폰으로 직접 열어 보게 합니다. 무엇을 만들지 눈으로 먼저 보여 주는 순서입니다.</p>
-        <ol class="list">
-          <li>강사 PC에서 완성본의 <code>src</code> 폴더로 PowerShell 창 A를 열고 앱을 실행합니다.</li>
-          <li>PowerShell 창 B에서 Tunnel을 실행합니다.</li>
-          <li>나온 <code>https://...trycloudflare.com</code> 주소를 화면에 띄우거나 단체 채팅방에 올려, 수강생이 휴대폰으로 열게 합니다.</li>
-          <li>시연용 계정으로 로그인해 대시보드, 당직·휴가 입력 화면을 보여 줍니다.</li>
-          <li>시연이 끝나면 창 B를 닫습니다. 주소는 바로 끊깁니다.</li>
-        </ol>
-        <div class="cmdbox"><div class="lbl">창 A · PowerShell<button class="copy" type="button">복사</button></div><pre><code>cd ...\src<br>npm start</code></pre></div>
-        <div class="cmdbox"><div class="lbl">창 B · PowerShell<button class="copy" type="button">복사</button></div><pre><code>.\cloudflared-windows-amd64.exe tunnel --url http://localhost:3000</code></pre></div>
-        <div class="warn"><div class="lbl">시연 전에 확인</div><ul>
-          <li>창 B는 <code>cloudflared-windows-amd64.exe</code> 파일이 있는 폴더에서 엽니다.</li>
-          <li>시연용 <code>data.db</code>에는 실제 직원 이름·사번 같은 개인정보를 넣지 않습니다. 주소를 아는 누구나 열 수 있습니다.</li>
-          <li>교육장 와이파이에서 안 열리면 휴대폰 데이터로 열어 보게 합니다.</li>
-        </ul></div>
-        <button class="go" type="button" data-goto="s9">10 외부 공유 자세히 보기 →</button>
+        <div class="lbl"><small>시연</small>완성본 외부 공유</div>
+        <button class="go" type="button" data-goto="s9">10 외부 공유 보기 →</button>
       </div>
 
       <h3>무엇을 만들까?</h3>
