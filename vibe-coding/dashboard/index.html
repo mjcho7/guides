@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="예술의전당 공연·전시 입장객 엑셀 데이터를 Codex에게 말로 설명해 웹 대시보드로 만들고, Vercel로 배포하는 바이브코딩 실습입니다.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="네모공장 교육">
+<meta property="og:title" content="예술의전당 입장객 웹 대시보드 만들고 배포하기">
+<meta property="og:description" content="예술의전당 공연·전시 입장객 엑셀 데이터를 Codex에게 말로 설명해 웹 대시보드로 만들고, Vercel로 배포하는 바이브코딩 실습입니다.">
+<meta property="og:url" content="https://edu.nemofactory.kr/vibe-coding/dashboard/">
+<title>예술의전당 입장객 웹 대시보드 만들고 배포하기 · 바이브코딩 실습</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>:root {
+  --bg: #f5f6f8; --surface: #ffffff; --ink: #1b2230; --muted: #5d6676; --line: #dfe3ea;
+  --accent: #2f4bbf; --accent-soft: #e8ecfb; --check: #0f7a5a; --check-soft: #e2f4ee;
+  --warn: #9a5b00; --warn-soft: #fdf1dc; --code-bg: #eef0f5; --accent-ink: #ffffff;
+  --t1: #2f4bbf; --t1s: #e8ecfb; --t2: #0f7a5a; --t2s: #e2f4ee; --t3: #8a4fb0; --t3s: #f3eafa;
+  --sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", "D2Coding", Consolas, "Courier New", monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14171d; --surface: #1c2029; --ink: #e6e9ef; --muted: #9aa3b2; --line: #2e3440;
+    --accent: #8ea2ff; --accent-soft: #232b4a; --check: #5fd0a8; --check-soft: #17332b;
+    --warn: #f0b458; --warn-soft: #3a2c12; --code-bg: #12151b; --accent-ink: #14171d;
+    --t1: #8ea2ff; --t1s: #232b4a; --t2: #5fd0a8; --t2s: #17332b; --t3: #d2a6f0; --t3s: #2e2338;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.7 var(--sans); padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+[hidden] { display: none !important; }
+.page { max-width: 1120px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 64px; }
+a { color: var(--accent); }
+code { font-family: var(--mono); font-size: .92em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+header.top { display: grid; gap: 10px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+.eyebrow { font: 500 13px/1.4 var(--mono); color: var(--accent); letter-spacing: .04em; }
+h1 { margin: 0; font-size: clamp(26px, 4.2vw, 38px); line-height: 1.25; font-weight: 700; text-wrap: balance; letter-spacing: -.01em; }
+.sub { margin: -4px 0 2px; font-size: 18px; font-weight: 500; color: var(--accent); }
+.lede { margin: 0; color: var(--muted); max-width: 64ch; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 6px 0 0; padding: 0; list-style: none; font-size: 14.5px; }
+.facts b { font-weight: 600; }
+.layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 40px; margin-top: 28px; align-items: start; }
+nav.rail { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
+.rail h2 { margin: 0 0 10px; font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: .03em; }
+.rail ol { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--line); }
+.rail li a { display: grid; grid-template-columns: 50px 14px 1fr; gap: 6px; padding: 7px 8px 7px 12px; margin-left: -2px; border-left: 2px solid transparent; color: var(--ink); text-decoration: none; font-size: 14.5px; line-height: 1.45; }
+.rail li a:hover { border-left-color: var(--accent); color: var(--accent); }
+.rail li a[aria-current="step"] { border-left-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; border-radius: 0 6px 6px 0; }
+.rail li a[aria-current="step"] time { color: var(--accent); }
+.rail li a::after { content: ""; order: 1; font: 600 13px/1.6 var(--mono); color: var(--check); text-align: center; }
+.rail li a time { order: 0; } .rail li a span { order: 2; }
+.rail li a.seen:not([aria-current])::after { content: "✓"; }
+.rail time { font: 400 12.5px/1.6 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.railbtns { display: grid; gap: 6px; margin-top: 14px; }
+.viewtoggle { font: 500 13px/1.2 var(--sans); color: var(--accent); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 8px 11px; cursor: pointer; width: 100%; }
+.viewtoggle:hover { border-color: var(--accent); }
+.viewtoggle[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+main { display: grid; gap: 28px; min-width: 0; }
+section { display: grid; gap: 14px; min-width: 0; scroll-margin-top: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 0 26px 26px; }
+.mhead { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0 -26px 4px; padding: 16px 26px; background: var(--accent-soft); border-bottom: 1px solid var(--line); border-radius: 10px 10px 0 0; }
+.clock { font: 600 13px/1.4 var(--mono); color: var(--accent-ink); background: var(--accent); padding: 4px 11px; border-radius: 999px; white-space: nowrap; }
+.mins { font: 500 13px/1.4 var(--mono); color: var(--accent); border: 1px solid var(--accent); padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+h2.title { margin: 0; font-size: 23px; line-height: 1.35; font-weight: 700; text-wrap: balance; }
+.where { font: 500 13px/1.4 var(--mono); color: var(--muted); margin-left: auto; white-space: nowrap; }
+h3 { margin: 14px 0 0; padding-top: 18px; border-top: 1px solid var(--line); font-size: 17px; font-weight: 700; }
+.mhead + .goal + h3, .mhead + h3 { border-top: 0; padding-top: 0; margin-top: 6px; }
+p { margin: 0; max-width: 70ch; }
+.goal { color: var(--muted); }
+.note { color: var(--muted); font-size: 14px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
+.kind { font: 500 12.5px/1.4 var(--mono); color: var(--muted); letter-spacing: .03em; margin-right: 4px; }
+.tag { font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+.t-out { color: var(--t1); background: var(--t1s); }
+.t-skill { color: var(--t2); background: var(--t2s); }
+.t-auto { color: var(--t3); background: var(--t3s); }
+td .tag { margin: 0 4px 4px 0; display: inline-block; }
+dl.spec { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; }
+dl.spec div { border: 1px solid var(--line); border-radius: 8px; padding: 11px 14px; background: var(--bg); min-width: 0; }
+dl.spec dt { font: 600 12.5px/1.4 var(--mono); color: var(--accent); letter-spacing: .03em; }
+dl.spec dd { margin: 3px 0 0; font-size: 15px; overflow-wrap: anywhere; }
+.folder { font-size: 14.5px; color: var(--muted); max-width: none; }
+.folder span { font-weight: 600; color: var(--ink); margin-right: 6px; }
+.step { display: grid; gap: 10px; padding: 16px 0 4px; border-top: 1px dashed var(--line); min-width: 0; }
+h3 + .step { border-top: 0; padding-top: 4px; }
+.step h4 { margin: 0; font-size: 16.5px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.sn { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--ink); color: var(--surface); font: 600 13px/26px var(--mono); text-align: center; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.chipl { font: 500 12.5px/1.4 var(--mono); color: var(--muted); margin-right: 2px; }
+.chip { font-size: 13.5px; padding: 2px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); }
+.links { font-size: 14.5px; }
+ol.steps { margin: 0; padding-left: 22px; display: grid; gap: 6px; max-width: 70ch; }
+.prompt { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; min-width: 0; background: var(--bg); }
+.prompt .bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 7px 8px 7px 14px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+.prompt pre { margin: 0; padding: 14px; background: var(--code-bg); font: 400 14px/1.75 var(--mono); white-space: pre-wrap; word-break: keep-all; overflow-wrap: anywhere; }
+button.copy { font: 500 13px/1 var(--sans); color: var(--accent); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 7px 11px; cursor: pointer; white-space: nowrap; }
+button.copy:hover { border-color: var(--accent); }
+button.copy.done { color: var(--check); border-color: var(--check); }
+.slot { background: var(--warn-soft); color: var(--warn); border-radius: 4px; padding: 1px 5px; font-weight: 500; }
+.verify, .caution { border-radius: 8px; padding: 12px 16px; display: grid; gap: 4px; }
+.verify { background: var(--check-soft); }
+.caution { background: var(--warn-soft); }
+.verify strong, .caution strong { font-size: 13.5px; letter-spacing: .02em; }
+.verify strong { color: var(--check); }
+.caution strong { color: var(--warn); }
+.verify ul, .caution ul { margin: 0; padding-left: 20px; display: grid; gap: 3px; }
+details.fold { border: 1px solid var(--line); border-radius: 8px; min-width: 0; }
+details.fold summary { cursor: pointer; padding: 10px 14px; font-weight: 600; font-size: 15px; list-style: none; display: flex; align-items: center; gap: 10px; }
+details.fold summary::-webkit-details-marker { display: none; }
+details.fold summary::before { content: "+"; font: 600 16px/1 var(--mono); color: var(--accent); width: 1em; text-align: center; }
+details.fold[open] summary::before { content: "−"; }
+details.fold[open] summary { border-bottom: 1px solid var(--line); }
+details.fold summary:hover { color: var(--accent); }
+.sumnote { margin-left: auto; font: 400 12.5px/1.4 var(--mono); color: var(--muted); }
+.foldbody { display: grid; gap: 14px; padding: 14px; min-width: 0; }
+.success { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.success > div { border: 1px solid var(--line); border-radius: 8px; padding: 10px 8px 8px; }
+.lv { display: inline-block; margin: 0 0 4px 10px; font-size: 13px; color: var(--check); }
+.lv2 { color: var(--t3); }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+th, td { text-align: left; vertical-align: top; padding: 9px 13px; border-bottom: 1px solid var(--line); }
+th { font-weight: 600; color: var(--muted); font-size: 13px; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.k { font-weight: 600; min-width: 9em; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.checks label { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; padding: 7px 10px; border-radius: 6px; cursor: pointer; }
+.checks label:hover { background: var(--bg); }
+.checks input { width: 18px; height: 18px; margin: 4px 0 0; accent-color: var(--check); }
+.checks input:checked + span { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line); }
+.progress { font: 400 13px/1.4 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.flow li { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; background: var(--bg); display: grid; gap: 2px; align-content: start; }
+.flow li:nth-child(1) { border-top: 3px solid var(--t1); }
+.flow li:nth-child(2) { border-top: 3px solid var(--t2); }
+.flow li:nth-child(3) { border-top: 3px solid var(--t3); }
+.flow b { font-weight: 700; font-size: 17px; }
+.flow span { color: var(--muted); font-size: 14px; }
+.flow em { font: 500 12.5px/1.5 var(--mono); font-style: normal; color: var(--muted); }
+.pager { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; margin-top: 10px; padding-top: 18px; border-top: 1px solid var(--line); }
+.pager button { font: 500 15px/1.3 var(--sans); padding: 11px 16px; border-radius: 8px; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-align: left; max-width: 100%; }
+.pager button small { display: block; font-size: 12.5px; color: var(--muted); font-weight: 400; }
+.pager button.next { margin-left: auto; background: var(--accent); border-color: var(--accent); color: var(--accent-ink); text-align: right; }
+.pager button.next small { color: var(--accent-ink); opacity: .8; }
+.pager button:hover { border-color: var(--accent); }
+.instructor { margin-top: 56px; padding: 22px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; display: flex; flex-wrap: wrap; gap: 16px 40px; align-items: center; justify-content: space-between; }
+.instructor .who { display: grid; gap: 2px; }
+.instructor .who strong { font-size: 19px; font-weight: 700; }
+.instructor .who span:last-child { color: var(--muted); }
+.instructor .work { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 8px; }
+.instructor .work li { font-size: 14px; padding: 4px 11px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+.instructor .contact { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.instructor .label { font-size: 13px; color: var(--muted); }
+.instructor .mail { font: 500 15px/1.4 var(--mono); user-select: all; }
+footer { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13.5px; }
+@media (max-width: 860px) {
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  nav.rail { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); margin-inline: -20px; padding: 8px 20px; border-bottom: 1px solid var(--line); }
+  .rail h2 { display: none; }
+  .rail ol { display: flex; gap: 6px; border-left: 0; overflow-x: auto; scrollbar-width: none; }
+  .rail ol::-webkit-scrollbar { display: none; }
+  .rail li { flex: none; }
+  .rail li a { display: flex; gap: 6px; align-items: center; border: 1px solid var(--line); border-radius: 999px; margin-left: 0; padding: 6px 12px; background: var(--surface); white-space: nowrap; }
+  .rail li a[aria-current="step"] { border-radius: 999px; border-color: var(--accent); }
+  .rail li a:not(.seen)::after, .rail li a[aria-current]::after { display: none; }
+  .railbtns { display: flex; gap: 6px; margin-top: 8px; }
+  .viewtoggle { width: auto; }
+  section { padding: 0 16px 20px; scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 120px); }
+  .mhead { margin: 0 -16px 4px; padding: 14px 16px; }
+  .where { margin-left: 0; }
+}
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+/* 도구 배지: PPT의 5단계 흐름 색 */
+:root { --c-chat:#5d6676; --c-chat-s:#eceef2; --c-project:#2f4bbf; --c-project-s:#e8ecfb; --c-skill:#0f7a5a; --c-skill-s:#e2f4ee; --c-work:#9a5b00; --c-work-s:#fdf1dc; --c-codex:#8a4fb0; --c-codex-s:#f3eafa; }
+@media (prefers-color-scheme: dark) { :root { --c-chat:#9aa3b2; --c-chat-s:#262b35; --c-project:#8ea2ff; --c-project-s:#232b4a; --c-skill:#5fd0a8; --c-skill-s:#17332b; --c-work:#f0b458; --c-work-s:#3a2c12; --c-codex:#d2a6f0; --c-codex-s:#2e2338; } }
+.tool { display:inline-block; font:600 13px/1.4 var(--sans); padding:3px 11px; border-radius:999px; white-space:nowrap; }
+.tool-chat { color:var(--c-chat); background:var(--c-chat-s); }
+.tool-project { color:var(--c-project); background:var(--c-project-s); }
+.tool-skill { color:var(--c-skill); background:var(--c-skill-s); }
+.tool-work { color:var(--c-work); background:var(--c-work-s); }
+.tool-codex { color:var(--c-codex); background:var(--c-codex-s); }
+.ladder { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; }
+@media (max-width:860px){ .ladder { grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); } }
+.ladder li { border:1px solid var(--line); border-radius:8px; padding:12px 14px; background:var(--bg); display:grid; gap:2px; align-content:start; border-top-width:3px; }
+.ladder em { font:500 12.5px/1.5 var(--mono); font-style:normal; color:var(--muted); }
+.ladder b { font-size:17px; }
+.ladder span { font-size:14px; }
+.ladder i { font-style:normal; font-size:13px; color:var(--muted); }
+.l-chat { border-top-color:var(--c-chat)!important; } .l-project { border-top-color:var(--c-project)!important; } .l-skill { border-top-color:var(--c-skill)!important; } .l-work { border-top-color:var(--c-work)!important; } .l-codex { border-top-color:var(--c-codex)!important; }
+.l-chat b { color:var(--c-chat); } .l-project b { color:var(--c-project); } .l-skill b { color:var(--c-skill); } .l-work b { color:var(--c-work); } .l-codex b { color:var(--c-codex); }
+.links { display:flex; flex-wrap:wrap; gap:8px; max-width:none; }
+a.ext { font-size:14px; text-decoration:none; padding:6px 12px; border:1px solid var(--line); border-radius:6px; background:var(--surface); }
+a.ext:hover { border-color:var(--accent); }
+ol.how { background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:14px 16px 14px 36px; max-width:none; }
+.ws { display:grid; gap:14px; border:1px solid var(--line); border-radius:8px; padding:16px; background:var(--bg); }
+.wsq { display:grid; gap:6px; }
+.wsq label, .wl { font-weight:600; font-size:15px; }
+.ws input[type=text], .ws textarea { font:400 15px/1.5 var(--sans); padding:9px 11px; border:1px solid var(--line); border-radius:6px; background:var(--surface); color:var(--ink); width:100%; min-width:0; resize:vertical; }
+.four { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:8px; }
+.opts { display:flex; flex-wrap:wrap; gap:6px; }
+.opts label { display:flex; align-items:center; gap:6px; font-weight:400; font-size:14.5px; padding:5px 11px; border:1px solid var(--line); border-radius:999px; background:var(--surface); cursor:pointer; }
+.opts input { accent-color:var(--accent); margin:0; }
+.opts label:has(input:checked) { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); }
+.intro { border:1px solid var(--c-skill); background:var(--c-skill-s); border-radius:8px; padding:12px 16px; display:grid; gap:6px; }
+.intro strong { color:var(--c-skill); font-size:15px; }
+.intro ul { margin:0; padding-left:20px; display:grid; gap:5px; }
+.tips { border:1px dashed var(--line); border-radius:8px; padding:12px 16px; display:grid; gap:4px; }
+.tips strong { font-size:13.5px; color:var(--accent); }
+.tips ul { margin:0; padding-left:20px; display:grid; gap:3px; }
+.two { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px; }
+.inl { display:flex; align-items:center; gap:8px; font-weight:400!important; font-size:14.5px!important; }
+.inl input[type=color] { width:52px; height:34px; border:1px solid var(--line); border-radius:6px; background:var(--surface); padding:2px; }
+.pb .wsq { gap:8px; }
+.preview { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 16px; border:1px solid var(--accent); background:var(--accent-soft); border-radius:8px; padding:12px 16px; }
+.preview div { display:grid; gap:2px; min-width:0; flex:1 1 280px; }
+.preview strong { color:var(--accent); font-size:15px; }
+.preview span { font-size:14px; color:var(--muted); }
+a.ext.go { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); font-weight:600; }
+.cases { display:grid; gap:8px; }
+.cases .ct { font-size:15px; color:var(--c-codex); }
+.cases ul { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:10px; }
+.cases li { border:1px solid var(--line); border-top:3px solid var(--c-codex); border-radius:8px; padding:12px 14px; background:var(--bg); display:grid; gap:8px; align-content:start; }
+.cases .ch { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 10px; }
+.cases .ch strong { font-size:16px; }
+.cases .who { font-size:12.5px; color:var(--c-codex); background:var(--c-codex-s); padding:1px 8px; border-radius:999px; }
+.cases p { font-size:14.5px; }
+.cases a.ext { justify-self:start; }
+.page { max-width: 920px; }
+main.solo { margin-top: 28px; }
+</style></head><body>
+<div class="page">
+  <header class="top">
+    <div class="eyebrow">바이브코딩 실습</div>
+    <h1>입장객 데이터로 웹 대시보드 만들기</h1>
+    <p class="sub">엑셀 → 단일 HTML 대시보드 → Vercel 주소</p>
+    <p class="lede">예술의전당 공연·전시 입장객 15년치 데이터를 Codex에게 말로 설명해 필터·차트·표가 움직이는 대시보드로 만들고, Vercel로 배포해 누구나 열어 볼 수 있는 주소를 얻습니다.</p>
+    <ul class="facts">
+      <li><b>강사</b> 조미정</li>
+      <li><b>도구</b> Codex 앱, Vercel</li>
+      <li><b>자료</b> 예술의전당 공연·전시 입장객 현황 엑셀</li>
+    </ul>
+  </header>
+  <main class="solo">
+<section id="dashboard">
+  <div class="mhead"><span class="clock">실습</span><h2 class="title">예술의전당 입장객 웹 대시보드 만들고 배포하기</h2></div>
+  <div class="meta"><span class="tool tool-codex">Codex</span><span class="kind">엑셀 → 단일 HTML 대시보드 → VERCEL 배포</span></div>
+  <dl class="spec"><div><dt>목표</dt><dd>예술의전당 공연·전시 입장객 데이터로 대시보드를 만들고 배포한다</dd></div><div><dt>재료</dt><dd>예술의전당_공연및전시_입장객현황_통합_20251231.xlsx (분석용 데이터 시트, 2011~2025년, 51,938행)</dd></div><div><dt>결과물</dt><dd>더블클릭으로 열리는 대시보드 HTML, 누구나 접속할 수 있는 vercel.app 주소</dd></div><div><dt>핵심</dt><dd>“코드를 알려줘”가 아니라 “작동하는 도구를 만들어줘”. 기능은 한 번에 하나씩 더하고, 매번 “기존 기능은 변경하지 마”를 붙인다</dd></div></dl>
+
+  <div class="tips"><strong>시작 전에 알아 둘 데이터 특징</strong><ul><li>엑셀에는 시트가 4개 있습니다. 분석에는 <b>분석용 데이터</b> 시트를 씁니다. 나머지(통합 안내, 연도별 요약, 전처리 현황)는 설명과 점검용입니다.</li><li>공연은 2011년부터, 전시는 2023년부터 들어 있습니다. 공연과 전시를 합친 연도별 추이는 2023년에 갑자기 늘어난 것처럼 보일 수 있습니다.</li><li>전시 행에는 시간과 시간대가 비어 있습니다. 시간대 분석은 공연 기준으로 봅니다.</li><li>연도에 따라 이름이 다르게 적힌 장소가 있습니다. 예: 서울서예박물관(2011~2022)과 서예박물관(2023~), 한가람디자인미술관과 디자인미술관, IBK챔버홀과 IBK기업은행챔버홀.</li><li>행 하나는 공연 회차 또는 전시 일자 하나입니다. 관객 수는 <b>관객수</b> 열, 장소는 <b>장소(표준)</b> 열을 씁니다.</li></ul></div>
+
+  <p class="folder"><span>실습 파일</span><code>예술의전당_공연및전시_입장객현황_통합_20251231.xlsx</code> · 사용 도구: Codex 앱</p>
+  <h3>진행 단계</h3>
+  <div class="step"><h4><span class="sn">1</span>데이터 확인과 설계</h4><p>대시보드를 만들기 전에 KPI와 분석 질문부터 받습니다. 실습 파일을 넣은 폴더를 Codex 앱에서 프로젝트로 열고 시작합니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>폴더의 예술의전당 공연·전시 입장객 현황 엑셀 파일을 분석해줘.
+‘분석용 데이터’ 시트를 기준으로 하고, 다른 시트는 데이터 설명으로 참고해줘.
+주요 컬럼을 분류하고 입장객 현황을 파악하기 위한
+KPI 5개와 분석 질문을 제안해줘.
+아직 대시보드는 만들지 마.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>연도·월·분야·장소(표준)·구분·공연·전시명·관객수·유료·무료 같은 컬럼이 구분됐나요?</li><li>KPI 5개가 데이터에 실제로 있는 컬럼으로 계산되나요?</li><li>전시가 2023년부터만 있다는 점을 짚었나요?</li><li>아직 HTML을 만들지 않았나요?</li></ul></div></div><div class="step"><h4><span class="sn">2</span>기본 대시보드</h4><p>필터·차트·표를 갖춘 1차 대시보드를 만듭니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>이 데이터를 이용해 단일 HTML 분석 대시보드를 만들어줘.
+연도, 분야(공연·전시), 장소, 구분(기획·대관) 필터를 제공하고,
+KPI, 연도별 입장객 추이(공연·전시 구분),
+장소별 입장객 비교, 월별·요일별 입장객 패턴,
+유료·무료 비율, 공연·전시명 입장객 TOP10,
+상세 데이터 표를 구성해줘.
+필터 변경 시 모든 항목이 자동 갱신되게 해줘.
+분석에 필요한 열만 골라 HTML 안에 넣어서
+서버 없이 브라우저에서 실행되는 단일 HTML로 만들어줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>HTML을 더블클릭하면 열리나요?</li><li>분야 필터를 ‘전시’로 바꾸면 KPI·차트·TOP10·표가 모두 바뀌나요?</li><li>필터를 모두 풀었을 때 총 입장객이 32,768,763명인가요? 엑셀에서 관객수 열 합계를 직접 내어 비교해 보세요.</li></ul></div></div><div class="step"><h4><span class="sn">3</span>Excel·CSV 업로드</h4><p>새로 받은 파일을 올려도 분석되도록 업로드 기능을 붙입니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>기존 대시보드에 Excel/CSV 업로드 기능을 추가해줘.
+업로드 시 기존 데이터를 교체하고
+모든 분석 결과를 자동 갱신해줘.
+여러 시트가 있으면 ‘분석용 데이터’ 시트를 찾아 쓰고,
+파일은 브라우저 내부에서만 처리해줘.
+필수 컬럼이 없으면 오류를 표시하고 기존 데이터는 유지해줘.
+기존 기능과 디자인은 유지해줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>실습 엑셀 파일을 다시 올리면 화면이 갱신되나요?</li><li>관계없는 엑셀 파일을 올리면 오류 안내가 나오고 기존 데이터가 유지되나요?</li></ul></div></div><div class="step"><h4><span class="sn">4</span>PDF 저장</h4><p>A4로 깔끔하게 인쇄되도록 합니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>기존 대시보드에 PDF 저장 기능을 추가해줘.
+- @media print 적용
+- A4 규격에 맞게 출력
+- 인쇄 시 불필요한 버튼과 필터 숨김
+- KPI, 차트가 페이지 중간에서 잘리지 않게 구성
+- 상세표의 페이지 잘림 최소화
+- PDF 저장 버튼 제공
+기존 기능과 디자인은 수정하지 마.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>PDF 저장 버튼을 누른 인쇄 미리보기에서 필터·버튼이 숨겨지고, 차트가 잘리지 않나요?</li></ul></div></div><div class="step"><h4><span class="sn">5</span>상세 데이터 페이징</h4><p>5만 행이 넘는 표를 나눠서 보여줍니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>상세 데이터 표에 페이징 기능을 추가해줘.
+기본 20행으로 표시하고
+20/50/100행 선택과 이전/다음 페이지 이동을 제공해줘.
+공연·전시명 검색도 넣어줘.
+데이터 업로드·필터·검색 후에도 정상 작동하게 하고,
+기존 기능은 수정하지 마.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>필터를 바꾸면 1페이지로 돌아가나요?</li><li>업로드 후에도 페이징이 맞게 동작하나요?</li></ul></div></div><div class="step"><h4><span class="sn">6</span>디자인</h4><p>원하는 느낌을 말로 설명하거나, 참고 이미지를 주고 같은 톤으로 바꿉니다.</p><p class="links"><a class="ext" href="https://www.krds.go.kr/" target="_blank" rel="noopener">KRDS 정부 디자인 시스템 ↗</a><a class="ext" href="https://dribbble.com/" target="_blank" rel="noopener">Dribbble ↗</a><a class="ext" href="https://www.tableau.com/ko-kr/products/public" target="_blank" rel="noopener">Tableau Public ↗</a></p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>기존 대시보드의 기능은 유지하면서 전체 디자인을 개선해줘.
+흰색 배경과 충분한 여백을 사용하고,
+공연장과 미술관에 어울리는 차분하고 품위 있는 색상을 적용해줘.
+공연과 전시는 서로 구분되는 색으로 일관되게 표시해줘.
+KPI는 카드형으로 구성하고
+차트와 표의 가독성을 높여줘.
+기존 기능은 변경하지 마.</pre></div><details class="fold"><summary>참고 이미지로 바꿀 때</summary><div class="foldbody"><div class="prompt"><div class="bar"><span>참고</span><button class="copy" type="button">복사</button></div><pre>첨부한 참고 이미지와 같은 톤으로
+대시보드 디자인을 수정해줘.</pre></div></div></details><div class="verify"><strong>확인할 것</strong><ul><li>디자인을 바꾼 뒤에도 필터·업로드·PDF·페이징이 모두 그대로 되나요?</li></ul></div></div><div class="step"><h4><span class="sn">7</span>결과 검증</h4><p>실제 업무에 쓰거나 배포하기 전에 정확성과 보안을 점검합니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>이 대시보드를 실제 업무에 사용하기 전에 확인해야 할 데이터 검증 및 보안 체크리스트를 만들어줘.
+엑셀의 ‘연도별 요약’ 시트와 대시보드의 연도별 입장객이 일치하는지도 대조해줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>KPI 합계·건수가 원본 엑셀과 일치하나요?</li><li>분야·장소 필터를 바꿨을 때 결과가 맞게 연동되나요?</li><li>누락되거나 두 번 집계된 연도·장소는 없나요? 엑셀의 ‘중복 후보’ 열에 ‘확인 필요’로 표시된 153행이 있습니다.</li><li>개인정보나 내부 자료가 화면에 없나요? 배포하면 누구나 볼 수 있습니다.</li></ul></div></div><div class="step"><h4><span class="sn">8</span>Vercel 배포 스킬 설치</h4><p>Codex에는 OpenAI가 공개한 vercel-deploy 스킬이 있습니다. 이 스킬을 설치하면 Codex가 Vercel에 바로 올려 줍니다. 이미 설치했다면 건너뜁니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>Vercel에 배포할 수 있게 OpenAI 스킬 카탈로그의 vercel-deploy 스킬을 설치해줘.</pre></div><div class="verify"><strong>확인할 것</strong><ul><li>Codex의 스킬 목록에 vercel-deploy가 보이나요?</li></ul></div><div class="caution"><strong>주의</strong><ul><li>설치 후 스킬이 바로 안 보이면 Codex 앱을 껐다가 다시 켭니다.</li></ul></div></div><div class="step"><h4><span class="sn">9</span>Vercel로 배포하기</h4><p>대시보드를 배포합니다. Vercel 로그인 없이도 임시 주소(Preview URL)와, 내 계정으로 가져오는 주소(Claim URL)가 나옵니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>이 대시보드를 Vercel에 배포해줘.
+대시보드 HTML 파일을 index.html로 맞춰서 배포하고,
+Preview URL과 Claim URL을 알려줘.</pre></div><p class="links"><a class="ext" href="https://vercel.com/signup" target="_blank" rel="noopener">Vercel 가입 (무료 Hobby) ↗</a><a class="ext" href="https://vercel.com/dashboard" target="_blank" rel="noopener">Vercel 대시보드 ↗</a></p><div class="verify"><strong>확인할 것</strong><ul><li>Preview URL을 휴대폰에서 열면 대시보드가 보이나요?</li><li>배포된 화면에서도 필터와 차트가 동작하나요?</li><li>Claim URL을 열고 Vercel에 로그인해 내 계정으로 가져왔나요? 그냥 두면 임시 배포라 일정 기간 뒤 사라집니다.</li></ul></div><div class="caution"><strong>주의</strong><ul><li>배포하려면 인터넷 접속 권한이 필요합니다. Codex가 권한을 물으면 승인합니다.</li><li>배포한 주소는 아는 사람 누구나 볼 수 있습니다. 공개 데이터만 올리고, 내부 자료나 개인정보가 담긴 대시보드는 배포하지 않습니다.</li></ul></div></div>
+  <h3>성공 기준</h3>
+  <div class="success"><div><b class="lv">기본 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="dash-s0"><span>더블클릭으로 열리는 대시보드에서 필터를 바꾸면 KPI·차트·표가 함께 바뀐다</span></label></li><li><label><input type="checkbox" data-key="dash-s1"><span>KPI 하나를 원본 엑셀과 직접 대조했다</span></label></li></ul></div><div><b class="lv lv2">도전 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="dash-c0"><span>업로드, PDF 저장, 페이징까지 모두 동작한다</span></label></li><li><label><input type="checkbox" data-key="dash-c1"><span>Vercel로 배포해 휴대폰에서 주소로 열어 봤다</span></label></li></ul></div></div>
+  <h3>막힐 때</h3>
+  <div class="tablewrap"><table><tr><th>이럴 때</th><th>이렇게</th></tr><tr><td class="k">기능을 더했더니 예전 기능이 망가졌다</td><td>“<span class="slot">망가진 기능</span>이 <span class="slot">방금 더한 기능</span>을 넣은 뒤로 안 돼. 이번 변경 전 동작으로 되돌리고, 새 기능은 유지해줘.”라고 보냅니다.</td></tr><tr><td class="k">HTML이 하얗게만 나온다</td><td>브라우저에서 F12 → Console의 빨간 오류를 복사해 그대로 보냅니다.</td></tr><tr><td class="k">HTML 파일이 너무 커서 느리다</td><td>“대시보드에 쓰지 않는 열은 빼고, 데이터를 더 가볍게 넣어줘. 기존 기능은 변경하지 마.”라고 보냅니다.</td></tr><tr><td class="k">차트 일부가 안 나온다</td><td>“Excel을 업로드했는데 일부 차트가 표시되지 않아. 현재 코드와 오류 화면을 분석해서 원인을 찾고 수정해줘.”라고 보냅니다.</td></tr><tr><td class="k">변경이 화면에 안 보인다</td><td>브라우저에서 Ctrl+F5로 새로고침합니다.</td></tr></table></div>
+  <h3>한 번에 만드는 통합 프롬프트</h3>
+  <p>단계별로 해 본 뒤, 요구사항을 한 번에 다 적으면 어떻게 되는지 비교할 때 씁니다. Codex 새 대화에서 보냅니다.</p>
+  <details class="fold"><summary>통합 프롬프트 펼치기</summary><div class="foldbody"><div class="prompt"><div class="bar"><span>Codex에게 · 통합 프롬프트</span><button class="copy" type="button">복사</button></div><pre>아래 요구사항을 모두 만족하는 단일 HTML 파일 기반 인터랙티브 대시보드를 만들어줘.
+데이터는 폴더의 예술의전당 공연·전시 입장객 현황 엑셀 파일이고, ‘분석용 데이터’ 시트를 기준으로 해.
+목표는 “엑셀·CSV 파일(수만 행)을 업로드하면 즉시 브라우저에서 분석 가능한 예술의전당 입장객 현황 대시보드”야.
+외부 서버 연결 없이, 모든 처리는 브라우저 내에서만 수행해야 해.
+1. 공통
+ㆍ기본 데이터(분석에 필요한 열만)·CSS·JavaScript를 HTML 내부에 포함
+ㆍ연도, 분야(공연·전시), 장소, 구분(기획·대관) 필터 제공 및 AND 조건 적용
+ㆍ필터 변경 시 KPI·차트·TOP10·상세표 모두 즉시 갱신
+ㆍ흰 배경, 공연장과 미술관에 어울리는 차분한 색상, 공연·전시는 일관된 구분 색
+2. 분석
+ㆍKPI: 총 입장객, 공연·전시 회차(행) 수, 회차당 평균 입장객, 유료 관객 비율, 입장객 최다 장소
+ㆍ연도별 입장객 추이(공연·전시 구분), 장소별 비교 차트
+ㆍ월별·요일별 입장객 패턴, 공연 시간대별 입장객
+ㆍ공연·전시명 입장객 TOP10
+ㆍ전시는 2023년부터만 있다는 안내 문구 표시
+3. 데이터 업로드
+ㆍExcel/CSV 업로드 및 Drag&amp;Drop 지원
+ㆍ파일은 서버 전송 없이 브라우저에서만 처리
+ㆍ모든 시트를 검사해 분석 시트 자동 선택
+ㆍ1행 헤더와 다중 헤더 모두 인식
+ㆍ필수 컬럼 검증 후 기존 데이터를 새 데이터로 완전히 교체
+ㆍ업로드 후 필터·KPI·차트·TOP10·상세표 자동 갱신
+ㆍ오류 시 기존 데이터 유지
+ㆍ기본 데이터 복원 기능
+ㆍ현재 파일명·시트명·건수 표시
+4. 상세 데이터
+ㆍ공연·전시명 검색·컬럼 정렬 지원
+ㆍ20/50/100행 페이징
+ㆍ처음/이전/페이지번호/다음/끝 제공
+ㆍ필터·검색·정렬·업로드 시 1페이지로 초기화
+ㆍ전체 건수와 현재 표시 범위 표시
+5. 성능
+ㆍ원본 데이터는 브라우저 메모리에 저장
+ㆍ필터 이벤트 debounce 적용
+ㆍ집계는 가능한 단일 pass
+ㆍ불필요한 전체 재계산과 DOM 렌더링 최소화
+6. 인쇄/PDF
+ㆍPDF 저장 버튼(window.print) 제공
+ㆍ@media print 및 A4 세로 규격 적용
+ㆍ인쇄 시 업로드·필터·페이징 UI 숨김
+ㆍKPI·차트·TOP10·표의 페이지 잘림 최소화
+ㆍ상세표는 필터 결과 전체 출력
+ㆍ표 헤더 반복
+7. 검증
+ㆍ업로드 → 데이터 교체 → 필터 → KPI → 차트 → TOP10 → 상세표 → 페이징 → PDF까지 연속 테스트
+ㆍ필터를 모두 풀었을 때 총 입장객이 엑셀의 관객수 합계와 같은지 확인
+ㆍJavaScript 오류가 없는지 확인
+ㆍ최종 결과는 실행 가능한 단일 HTML 파일로 제공
+ㆍHTML을 더블클릭해서 브라우저에서 바로 실행 가능해야 함
+ㆍ서버나 별도 설치 없이 동작해야 함
+ㆍ코드 내 주요 영역과 함수에는 주석을 작성
+ㆍ데이터 컬럼명 매핑 영역은 JavaScript 상단에 따로 두어 쉽게 수정 가능하게 구성</pre></div></div></details>
+</section>
+
+  </main>
+  <aside class="instructor" aria-label="강사 소개">
+    <div class="who"><strong>조미정</strong><span>네모공장(주) 대표 · 공공기관 AI 교육·컨설팅</span></div>
+    <ul class="work"><li>데이터 분석</li><li>AI 업무자동화</li><li>AI 프로젝트</li></ul>
+    <div class="contact"><span class="label">문의</span><span class="mail" id="mail">mjcho7@naver.com</span><button class="copy" type="button" id="mailcopy">주소 복사</button><span class="mail" id="tel">010-9365-5638</span></div>
+  </aside>
+</div>
+<script>// 복사 버튼: 실패하면 글자를 선택해 Ctrl+C로 복사할 수 있게 한다
+function wireCopy(btn, source, idle) {
+  btn.addEventListener("click", function () {
+    var done = function (label) {
+      btn.textContent = label; btn.classList.add("done");
+      setTimeout(function () { btn.textContent = idle; btn.classList.remove("done"); }, 1800);
+    };
+    var selectText = function () {
+      var r = document.createRange(); r.selectNodeContents(source);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      done("선택됨 · Ctrl+C");
+    };
+    try { navigator.clipboard.writeText(source.textContent.trim()).then(function () { done("복사됨"); }, selectText); }
+    catch (e) { selectText(); }
+  });
+}
+document.querySelectorAll(".prompt").forEach(function (box) {
+  wireCopy(box.querySelector("button.copy"), box.querySelector("pre"), "복사");
+});
+wireCopy(document.getElementById("mailcopy"), document.getElementById("mail"), "주소 복사");
+
+// 체크 항목: 이 브라우저에만 저장 (저장이 안 되는 환경에서도 그대로 동작)
+(function () {
+  var KEY = "vibe-dashboard-checks", saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) {}
+  document.querySelectorAll(".checks input[data-key]").forEach(function (b) {
+    var k = b.getAttribute("data-key");
+    if (saved[k]) b.checked = true;
+    b.addEventListener("change", function () { saved[k] = b.checked; try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {} });
+  });
+})();
+</script>
+</body></html>
