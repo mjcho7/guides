@@ -538,10 +538,14 @@ footer.foot{width:min(1180px,calc(100% - 40px));margin:auto;padding:24px 0 48px;
   }
 
   // 한 단계씩 보기: 해당 단계만 보이게 전환
-  function showStep(id){
+  // scroll이 true면 위 헤더는 지나치고 실습 박스 맨 위가 화면 위에 오게 한다
+  function showStep(id, scroll){
     stepEls.forEach(function(s){ s.classList.toggle('active', s.id === id); });
     setActiveLink(id);
-    window.scrollTo({top:0, behavior:'smooth'});
+    if(scroll){
+      var el = document.getElementById(id);
+      if(el) el.scrollIntoView({behavior:'auto', block:'start'});
+    }
   }
 
   // 이전/다음 버튼
@@ -552,7 +556,7 @@ footer.foot{width:min(1180px,calc(100% - 40px));margin:auto;padding:24px 0 48px;
         var el = document.getElementById(id);
         if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
       } else {
-        showStep(id);
+        showStep(id, true);
       }
     });
   });
@@ -566,7 +570,7 @@ footer.foot{width:min(1180px,calc(100% - 40px));margin:auto;padding:24px 0 48px;
         var el = document.getElementById(id);
         if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
       } else {
-        showStep(id);
+        showStep(id, true);
       }
     });
   });
@@ -595,7 +599,7 @@ footer.foot{width:min(1180px,calc(100% - 40px));margin:auto;padding:24px 0 48px;
     } else {
       stopScrollspy();
       var current = stepEls.find(function(s){ return s.classList.contains('active'); }) || stepEls[0];
-      showStep(current.id);
+      showStep(current.id, true);
     }
   });
 
