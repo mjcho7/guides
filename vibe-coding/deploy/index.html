@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Git과 GitHub, Vercel을 연결해 GitHub에 올리기만 하면 사이트가 자동으로 새로 배포되게 만드는 바이브코딩 실습입니다.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="네모공장 교육">
+<meta property="og:title" content="Git · GitHub · Vercel로 자동 배포하기">
+<meta property="og:description" content="Git과 GitHub, Vercel을 연결해 GitHub에 올리기만 하면 사이트가 자동으로 새로 배포되게 만드는 바이브코딩 실습입니다.">
+<meta property="og:url" content="https://edu.nemofactory.kr/vibe-coding/deploy/">
+<title>Git · GitHub · Vercel로 자동 배포하기 · 바이브코딩 실습</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>:root {
+  --bg: #f5f6f8; --surface: #ffffff; --ink: #1b2230; --muted: #5d6676; --line: #dfe3ea;
+  --accent: #2f4bbf; --accent-soft: #e8ecfb; --check: #0f7a5a; --check-soft: #e2f4ee;
+  --warn: #9a5b00; --warn-soft: #fdf1dc; --code-bg: #eef0f5; --accent-ink: #ffffff;
+  --t1: #2f4bbf; --t1s: #e8ecfb; --t2: #0f7a5a; --t2s: #e2f4ee; --t3: #8a4fb0; --t3s: #f3eafa;
+  --sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", "D2Coding", Consolas, "Courier New", monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14171d; --surface: #1c2029; --ink: #e6e9ef; --muted: #9aa3b2; --line: #2e3440;
+    --accent: #8ea2ff; --accent-soft: #232b4a; --check: #5fd0a8; --check-soft: #17332b;
+    --warn: #f0b458; --warn-soft: #3a2c12; --code-bg: #12151b; --accent-ink: #14171d;
+    --t1: #8ea2ff; --t1s: #232b4a; --t2: #5fd0a8; --t2s: #17332b; --t3: #d2a6f0; --t3s: #2e2338;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.7 var(--sans); padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+[hidden] { display: none !important; }
+.page { max-width: 1120px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 64px; }
+a { color: var(--accent); }
+code { font-family: var(--mono); font-size: .92em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+header.top { display: grid; gap: 10px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+.eyebrow { font: 500 13px/1.4 var(--mono); color: var(--accent); letter-spacing: .04em; }
+h1 { margin: 0; font-size: clamp(26px, 4.2vw, 38px); line-height: 1.25; font-weight: 700; text-wrap: balance; letter-spacing: -.01em; }
+.sub { margin: -4px 0 2px; font-size: 18px; font-weight: 500; color: var(--accent); }
+.lede { margin: 0; color: var(--muted); max-width: 64ch; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 6px 0 0; padding: 0; list-style: none; font-size: 14.5px; }
+.facts b { font-weight: 600; }
+.layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 40px; margin-top: 28px; align-items: start; }
+nav.rail { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
+.rail h2 { margin: 0 0 10px; font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: .03em; }
+.rail ol { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--line); }
+.rail li a { display: grid; grid-template-columns: 50px 14px 1fr; gap: 6px; padding: 7px 8px 7px 12px; margin-left: -2px; border-left: 2px solid transparent; color: var(--ink); text-decoration: none; font-size: 14.5px; line-height: 1.45; }
+.rail li a:hover { border-left-color: var(--accent); color: var(--accent); }
+.rail li a[aria-current="step"] { border-left-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; border-radius: 0 6px 6px 0; }
+.rail li a[aria-current="step"] time { color: var(--accent); }
+.rail li a::after { content: ""; order: 1; font: 600 13px/1.6 var(--mono); color: var(--check); text-align: center; }
+.rail li a time { order: 0; } .rail li a span { order: 2; }
+.rail li a.seen:not([aria-current])::after { content: "✓"; }
+.rail time { font: 400 12.5px/1.6 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.railbtns { display: grid; gap: 6px; margin-top: 14px; }
+.viewtoggle { font: 500 13px/1.2 var(--sans); color: var(--accent); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 8px 11px; cursor: pointer; width: 100%; }
+.viewtoggle:hover { border-color: var(--accent); }
+.viewtoggle[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+main { display: grid; gap: 28px; min-width: 0; }
+section { display: grid; gap: 14px; min-width: 0; scroll-margin-top: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 0 26px 26px; }
+.mhead { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0 -26px 4px; padding: 16px 26px; background: var(--accent-soft); border-bottom: 1px solid var(--line); border-radius: 10px 10px 0 0; }
+.clock { font: 600 13px/1.4 var(--mono); color: var(--accent-ink); background: var(--accent); padding: 4px 11px; border-radius: 999px; white-space: nowrap; }
+.mins { font: 500 13px/1.4 var(--mono); color: var(--accent); border: 1px solid var(--accent); padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+h2.title { margin: 0; font-size: 23px; line-height: 1.35; font-weight: 700; text-wrap: balance; }
+.where { font: 500 13px/1.4 var(--mono); color: var(--muted); margin-left: auto; white-space: nowrap; }
+h3 { margin: 14px 0 0; padding-top: 18px; border-top: 1px solid var(--line); font-size: 17px; font-weight: 700; }
+.mhead + .goal + h3, .mhead + h3 { border-top: 0; padding-top: 0; margin-top: 6px; }
+p { margin: 0; max-width: 70ch; }
+.goal { color: var(--muted); }
+.note { color: var(--muted); font-size: 14px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
+.kind { font: 500 12.5px/1.4 var(--mono); color: var(--muted); letter-spacing: .03em; margin-right: 4px; }
+.tag { font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+.t-out { color: var(--t1); background: var(--t1s); }
+.t-skill { color: var(--t2); background: var(--t2s); }
+.t-auto { color: var(--t3); background: var(--t3s); }
+td .tag { margin: 0 4px 4px 0; display: inline-block; }
+dl.spec { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; }
+dl.spec div { border: 1px solid var(--line); border-radius: 8px; padding: 11px 14px; background: var(--bg); min-width: 0; }
+dl.spec dt { font: 600 12.5px/1.4 var(--mono); color: var(--accent); letter-spacing: .03em; }
+dl.spec dd { margin: 3px 0 0; font-size: 15px; overflow-wrap: anywhere; }
+.folder { font-size: 14.5px; color: var(--muted); max-width: none; }
+.folder span { font-weight: 600; color: var(--ink); margin-right: 6px; }
+.step { display: grid; gap: 10px; padding: 16px 0 4px; border-top: 1px dashed var(--line); min-width: 0; }
+h3 + .step { border-top: 0; padding-top: 4px; }
+.step h4 { margin: 0; font-size: 16.5px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.sn { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--ink); color: var(--surface); font: 600 13px/26px var(--mono); text-align: center; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.chipl { font: 500 12.5px/1.4 var(--mono); color: var(--muted); margin-right: 2px; }
+.chip { font-size: 13.5px; padding: 2px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); }
+.links { font-size: 14.5px; }
+ol.steps { margin: 0; padding-left: 22px; display: grid; gap: 6px; max-width: 70ch; }
+.prompt { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; min-width: 0; background: var(--bg); }
+.prompt .bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 7px 8px 7px 14px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+.prompt pre { margin: 0; padding: 14px; background: var(--code-bg); font: 400 14px/1.75 var(--mono); white-space: pre-wrap; word-break: keep-all; overflow-wrap: anywhere; }
+button.copy { font: 500 13px/1 var(--sans); color: var(--accent); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 7px 11px; cursor: pointer; white-space: nowrap; }
+button.copy:hover { border-color: var(--accent); }
+button.copy.done { color: var(--check); border-color: var(--check); }
+.slot { background: var(--warn-soft); color: var(--warn); border-radius: 4px; padding: 1px 5px; font-weight: 500; }
+.verify, .caution { border-radius: 8px; padding: 12px 16px; display: grid; gap: 4px; }
+.verify { background: var(--check-soft); }
+.caution { background: var(--warn-soft); }
+.verify strong, .caution strong { font-size: 13.5px; letter-spacing: .02em; }
+.verify strong { color: var(--check); }
+.caution strong { color: var(--warn); }
+.verify ul, .caution ul { margin: 0; padding-left: 20px; display: grid; gap: 3px; }
+details.fold { border: 1px solid var(--line); border-radius: 8px; min-width: 0; }
+details.fold summary { cursor: pointer; padding: 10px 14px; font-weight: 600; font-size: 15px; list-style: none; display: flex; align-items: center; gap: 10px; }
+details.fold summary::-webkit-details-marker { display: none; }
+details.fold summary::before { content: "+"; font: 600 16px/1 var(--mono); color: var(--accent); width: 1em; text-align: center; }
+details.fold[open] summary::before { content: "−"; }
+details.fold[open] summary { border-bottom: 1px solid var(--line); }
+details.fold summary:hover { color: var(--accent); }
+.sumnote { margin-left: auto; font: 400 12.5px/1.4 var(--mono); color: var(--muted); }
+.foldbody { display: grid; gap: 14px; padding: 14px; min-width: 0; }
+.success { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.success > div { border: 1px solid var(--line); border-radius: 8px; padding: 10px 8px 8px; }
+.lv { display: inline-block; margin: 0 0 4px 10px; font-size: 13px; color: var(--check); }
+.lv2 { color: var(--t3); }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+th, td { text-align: left; vertical-align: top; padding: 9px 13px; border-bottom: 1px solid var(--line); }
+th { font-weight: 600; color: var(--muted); font-size: 13px; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.k { font-weight: 600; min-width: 9em; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.checks label { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; padding: 7px 10px; border-radius: 6px; cursor: pointer; }
+.checks label:hover { background: var(--bg); }
+.checks input { width: 18px; height: 18px; margin: 4px 0 0; accent-color: var(--check); }
+.checks input:checked + span { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line); }
+.progress { font: 400 13px/1.4 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.flow li { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; background: var(--bg); display: grid; gap: 2px; align-content: start; }
+.flow li:nth-child(1) { border-top: 3px solid var(--t1); }
+.flow li:nth-child(2) { border-top: 3px solid var(--t2); }
+.flow li:nth-child(3) { border-top: 3px solid var(--t3); }
+.flow b { font-weight: 700; font-size: 17px; }
+.flow span { color: var(--muted); font-size: 14px; }
+.flow em { font: 500 12.5px/1.5 var(--mono); font-style: normal; color: var(--muted); }
+.pager { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; margin-top: 10px; padding-top: 18px; border-top: 1px solid var(--line); }
+.pager button { font: 500 15px/1.3 var(--sans); padding: 11px 16px; border-radius: 8px; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-align: left; max-width: 100%; }
+.pager button small { display: block; font-size: 12.5px; color: var(--muted); font-weight: 400; }
+.pager button.next { margin-left: auto; background: var(--accent); border-color: var(--accent); color: var(--accent-ink); text-align: right; }
+.pager button.next small { color: var(--accent-ink); opacity: .8; }
+.pager button:hover { border-color: var(--accent); }
+.instructor { margin-top: 56px; padding: 22px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; display: flex; flex-wrap: wrap; gap: 16px 40px; align-items: center; justify-content: space-between; }
+.instructor .who { display: grid; gap: 2px; }
+.instructor .who strong { font-size: 19px; font-weight: 700; }
+.instructor .who span:last-child { color: var(--muted); }
+.instructor .work { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 8px; }
+.instructor .work li { font-size: 14px; padding: 4px 11px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+.instructor .contact { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.instructor .label { font-size: 13px; color: var(--muted); }
+.instructor .mail { font: 500 15px/1.4 var(--mono); user-select: all; }
+footer { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13.5px; }
+@media (max-width: 860px) {
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  nav.rail { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); margin-inline: -20px; padding: 8px 20px; border-bottom: 1px solid var(--line); }
+  .rail h2 { display: none; }
+  .rail ol { display: flex; gap: 6px; border-left: 0; overflow-x: auto; scrollbar-width: none; }
+  .rail ol::-webkit-scrollbar { display: none; }
+  .rail li { flex: none; }
+  .rail li a { display: flex; gap: 6px; align-items: center; border: 1px solid var(--line); border-radius: 999px; margin-left: 0; padding: 6px 12px; background: var(--surface); white-space: nowrap; }
+  .rail li a[aria-current="step"] { border-radius: 999px; border-color: var(--accent); }
+  .rail li a:not(.seen)::after, .rail li a[aria-current]::after { display: none; }
+  .railbtns { display: flex; gap: 6px; margin-top: 8px; }
+  .viewtoggle { width: auto; }
+  section { padding: 0 16px 20px; scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 120px); }
+  .mhead { margin: 0 -16px 4px; padding: 14px 16px; }
+  .where { margin-left: 0; }
+}
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+/* 도구 배지: PPT의 5단계 흐름 색 */
+:root { --c-chat:#5d6676; --c-chat-s:#eceef2; --c-project:#2f4bbf; --c-project-s:#e8ecfb; --c-skill:#0f7a5a; --c-skill-s:#e2f4ee; --c-work:#9a5b00; --c-work-s:#fdf1dc; --c-codex:#8a4fb0; --c-codex-s:#f3eafa; }
+@media (prefers-color-scheme: dark) { :root { --c-chat:#9aa3b2; --c-chat-s:#262b35; --c-project:#8ea2ff; --c-project-s:#232b4a; --c-skill:#5fd0a8; --c-skill-s:#17332b; --c-work:#f0b458; --c-work-s:#3a2c12; --c-codex:#d2a6f0; --c-codex-s:#2e2338; } }
+.tool { display:inline-block; font:600 13px/1.4 var(--sans); padding:3px 11px; border-radius:999px; white-space:nowrap; }
+.tool-chat { color:var(--c-chat); background:var(--c-chat-s); }
+.tool-project { color:var(--c-project); background:var(--c-project-s); }
+.tool-skill { color:var(--c-skill); background:var(--c-skill-s); }
+.tool-work { color:var(--c-work); background:var(--c-work-s); }
+.tool-codex { color:var(--c-codex); background:var(--c-codex-s); }
+.ladder { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; }
+@media (max-width:860px){ .ladder { grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); } }
+.ladder li { border:1px solid var(--line); border-radius:8px; padding:12px 14px; background:var(--bg); display:grid; gap:2px; align-content:start; border-top-width:3px; }
+.ladder em { font:500 12.5px/1.5 var(--mono); font-style:normal; color:var(--muted); }
+.ladder b { font-size:17px; }
+.ladder span { font-size:14px; }
+.ladder i { font-style:normal; font-size:13px; color:var(--muted); }
+.l-chat { border-top-color:var(--c-chat)!important; } .l-project { border-top-color:var(--c-project)!important; } .l-skill { border-top-color:var(--c-skill)!important; } .l-work { border-top-color:var(--c-work)!important; } .l-codex { border-top-color:var(--c-codex)!important; }
+.l-chat b { color:var(--c-chat); } .l-project b { color:var(--c-project); } .l-skill b { color:var(--c-skill); } .l-work b { color:var(--c-work); } .l-codex b { color:var(--c-codex); }
+.links { display:flex; flex-wrap:wrap; gap:8px; max-width:none; }
+a.ext { font-size:14px; text-decoration:none; padding:6px 12px; border:1px solid var(--line); border-radius:6px; background:var(--surface); }
+a.ext:hover { border-color:var(--accent); }
+ol.how { background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:14px 16px 14px 36px; max-width:none; }
+.ws { display:grid; gap:14px; border:1px solid var(--line); border-radius:8px; padding:16px; background:var(--bg); }
+.wsq { display:grid; gap:6px; }
+.wsq label, .wl { font-weight:600; font-size:15px; }
+.ws input[type=text], .ws textarea { font:400 15px/1.5 var(--sans); padding:9px 11px; border:1px solid var(--line); border-radius:6px; background:var(--surface); color:var(--ink); width:100%; min-width:0; resize:vertical; }
+.four { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:8px; }
+.opts { display:flex; flex-wrap:wrap; gap:6px; }
+.opts label { display:flex; align-items:center; gap:6px; font-weight:400; font-size:14.5px; padding:5px 11px; border:1px solid var(--line); border-radius:999px; background:var(--surface); cursor:pointer; }
+.opts input { accent-color:var(--accent); margin:0; }
+.opts label:has(input:checked) { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); }
+.intro { border:1px solid var(--c-skill); background:var(--c-skill-s); border-radius:8px; padding:12px 16px; display:grid; gap:6px; }
+.intro strong { color:var(--c-skill); font-size:15px; }
+.intro ul { margin:0; padding-left:20px; display:grid; gap:5px; }
+.tips { border:1px dashed var(--line); border-radius:8px; padding:12px 16px; display:grid; gap:4px; }
+.tips strong { font-size:13.5px; color:var(--accent); }
+.tips ul { margin:0; padding-left:20px; display:grid; gap:3px; }
+.two { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px; }
+.inl { display:flex; align-items:center; gap:8px; font-weight:400!important; font-size:14.5px!important; }
+.inl input[type=color] { width:52px; height:34px; border:1px solid var(--line); border-radius:6px; background:var(--surface); padding:2px; }
+.pb .wsq { gap:8px; }
+.preview { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 16px; border:1px solid var(--accent); background:var(--accent-soft); border-radius:8px; padding:12px 16px; }
+.preview div { display:grid; gap:2px; min-width:0; flex:1 1 280px; }
+.preview strong { color:var(--accent); font-size:15px; }
+.preview span { font-size:14px; color:var(--muted); }
+a.ext.go { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); font-weight:600; }
+.cases { display:grid; gap:8px; }
+.cases .ct { font-size:15px; color:var(--c-codex); }
+.cases ul { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:10px; }
+.cases li { border:1px solid var(--line); border-top:3px solid var(--c-codex); border-radius:8px; padding:12px 14px; background:var(--bg); display:grid; gap:8px; align-content:start; }
+.cases .ch { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 10px; }
+.cases .ch strong { font-size:16px; }
+.cases .who { font-size:12.5px; color:var(--c-codex); background:var(--c-codex-s); padding:1px 8px; border-radius:999px; }
+.cases p { font-size:14.5px; }
+.cases a.ext { justify-self:start; }
+.page { max-width: 920px; }
+main.solo { margin-top: 28px; }
+h1, h2.title, ol.chain li { word-break: keep-all; }
+.slot.filled { background: var(--check-soft); color: var(--check); }
+.fill { display: grid; gap: 6px; padding: 14px 16px; border: 2px solid var(--warn); border-radius: 8px; background: var(--warn-soft); min-width: 0; }
+.fill.ok { border-color: var(--check); background: var(--check-soft); }
+.fill label { font-weight: 700; font-size: 15px; }
+.fill input { font: 400 15px/1.4 var(--mono); padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); width: 100%; min-width: 0; }
+.fillnote { font-size: 13.5px; color: var(--muted); }
+button.copy.stop { background: var(--warn-soft); color: var(--warn); border-color: var(--warn); }
+ol.chain { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; counter-reset: c; }
+ol.chain li { counter-increment: c; border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 8px; padding: 10px 12px; background: var(--bg); display: grid; gap: 2px; }
+ol.chain li b::before { content: counter(c) ". "; color: var(--accent); }
+ol.chain li span { font-size: 14px; color: var(--muted); }
+ul.tools2 { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+ul.tools2 b { margin-right: 6px; }
+</style></head><body>
+<div class="page">
+  <header class="top">
+    <div class="eyebrow">바이브코딩 실습</div>
+    <h1>GitHub에 올리면 저절로 배포되게</h1>
+    <p class="sub">Git → GitHub → Vercel 자동 배포</p>
+    <p class="lede">내 컴퓨터의 자기소개 페이지를 GitHub 저장소에 올리고 Vercel과 한 번 연결합니다. 그다음부터는 고친 내용을 GitHub에 올리기만 하면 같은 주소의 사이트가 새 내용으로 바뀝니다.</p>
+    <ul class="facts">
+      <li><b>강사</b> 조미정</li>
+      <li><b>도구</b> Git, GitHub, Vercel (Hobby), Codex 앱 또는 Claude Code</li>
+      <li><b>준비물</b> my-intro 폴더 (index.html)</li>
+    </ul>
+  </header>
+  <main class="solo">
+<section id="flow">
+  <div class="mhead"><span class="clock">흐름</span><h2 class="title">자동 배포는 이렇게 돌아갑니다</h2></div>
+  <p class="goal">한 번만 연결해 두면, 내 컴퓨터에서 고친 내용을 GitHub에 올리는 것만으로 사이트가 저절로 새로 배포됩니다.</p>
+  <ol class="chain"><li><b>내 컴퓨터</b><span>index.html을 고침</span></li><li><b>Git</b><span>바뀐 내용을 기록(커밋)</span></li><li><b>GitHub</b><span>기록을 올려 보관(푸시)</span></li><li><b>Vercel</b><span>새 기록을 알아채고 자동 배포</span></li><li><b>내 주소</b><span>my-intro.vercel.app이 새 내용으로</span></li></ol>
+  <div class="tablewrap"><table><tr><th>말</th><th>뜻</th></tr><tr><td class="k">Git</td><td>파일이 언제 어떻게 바뀌었는지 기록해 두는 프로그램입니다. 내 컴퓨터에 설치합니다.</td></tr><tr><td class="k">GitHub</td><td>Git 기록을 인터넷에 보관하는 곳입니다. 폴더 하나를 <b>저장소</b>(repository)라고 부릅니다.</td></tr><tr><td class="k">커밋 (commit)</td><td>“여기까지 고쳤다”고 기록을 한 번 남기는 일입니다.</td></tr><tr><td class="k">푸시 (push)</td><td>내 컴퓨터의 기록을 GitHub에 올리는 일입니다.</td></tr><tr><td class="k">Vercel</td><td>GitHub 저장소를 웹사이트로 띄워 주는 서비스입니다. 개인용 Hobby 요금제는 무료입니다.</td></tr></table></div>
+  <dl class="spec"><div><dt>재료</dt><dd>자기소개 페이지 실습에서 만든 <code>my-intro</code> 폴더 (<code>index.html</code>, 선택 <code>photo.jpg</code>)</dd></div><div><dt>도구</dt><dd>Codex 앱 또는 Claude Code, PowerShell, 웹 브라우저</dd></div><div><dt>결과물</dt><dd>GitHub 저장소 하나, GitHub에 올릴 때마다 자동으로 새로 배포되는 vercel.app 주소</dd></div><div><dt>기준</dt><dd>2026년 11월 화면 기준입니다. 버튼 이름은 조금 바뀔 수 있습니다.</dd></div></dl>
+  <p class="note">아직 my-intro 폴더가 없다면 <a href="../portfolio/">자기소개 페이지 만들기</a> 실습을 먼저 하거나, 아무 <code>index.html</code> 하나가 든 폴더로 따라 해도 됩니다.</p>
+</section>
+
+<section id="git">
+  <div class="mhead"><span class="clock">준비</span><h2 class="title">Git 설치와 GitHub 저장소 만들기</h2></div>
+  <p class="goal">내 컴퓨터의 폴더를 인터넷에 올리려면 Git과 GitHub 저장소가 필요합니다. 처음 한 번만 합니다.</p>
+
+  <h3>1. Git 설치</h3>
+  <ol class="steps">
+    <li>검색창에 “GIT 설치”를 검색해 <b>Git - Install for Windows</b>를 엽니다. 주소는 <a href="https://git-scm.com/install/windows" target="_blank" rel="noopener">git-scm.com/install/windows</a>입니다.</li>
+    <li><b>Git for Windows/x64 Setup</b>을 내려받아 실행합니다.</li>
+    <li>설치 화면의 선택지는 기본값 그대로 두고 끝까지 진행합니다.</li>
+    <li>PowerShell을 새로 열어 아래 명령으로 확인합니다.</li>
+  </ol>
+  <div class="prompt"><div class="bar"><span>PowerShell에서 직접</span><button class="copy" type="button">복사</button></div><pre>git --version</pre></div>
+  <div class="verify"><strong>확인할 것</strong><ul><li><code>git version 2.…</code>처럼 버전이 나오나요? “인식되지 않습니다”가 나오면 PowerShell을 닫았다가 다시 엽니다.</li></ul></div>
+
+  <h3>2. GitHub 계정 만들기</h3>
+  <ol class="steps">
+    <li><a href="https://github.com/" target="_blank" rel="noopener">github.com</a>에 접속합니다.</li>
+    <li><b>Sign up</b>을 누릅니다.</li>
+    <li>이메일, 비밀번호, 사용자 이름을 입력합니다.</li>
+    <li>이메일 인증을 마칩니다.</li>
+  </ol>
+  <p class="note">GitHub 사용자 이름은 저장소 주소에 쓰이므로 영문과 숫자로 된 간단한 이름을 권합니다.</p>
+
+  <h3>3. 새 저장소 만들기</h3>
+  <ol class="steps">
+    <li>GitHub에 로그인하고 오른쪽 위 <b>+</b> → <b>New repository</b>를 누릅니다.</li>
+    <li><b>Repository name</b>에 <code>my-intro</code>를 입력합니다.</li>
+    <li><b>Public</b>(누구나 코드 보기)과 <b>Private</b>(나만 보기) 중 하나를 고릅니다. 개인 계정 저장소는 둘 다 Vercel 무료 요금제로 배포됩니다.</li>
+    <li>README 추가 같은 아래쪽 선택지는 체크하지 않고 <b>Create repository</b>를 누릅니다.</li>
+  </ol>
+  <div class="verify"><strong>확인할 것</strong><ul><li>브라우저 주소창이 <code>https://github.com/내계정/my-intro</code>처럼 바뀌었나요? 이 주소를 다음 단계에서 씁니다.</li></ul></div>
+</section>
+
+<section id="push">
+  <div class="mhead"><span class="clock">올리기</span><h2 class="title">내 폴더를 GitHub에 올리기</h2></div>
+  <p class="goal">my-intro 폴더를 방금 만든 저장소와 연결하고 올립니다. 올리기 전에 공개하면 안 되는 파일이 없는지 확인합니다.</p>
+
+  <h3>1. Git 작성자 정보 등록</h3>
+  <p>Git을 처음 쓸 때 한 번만 합니다. 색칠된 부분을 내 이름과 GitHub 가입 이메일로 바꿉니다.</p>
+  <div class="prompt"><div class="bar"><span>PowerShell에서 직접 · 색칠된 부분을 내 것으로</span><button class="copy" type="button">복사</button></div><pre>git config --global user.name "<span class="slot">홍길동</span>"
+git config --global user.email "<span class="slot">내GitHub가입이메일</span>"</pre></div>
+
+  <h3>2. 저장소 연결</h3>
+  <ol class="steps">
+    <li>저장소 화면에서 <b>브라우저 주소창</b>의 주소를 복사합니다.</li>
+    <li>복사한 주소를 아래 칸에 붙여 넣습니다. 명령에 주소가 자동으로 들어갑니다.</li>
+    <li>파일 탐색기에서 my-intro 폴더를 열고, 빈 곳에서 오른쪽 클릭 → <b>터미널에서 열기</b>로 PowerShell을 엽니다.</li>
+    <li>아래 명령을 복사해 실행합니다.</li>
+  </ol>
+  <div class="fill">
+    <label for="repo-url">내 저장소 주소</label>
+    <input id="repo-url" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://github.com/내계정/my-intro">
+    <span class="fillnote" id="repo-note">주소를 붙여 넣으면 아래 명령에 자동으로 들어갑니다.</span>
+  </div>
+  <div class="prompt" data-needs="repo-url"><div class="bar"><span>PowerShell에서 직접 · my-intro 폴더에서</span><button class="copy" type="button">복사</button></div><pre>git init
+git branch -M main
+git remote add origin <span class="slot" id="repo-slot">(위 칸에 저장소 주소를 넣으세요)</span></pre></div>
+  <p class="note">저장소 화면 아래쪽 상자에 나오는 명령은 쓰지 않습니다. 파일을 올리는 일은 다음 프롬프트로 AI에게 맡깁니다.</p>
+
+  <h3>3. AI에게 올리기 맡기기</h3>
+  <p>my-intro 폴더를 AI 도구에서 엽니다.</p>
+  <ul class="tools2"><li><b>Codex 앱</b> my-intro 폴더를 프로젝트로 추가하고 새 대화를 엽니다.</li><li><b>Claude Code</b> Claude 데스크톱 앱의 Code 탭에서 my-intro 폴더를 고르고 새 세션을 엽니다.</li></ul>
+  <div class="prompt"><div class="bar"><span>AI에게</span><button class="copy" type="button">복사</button></div><pre>이 폴더를 GitHub의 origin/main에 처음으로 올리려고 해.
+1. 공개되면 안 되는 파일(개인 연락처, 비밀번호, API 키, 개인 문서)이 있는지 먼저 확인해줘.
+2. 시스템이 만드는 불필요한 파일은 .gitignore에 넣어줘.
+3. 올릴 파일 목록을 보여준 뒤, “첫 업로드” 메시지로 커밋하고 origin/main에 푸시해줘.</pre></div>
+  <p class="note">처음 푸시할 때 브라우저에 GitHub 로그인 창이 뜨면 로그인하고 승인합니다. AI 도구가 명령 실행이나 인터넷 접속 권한을 물으면 승인합니다.</p>
+  <div class="verify"><strong>확인할 것</strong><ul><li>올릴 파일 목록에 <code>index.html</code>이 있나요? Vercel은 이 파일을 첫 화면으로 엽니다.</li><li>GitHub 저장소 화면을 새로고침하면 파일이 보이나요?</li></ul></div>
+  <div class="caution"><strong>주의</strong><ul><li>Public 저장소는 누구나 코드를 볼 수 있고, 배포된 사이트는 Private 저장소여도 주소를 아는 누구나 볼 수 있습니다. 집 주소, 개인 휴대폰 번호 같은 정보는 넣지 않습니다.</li></ul></div>
+</section>
+
+<section id="vercel">
+  <div class="mhead"><span class="clock">가입</span><h2 class="title">Vercel에 Hobby로 가입하기</h2></div>
+  <p class="goal">Vercel 계정을 GitHub 계정으로 만듭니다. 그러면 Vercel이 내 GitHub 저장소를 바로 볼 수 있습니다.</p>
+  <ol class="steps">
+    <li><a href="https://vercel.com/signup" target="_blank" rel="noopener">vercel.com/signup</a>에 접속합니다.</li>
+    <li>요금제 종류에서 개인 프로젝트용 <b>Hobby</b>를 고릅니다. (“I’m working on personal projects”) 무료이고 카드 등록이 필요 없습니다.</li>
+    <li>이름을 입력하고 <b>Continue</b>를 누릅니다.</li>
+    <li>가입 방법에서 <b>Continue with GitHub</b>를 누릅니다.</li>
+    <li>GitHub 창이 뜨면 로그인하고, Vercel 접근을 허용하는 <b>Authorize Vercel</b>을 누릅니다.</li>
+    <li>Vercel 화면으로 돌아오면 가입이 끝납니다. 이후 Vercel에 들어갈 때도 <b>Continue with GitHub</b>로 로그인합니다.</li>
+  </ol>
+  <p class="links"><a class="ext" href="https://vercel.com/signup" target="_blank" rel="noopener">Vercel 가입 ↗</a><a class="ext" href="https://vercel.com/dashboard" target="_blank" rel="noopener">Vercel 대시보드 ↗</a></p>
+  <div class="verify"><strong>확인할 것</strong><ul><li>오른쪽 위 프로필 사진이 내 GitHub 사진(또는 기본 그림)으로 보이나요?</li><li>왼쪽 위 팀 이름 옆에 <b>Hobby</b>가 표시되나요?</li></ul></div>
+  <div class="caution"><strong>주의</strong><ul><li>Hobby는 개인·비상업용입니다. 기관의 공식 서비스나 수익이 나는 사이트는 Pro 요금제가 필요합니다.</li><li>이메일로 먼저 가입했다면, 설정의 Authentication에서 GitHub를 연결해 두면 다음 단계가 편합니다.</li></ul></div>
+</section>
+
+<section id="import">
+  <div class="mhead"><span class="clock">연결</span><h2 class="title">GitHub 저장소를 Vercel로 가져와 배포하기</h2></div>
+  <p class="goal">Vercel에 my-intro 저장소를 가져오면(import) 첫 배포가 되고, 이때부터 GitHub에 올릴 때마다 자동으로 다시 배포됩니다.</p>
+
+  <h3>1. 저장소 가져오기</h3>
+  <ol class="steps">
+    <li>Vercel 대시보드 오른쪽 위 <b>Add New…</b> → <b>Project</b>를 누릅니다. 바로 가려면 <a href="https://vercel.com/new" target="_blank" rel="noopener">vercel.com/new</a>를 엽니다.</li>
+    <li><b>Import Git Repository</b> 목록에 내 저장소가 보입니다. 처음이면 <b>Install</b>(GitHub 앱 설치) 단추가 먼저 나올 수 있습니다. 누르고 GitHub 창에서 진행합니다.</li>
+    <li>GitHub 창에서 저장소 범위를 묻습니다. <b>Only select repositories</b>를 고르고 <code>my-intro</code>를 선택한 뒤 <b>Install</b>(또는 <b>Save</b>)을 누릅니다. <b>All repositories</b>를 골라도 됩니다.</li>
+    <li>목록의 <code>my-intro</code> 오른쪽 <b>Import</b>를 누릅니다.</li>
+  </ol>
+  <div class="verify"><strong>확인할 것</strong><ul><li>목록에 my-intro가 안 보이면 목록 아래 <b>Adjust GitHub App Permissions</b>를 눌러 저장소를 추가합니다.</li><li>목록 왼쪽 위 계정 이름이 내 GitHub 계정인가요?</li></ul></div>
+
+  <h3>2. 설정 확인하고 배포</h3>
+  <p><b>Configure Project</b> 화면이 나옵니다. HTML 한 파일짜리 사이트는 대부분 그대로 두면 됩니다.</p>
+  <div class="tablewrap"><table><tr><th>항목</th><th>이렇게</th></tr><tr><td class="k">Project Name</td><td><code>my-intro</code> 그대로 둡니다. 사이트 주소의 앞부분이 됩니다. 영문 소문자·숫자·하이픈만 됩니다.</td></tr><tr><td class="k">Framework Preset</td><td><b>Other</b>로 둡니다. 다른 이름이 골라져 있으면 Other로 바꿉니다.</td></tr><tr><td class="k">Root Directory</td><td><code>./</code> 그대로 둡니다. index.html이 저장소 맨 위에 있으면 바꿀 필요가 없습니다.</td></tr><tr><td class="k">Build and Output Settings</td><td>건드리지 않습니다.</td></tr><tr><td class="k">Environment Variables</td><td>비워 둡니다. API 키를 쓰는 사이트일 때만 여기에 넣습니다.</td></tr></table></div>
+  <ol class="steps">
+    <li><b>Deploy</b>를 누릅니다. 빌드 기록이 흘러가고 잠시 뒤 축하 화면이 나옵니다.</li>
+    <li>미리보기 화면을 누르거나 <b>Continue to Dashboard</b>로 프로젝트 화면에 들어갑니다.</li>
+    <li><b>Domains</b>에 보이는 <code>my-intro-….vercel.app</code> 주소가 내 사이트 주소입니다. 이름이 비어 있으면 <code>my-intro.vercel.app</code>처럼 짧게, 이미 누가 쓰고 있으면 뒤에 글자가 붙습니다.</li>
+  </ol>
+  <div class="fill">
+    <label for="site-url">내 사이트 주소</label>
+    <input id="site-url" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://my-intro.vercel.app">
+    <span class="fillnote" id="site-note">주소를 붙여 넣어 두면 아래 자동 배포 확인 프롬프트에 들어갑니다.</span>
+  </div>
+  <div class="verify"><strong>확인할 것</strong><ul><li>사이트 주소를 휴대폰으로 열면 내 자기소개 페이지가 보이나요?</li><li>프로젝트의 <b>Settings → Git</b>에 my-intro 저장소가 연결돼 있나요? 이것이 자동 배포의 연결 고리입니다.</li></ul></div>
+</section>
+
+<section id="auto">
+  <div class="mhead"><span class="clock">자동 배포</span><h2 class="title">고치고 올리면 저절로 바뀌는지 확인하기</h2></div>
+  <p class="goal">이제 Vercel 화면에 들어가지 않습니다. 고치고 GitHub에 올리기만 하면 같은 주소가 새 내용으로 바뀝니다. main 브랜치에 올린 것은 실제 사이트(Production)로 배포됩니다.</p>
+
+  <h3>1. 한 군데 고치고 올리기</h3>
+  <p>눈에 잘 띄는 곳을 하나 고쳐야 바뀐 것을 확인하기 쉽습니다.</p>
+  <div class="prompt"><div class="bar"><span>AI에게 · 색칠된 부분을 내 것으로</span><button class="copy" type="button">복사</button></div><pre>index.html의 <span class="slot">첫 화면 한 줄 소개 문구를 “오늘 자동 배포를 배웠습니다”로</span> 바꿔줘.
+다른 곳은 고치지 마.
+고친 뒤 변경 내용을 보여주고, “한 줄 소개 수정” 메시지로 커밋해서 origin/main에 푸시해줘.
+푸시가 끝나면 커밋 번호(앞 7자리)와 커밋 메시지를 알려줘.</pre></div>
+
+  <h3>2. 자동 배포 확인</h3>
+  <ol class="steps">
+    <li>Vercel 프로젝트의 <b>Deployments</b>를 엽니다. 방금 커밋 메시지가 적힌 새 배포가 맨 위에 생깁니다.</li>
+    <li>상태가 <b>Building</b>에서 <b>Ready</b>로 바뀔 때까지 기다립니다. 보통 1분 안팎입니다.</li>
+    <li>내 사이트 주소를 열고 <b>Ctrl+F5</b>로 새로고침해 고친 문구가 보이는지 봅니다.</li>
+  </ol>
+  <p>AI에게 확인을 맡길 수도 있습니다. 위 <b>내 사이트 주소</b> 칸에 주소를 넣으면 아래 프롬프트에 들어갑니다.</p>
+  <div class="prompt"><div class="bar"><span>AI에게 · 자동 배포 확인</span><button class="copy" type="button">복사</button></div><pre>방금 GitHub에 푸시한 변경이 Vercel에 자동 배포됐는지 확인해줘.
+내 사이트 주소는 <span class="slot" id="site-slot">(위 ‘내 사이트 주소’ 칸에 주소를 넣으세요)</span> 야.
+1. git log로 origin/main의 최신 커밋 번호와 메시지를 알려줘.
+2. 사이트 주소를 열어서 방금 고친 문구가 실제로 보이는지 확인해줘.
+3. 아직 예전 내용이면 1~2분 기다렸다가 한 번 더 확인해줘.
+4. 그래도 반영되지 않았으면 가능한 원인(푸시 실패, 다른 브랜치에 푸시, Vercel 연결 끊김, 배포 오류)을 순서대로 점검하고,
+   내가 Vercel 화면에서 직접 볼 곳을 알려줘.</pre></div>
+  <div class="verify"><strong>확인할 것</strong><ul><li>Deployments 맨 위 배포의 커밋 메시지가 방금 AI가 알려준 메시지와 같나요?</li><li>상태가 <b>Ready</b>이고 환경이 <b>Production</b>인가요?</li><li>사이트 주소가 바뀌지 않고 그대로인데 내용만 새것으로 바뀌었나요?</li></ul></div>
+
+  <h3>3. 앞으로는 이렇게</h3>
+  <div class="prompt"><div class="bar"><span>AI에게 · 고치고 바로 배포 · 색칠된 부분을 내 것으로</span><button class="copy" type="button">복사</button></div><pre><span class="slot">고칠 내용</span>을 고쳐줘. 다른 곳은 그대로 둬.
+고친 뒤 커밋해서 origin/main에 푸시해줘. Vercel이 자동으로 배포해.</pre></div>
+  <details class="fold"><summary>잘못 올렸을 때 되돌리기</summary><div class="foldbody"><p>방금 배포가 마음에 들지 않으면 Vercel의 Deployments에서 이전 배포 오른쪽 <b>⋯</b> → <b>Promote</b> 또는 <b>Instant Rollback</b>으로 예전 화면을 바로 되살릴 수 있습니다. 코드도 되돌리려면 AI에게 아래처럼 보냅니다.</p><div class="prompt"><div class="bar"><span>AI에게</span><button class="copy" type="button">복사</button></div><pre>방금 커밋을 되돌리는 커밋을 만들어서 origin/main에 푸시해줘. 이전 커밋은 지우지 마.</pre></div></div></details>
+
+  <h3>성공 기준</h3>
+  <div class="success"><div><b class="lv">기본 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="deploy-s0"><span>my-intro 폴더가 GitHub 저장소에 올라갔다</span></label></li><li><label><input type="checkbox" data-key="deploy-s1"><span>Vercel에서 저장소를 Import해 vercel.app 주소가 생겼다</span></label></li></ul></div><div><b class="lv lv2">도전 성공</b><ul class="checks"><li><label><input type="checkbox" data-key="deploy-c0"><span>Vercel 화면을 건드리지 않고, 푸시만으로 사이트 내용이 바뀌었다</span></label></li><li><label><input type="checkbox" data-key="deploy-c1"><span>Deployments에서 커밋 메시지와 배포 기록을 맞춰 봤다</span></label></li></ul></div></div>
+
+  <h3>막힐 때</h3>
+  <div class="tablewrap"><table><tr><th>이럴 때</th><th>이렇게</th></tr>
+  <tr><td class="k">Import 목록에 저장소가 없다</td><td>목록 아래 <b>Adjust GitHub App Permissions</b>를 눌러 my-intro를 추가하고 저장합니다. 목록 왼쪽 위 계정이 맞는지도 봅니다.</td></tr>
+  <tr><td class="k">푸시할 때 거부된다</td><td>“푸시가 실패했어. 오류 메시지를 보고 원인을 설명하고, 원격 저장소의 내용을 지우지 않는 방법으로 해결해줘.”라고 보냅니다. 강제 푸시(force)는 하지 않게 합니다.</td></tr>
+  <tr><td class="k">주소를 열면 404 NOT_FOUND</td><td>저장소 맨 위에 <code>index.html</code>이 있는지 봅니다. 파일 이름이 다르거나 폴더 안에 들어 있으면 “첫 화면 파일을 저장소 맨 위의 index.html로 옮겨서 푸시해줘.”라고 보냅니다.</td></tr>
+  <tr><td class="k">배포 상태가 Error</td><td>그 배포를 눌러 <b>Build Logs</b>의 빨간 줄을 복사해 AI에게 그대로 보냅니다.</td></tr>
+  <tr><td class="k">푸시했는데 새 배포가 안 생긴다</td><td>main이 아닌 다른 브랜치에 올렸는지 AI에게 물어봅니다. Vercel의 <b>Settings → Git</b>에서 저장소 연결이 살아 있는지 봅니다.</td></tr>
+  <tr><td class="k">배포는 Ready인데 화면이 그대로</td><td>Ctrl+F5로 새로고침하거나 휴대폰으로 열어 봅니다. 브라우저가 예전 화면을 기억하고 있을 수 있습니다.</td></tr></table></div>
+</section>
+
+  </main>
+  <aside class="instructor" aria-label="강사 소개">
+    <div class="who"><strong>조미정</strong><span>네모공장(주) 대표 · 공공기관 AI 교육·컨설팅</span></div>
+    <ul class="work"><li>데이터 분석</li><li>AI 업무자동화</li><li>AI 프로젝트</li></ul>
+    <div class="contact"><span class="label">문의</span><span class="mail" id="mail">mjcho7@naver.com</span><button class="copy" type="button" id="mailcopy">주소 복사</button><span class="mail" id="tel">010-9365-5638</span></div>
+  </aside>
+</div>
+<script>
+// 주소 칸: 넣은 주소가 명령·프롬프트에 바로 들어가고, 이 브라우저에만 저장된다
+var RULES = {
+  "repo-url": { re: /^https:\/\/github\.com\/[^\/\s]+\/[^\/\s]+$/, slot: "repo-slot", note: "repo-note", key: "vibe-deploy-repo",
+    ok: "명령에 주소가 들어갔습니다. 아래 복사 버튼을 누르세요.", bad: "https://github.com/계정/저장소 형태의 주소를 넣어 주세요." },
+  "site-url": { re: /^https:\/\/[^\/\s]+\.vercel\.app$/, slot: "site-slot", note: "site-note", key: "vibe-deploy-site",
+    ok: "자동 배포 확인 프롬프트에 주소가 들어갔습니다.", bad: "https://이름.vercel.app 형태의 주소를 넣어 주세요." }
+};
+var clean = function (v) { return v.trim().replace(/\/+$/, ""); };
+Object.keys(RULES).forEach(function (id) {
+  var r = RULES[id], field = document.getElementById(id), slot = document.getElementById(r.slot), note = document.getElementById(r.note);
+  if (!field) return;
+  var EMPTY = slot.textContent, HINT = note.textContent, wrap = field.parentNode;
+  var sync = function () {
+    var v = clean(field.value), ok = r.re.test(v);
+    slot.textContent = ok ? v : EMPTY; slot.classList.toggle("filled", ok); wrap.classList.toggle("ok", ok);
+    note.textContent = ok ? r.ok : (v ? r.bad : HINT);
+    try { localStorage.setItem(r.key, v); } catch (e) {}
+  };
+  try { field.value = localStorage.getItem(r.key) || ""; } catch (e) {}
+  field.addEventListener("input", sync); sync();
+});
+
+// 복사 버튼: 주소가 필요한 명령은 주소를 먼저 넣게 하고, 실패하면 글자를 선택해 Ctrl+C로 복사할 수 있게 한다
+function wireCopy(btn, source, idle, needs) {
+  btn.addEventListener("click", function () {
+    if (needs) {
+      var field = document.getElementById(needs);
+      if (!RULES[needs].re.test(clean(field.value))) {
+        btn.textContent = "주소를 먼저 넣으세요"; btn.classList.add("stop");
+        try { field.focus(); field.scrollIntoView({ block: "center" }); } catch (e) {}
+        setTimeout(function () { btn.textContent = idle; btn.classList.remove("stop"); }, 2200);
+        return;
+      }
+    }
+    var done = function (label) {
+      btn.textContent = label; btn.classList.add("done");
+      setTimeout(function () { btn.textContent = idle; btn.classList.remove("done"); }, 1800);
+    };
+    var selectText = function () {
+      var range = document.createRange(); range.selectNodeContents(source);
+      var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+      done("선택됨 · Ctrl+C");
+    };
+    try { navigator.clipboard.writeText(source.textContent.trim()).then(function () { done("복사됨"); }, selectText); }
+    catch (e) { selectText(); }
+  });
+}
+document.querySelectorAll(".prompt").forEach(function (box) {
+  wireCopy(box.querySelector("button.copy"), box.querySelector("pre"), "복사", box.getAttribute("data-needs"));
+});
+wireCopy(document.getElementById("mailcopy"), document.getElementById("mail"), "주소 복사");
+
+// 체크 항목: 이 브라우저에만 저장
+(function () {
+  var KEY = "vibe-deploy-checks", saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) {}
+  document.querySelectorAll(".checks input[data-key]").forEach(function (b) {
+    var k = b.getAttribute("data-key");
+    if (saved[k]) b.checked = true;
+    b.addEventListener("change", function () { saved[k] = b.checked; try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {} });
+  });
+})();
+</script>
+</body></html>
