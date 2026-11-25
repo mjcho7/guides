@@ -129,6 +129,26 @@ mark.slot{background:#e9d9fb;color:#5a2f99;padding:0 3px;border-radius:4px;font-
 
 footer.foot{width:min(1180px,calc(100% - 40px));margin:auto;padding:24px 0 48px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
 
+.demo{margin:16px 0;padding:16px 18px;border:2px solid #9cc3ec;border-radius:12px;background:var(--accent-soft)}
+.demo > .lbl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--navy);font-weight:700;font-size:15px;margin-bottom:6px}
+.demo > .lbl small{padding:2px 9px;border-radius:999px;background:var(--navy);color:#fff;font-size:12px;font-weight:700}
+.demo > p{margin:4px 0 8px;font-size:14px;color:#2c4766}
+.demo .list{margin:6px 0 10px}
+.demo .go{display:inline-flex;margin-top:6px;padding:9px 15px;border-radius:10px;border:1px solid var(--navy);background:var(--navy);color:#fff;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.demo .go:hover{filter:brightness(1.1)}
+
+.instructor{width:min(1180px,calc(100% - 40px));margin:30px auto 0;padding:20px 24px;border:1px solid var(--line);border-radius:14px;background:var(--surface);display:flex;flex-wrap:wrap;gap:14px 36px;align-items:center;justify-content:space-between;box-sizing:border-box}
+.instructor .who{display:grid;gap:2px}
+.instructor .who strong{font-size:19px;color:var(--navy)}
+.instructor .who span{color:var(--muted);font-size:14px}
+.instructor .work{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 8px}
+.instructor .work li{font-size:13.5px;padding:4px 11px;border-radius:999px;background:var(--accent-soft);color:#17457f}
+.instructor .contact{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.instructor .label{font-size:13px;color:var(--muted)}
+.instructor .mail{font:500 15px/1.4 var(--mono);user-select:all}
+.instructor .mailcopy{border:1px solid var(--line);background:#f7faff;color:#2d5590;border-radius:6px;padding:3px 10px;font:inherit;font-size:12.5px;cursor:pointer}
+.instructor .mailcopy:hover{background:var(--accent-soft)}
+
 @media(max-width:860px){
   .layout{display:block;padding-top:16px}
   .toc{position:static;margin-bottom:16px}
@@ -181,6 +201,26 @@ footer.foot{width:min(1180px,calc(100% - 40px));margin:auto;padding:24px 0 48px;
         <label><input type="checkbox" data-k="p0"> AI 코딩 도구(Codex, Claude Code 등)를 실행할 수 있고 로그인돼 있다</label>
         <label><input type="checkbox" data-k="p1"> <code>Team Hub</code> 폴더를 AI 코딩 도구로 열었다</label>
         <label><input type="checkbox" data-k="p3"> 지금 당장 실행 결과를 눈으로 확인할 수 있다 (화면을 볼 PC가 있다)</label>
+      </div>
+
+      <div class="demo">
+        <div class="lbl"><small>강사 시연</small>완성본을 외부 공유 주소로 먼저 보여 주기</div>
+        <p>실습을 시작하기 전에, 완성된 현황판을 <b>10 외부 공유</b> 방식(Cloudflare Tunnel)으로 띄워 수강생이 자기 휴대폰으로 직접 열어 보게 합니다. 무엇을 만들지 눈으로 먼저 보여 주는 순서입니다.</p>
+        <ol class="list">
+          <li>강사 PC에서 완성본의 <code>src</code> 폴더로 PowerShell 창 A를 열고 앱을 실행합니다.</li>
+          <li>PowerShell 창 B에서 Tunnel을 실행합니다.</li>
+          <li>나온 <code>https://...trycloudflare.com</code> 주소를 화면에 띄우거나 단체 채팅방에 올려, 수강생이 휴대폰으로 열게 합니다.</li>
+          <li>시연용 계정으로 로그인해 대시보드, 당직·휴가 입력 화면을 보여 줍니다.</li>
+          <li>시연이 끝나면 창 B를 닫습니다. 주소는 바로 끊깁니다.</li>
+        </ol>
+        <div class="cmdbox"><div class="lbl">창 A · PowerShell<button class="copy" type="button">복사</button></div><pre><code>cd ...\src<br>npm start</code></pre></div>
+        <div class="cmdbox"><div class="lbl">창 B · PowerShell<button class="copy" type="button">복사</button></div><pre><code>.\cloudflared-windows-amd64.exe tunnel --url http://localhost:3000</code></pre></div>
+        <div class="warn"><div class="lbl">시연 전에 확인</div><ul>
+          <li>창 B는 <code>cloudflared-windows-amd64.exe</code> 파일이 있는 폴더에서 엽니다.</li>
+          <li>시연용 <code>data.db</code>에는 실제 직원 이름·사번 같은 개인정보를 넣지 않습니다. 주소를 아는 누구나 열 수 있습니다.</li>
+          <li>교육장 와이파이에서 안 열리면 휴대폰 데이터로 열어 보게 합니다.</li>
+        </ul></div>
+        <button class="go" type="button" data-goto="s9">10 외부 공유 자세히 보기 →</button>
       </div>
 
       <h3>무엇을 만들까?</h3>
@@ -461,6 +501,12 @@ footer.foot{width:min(1180px,calc(100% - 40px));margin:auto;padding:24px 0 48px;
   </main>
 </div>
 
+<aside class="instructor" aria-label="강사 소개">
+  <div class="who"><strong>조미정</strong><span>네모공장(주) 대표 · AX 교육·컨설팅</span></div>
+  <ul class="work"><li>데이터 분석</li><li>AI 업무자동화</li><li>AX 프로젝트</li></ul>
+  <div class="contact"><span class="label">문의</span><span class="mail" id="mail">mjcho7@naver.com</span><button class="mailcopy" type="button" id="mailcopy">주소 복사</button><span class="mail" id="tel">010-9365-5638</span></div>
+</aside>
+
 <footer class="foot">부서 운영 현황판 바이브코딩 실습 · 프롬프트편</footer>
 
 <script>
@@ -475,6 +521,14 @@ footer.foot{width:min(1180px,calc(100% - 40px));margin:auto;padding:24px 0 48px;
       b.textContent = '복사됨';
       setTimeout(function(){ b.textContent = old; }, 1200);
     });
+  });
+
+  // 강사 이메일 복사
+  var mc = document.getElementById('mailcopy');
+  if(mc) mc.addEventListener('click', async function(){
+    try{ await navigator.clipboard.writeText(document.getElementById('mail').textContent.trim()); mc.textContent = '복사됨'; }
+    catch(e){ var r = document.createRange(); r.selectNodeContents(document.getElementById('mail')); var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); mc.textContent = '선택됨 · Ctrl+C'; }
+    setTimeout(function(){ mc.textContent = '주소 복사'; }, 1500);
   });
 
   // 체크리스트 로컬 저장
