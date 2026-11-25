@@ -253,11 +253,13 @@ a.ext.go { background:var(--accent); color:var(--accent-ink); border-color:var(-
   <div class="meta"><span class="tool tool-codex">Codex</span><span class="kind">엑셀 → 단일 HTML 대시보드 → VERCEL 배포</span></div>
   <dl class="spec"><div><dt>목표</dt><dd>예술의전당 공연·전시 입장객 데이터로 대시보드를 만들고 배포한다</dd></div><div><dt>재료</dt><dd>예술의전당_공연및전시_입장객현황_통합_20251231.xlsx (분석용 데이터 시트, 2011~2025년, 51,938행)</dd></div><div><dt>결과물</dt><dd>더블클릭으로 열리는 대시보드 HTML, 누구나 접속할 수 있는 vercel.app 주소</dd></div><div><dt>핵심</dt><dd>“코드를 알려줘”가 아니라 “작동하는 도구를 만들어줘”. 기능은 한 번에 하나씩 더하고, 매번 “기존 기능은 변경하지 마”를 붙인다</dd></div></dl>
   <div class="tips"><strong>시작 전에 알아 둘 데이터 특징</strong><ul><li>엑셀에는 시트가 4개 있습니다. 분석에는 <b>분석용 데이터</b> 시트를 씁니다. 나머지(통합 안내, 연도별 요약, 전처리 현황)는 설명과 점검용입니다.</li><li>공연은 2011년부터, 전시는 2023년부터 들어 있습니다. 공연과 전시를 합친 연도별 추이는 2023년에 갑자기 늘어난 것처럼 보일 수 있습니다.</li><li>전시 행에는 시간과 시간대가 비어 있습니다. 시간대 분석은 공연 기준으로 봅니다.</li><li>연도에 따라 이름이 다르게 적힌 장소가 있습니다. 예: 서울서예박물관(2011~2022)과 서예박물관(2023~), 한가람디자인미술관과 디자인미술관, IBK챔버홀과 IBK기업은행챔버홀.</li><li>행 하나는 공연 회차 또는 전시 일자 하나입니다. 관객 수는 <b>관객수</b> 열, 장소는 <b>장소(표준)</b> 열을 씁니다.</li></ul></div>
-  <p class="folder"><span>실습 파일</span><code>예술의전당_공연및전시_입장객현황_통합_20251231.xlsx</code> · 사용 도구: Codex 앱</p>
+  <div class="preview"><div><strong>실습 데이터 내려받기</strong><span>예술의전당_공연및전시_입장객현황_통합_20251231.xlsx · 2011~2025년, 51,938행 · 약 6.6MB</span></div><a class="ext go" href="%EC%98%88%EC%88%A0%EC%9D%98%EC%A0%84%EB%8B%B9_%EA%B3%B5%EC%97%B0%EB%B0%8F%EC%A0%84%EC%8B%9C_%EC%9E%85%EC%9E%A5%EA%B0%9D%ED%98%84%ED%99%A9_%ED%86%B5%ED%95%A9_20251231.xlsx" download>내려받기 ↓</a></div>
+  <ol class="steps"><li>위 버튼으로 엑셀 파일을 내려받습니다.</li><li>바탕화면에 <code>seoul-arts-dashboard</code> 폴더를 만들고, 내려받은 파일을 그 안으로 옮깁니다. 파일 이름은 바꾸지 않습니다.</li><li>Codex 앱에서 이 폴더를 프로젝트로 추가하고 새 대화를 엽니다.</li></ol>
+  <p class="folder"><span>실습 폴더</span><code>바탕화면 · seoul-arts-dashboard</code> · 사용 도구: Codex 앱</p>
 </section>
 <section id="s1">
   <div class="mhead"><span class="clock">1단계</span><h2 class="title">데이터 확인과 설계</h2></div>
-  <p class="goal">대시보드를 만들기 전에 KPI와 분석 질문부터 받습니다. 실습 파일을 넣은 폴더를 Codex 앱에서 프로젝트로 열고 시작합니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>폴더의 예술의전당 공연·전시 입장객 현황 엑셀 파일을 분석해줘.
+  <p class="goal">대시보드를 만들기 전에 KPI와 분석 질문부터 받습니다. 개요에서 내려받은 엑셀 파일을 넣은 seoul-arts-dashboard 폴더를 Codex 앱에서 프로젝트로 열고 시작합니다.</p><div class="prompt"><div class="bar"><span>Codex에게</span><button class="copy" type="button">복사</button></div><pre>폴더의 예술의전당 공연·전시 입장객 현황 엑셀 파일을 분석해줘.
 ‘분석용 데이터’ 시트를 기준으로 하고, 다른 시트는 데이터 설명으로 참고해줘.
 주요 컬럼을 분류하고 입장객 현황을 파악하기 위한
 KPI 5개와 분석 질문을 제안해줘.
