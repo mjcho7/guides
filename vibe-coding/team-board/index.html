@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>바이브코딩으로 만드는 부서 운영 현황판</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+:root{
+  --bg:#f5f7fb;--surface:#ffffff;--ink:#1b2639;--muted:#64748b;--line:#e1e7f0;
+  --navy:#103a6d;--accent:#1f6fc4;--accent-soft:#eaf2fd;
+  --check:#0f7a5a;--check-soft:#e4f5ee;
+  --warn:#a35b12;--warn-soft:#fdf1df;
+  --code-bg:#0f2a4d;--code-ink:#e7f1ff;
+  --tpl:#6a3fb5;--tpl-soft:#f1ebfb;
+  --sans:"Pretendard Variable","Malgun Gothic",Arial,sans-serif;
+  --mono:Consolas,"D2Coding","Courier New",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.7}
+a{color:var(--accent)}
+code{font-family:var(--mono)}
+
+.topbar{border-bottom:1px solid var(--line);background:var(--surface)}
+.topbar-in{width:min(1180px,calc(100% - 40px));margin:auto;display:flex;gap:18px;align-items:center;padding:14px 0;font-size:14px;color:var(--muted)}
+.topbar-in b{color:var(--navy)}
+.topbar a.back{color:var(--muted);text-decoration:none}
+.topbar a.back:hover{color:var(--accent)}
+
+.hero{width:min(1180px,calc(100% - 40px));margin:auto;padding:30px 0 6px}
+.crumb{display:inline-flex;align-items:center;gap:6px;color:var(--accent);font-weight:700;font-size:13px;margin-bottom:10px}
+h1{margin:0 0 10px;font-size:clamp(26px,4vw,38px);letter-spacing:-1px;color:var(--navy)}
+.sub{margin:0 0 14px;font-size:16px;color:#2d5590;font-weight:600}
+.desc{max-width:760px;color:var(--muted);font-size:15px;margin:0 0 18px}
+.meta{display:flex;flex-wrap:wrap;gap:10px 28px;padding:12px 0 2px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted)}
+.meta b{display:block;color:var(--ink);font-size:13px;margin-bottom:3px}
+.meta span.pill{display:inline-block;margin:2px 6px 2px 0;padding:3px 9px;border-radius:999px;background:var(--accent-soft);color:#17457f;font-size:12.5px}
+
+.origin{width:min(1180px,calc(100% - 40px));margin:16px auto 0;padding:14px 18px;border:1px solid #cfe0d4;border-radius:12px;background:var(--check-soft);color:#0c5c43;font-size:14px}
+.origin b{color:var(--check)}
+
+.layout{width:min(1180px,calc(100% - 40px));margin:auto;display:grid;grid-template-columns:230px minmax(0,1fr);gap:34px;padding:12px 0 80px;align-items:start}
+
+.toc{position:sticky;top:18px;border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
+.toc h2{margin:0;padding:12px 16px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--line);font-weight:700}
+.toc ol{list-style:none;margin:0;padding:6px}
+.toc li{margin:1px 0}
+.toc a{display:flex;gap:9px;align-items:baseline;padding:8px 10px;border-radius:8px;text-decoration:none;color:#49607d;font-size:13.5px;border-left:3px solid transparent}
+.toc a .n{flex:0 0 auto;min-width:18px;color:var(--muted);font-size:12px;font-weight:700}
+.toc a:hover{background:#f3f8ff}
+.toc a.active{background:var(--accent-soft);border-left-color:var(--accent);color:var(--navy);font-weight:700}
+.toc a.active .n{color:var(--accent)}
+.expand-btn{display:block;width:calc(100% - 12px);margin:4px 6px 8px;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:#f7faff;color:#2d5590;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.expand-btn:hover{background:var(--accent-soft)}
+.expand-btn.on{background:var(--navy);border-color:var(--navy);color:#fff}
+
+body:not(.expanded) section.step{display:none}
+body:not(.expanded) section.step.active{display:block}
+body.expanded section.step{display:block}
+body.expanded .stepnav{display:none}
+
+main{min-width:0}
+section.step{margin-bottom:26px;padding:28px;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:0 8px 22px rgb(16 58 109 / 4%);scroll-margin-top:18px}
+.step-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.badge{display:inline-block;padding:4px 11px;border-radius:999px;background:var(--navy);color:#fff;font-size:12.5px;font-weight:700;white-space:nowrap}
+.badge.alt{background:#4a6b93}
+.step-head h2{margin:0;font-size:21px;color:var(--navy);letter-spacing:-0.5px;flex:1}
+.count{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+.step>p.lead{color:#3b4f6b;margin:10px 0 18px}
+
+h3{margin:24px 0 8px;font-size:16.5px;color:#234a79}
+p{margin:0 0 12px}
+ul,ol.list{margin:6px 0 14px;padding-left:22px}
+li{margin:4px 0}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0 16px}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:#2d5590;background:#f4f8fd;font-size:13px}
+
+.mech{margin:10px 0 16px;padding:11px 14px;border-radius:9px;background:#f6f3fb;border:1px dashed #cdbcea;color:#4a3576;font-size:13.5px}
+.mech b{color:var(--tpl)}
+
+.aibox{margin:10px 0;border:1px solid #bcd6f3;border-radius:11px;overflow:hidden;background:var(--accent-soft)}
+.aibox .lbl{display:flex;align-items:center;justify-content:space-between;padding:8px 13px;background:#dcecfd;color:#15529a;font-size:12.5px;font-weight:700}
+.aibox pre{margin:0;padding:14px;color:#1c3c60;background:transparent;font-family:var(--sans);font-size:14px;white-space:pre-wrap;line-height:1.65}
+.aibox code{font-family:inherit}
+
+.cmdbox{margin:10px 0;border-radius:11px;overflow:hidden}
+.cmdbox .lbl{display:flex;align-items:center;justify-content:space-between;padding:7px 13px;background:#1c3b61;color:#bcd8f7;font-size:12px}
+.cmdbox pre{margin:0;padding:14px;color:var(--code-ink);background:var(--code-bg);font-size:13.5px;overflow:auto;white-space:pre-wrap}
+
+.copy{border:1px solid rgb(255 255 255 / 35%);background:transparent;color:inherit;border-radius:6px;padding:3px 9px;font:inherit;font-size:12px;cursor:pointer}
+.aibox .copy{border-color:#8fb9e6;color:#15529a}
+.copy:hover{background:rgb(255 255 255 / 15%)}
+.aibox .copy:hover{background:#c7e0fa}
+
+.check{margin:12px 0;padding:13px 15px;border-radius:10px;background:var(--check-soft);border:1px solid #bfe3d2}
+.check .lbl{color:var(--check);font-weight:700;font-size:13px;margin-bottom:6px}
+.check ul{margin:0;padding-left:18px}
+.check li{color:#115c44;font-size:13.5px}
+
+.warn{margin:12px 0;padding:13px 15px;border-radius:10px;background:var(--warn-soft);border:1px solid #efd1a2}
+.warn .lbl{color:var(--warn);font-weight:700;font-size:13px;margin-bottom:6px}
+.warn ul{margin:0;padding-left:18px}
+.warn li{color:#7a4208;font-size:13.5px}
+
+.tplbox{margin:10px 0;border:1px solid #d8c7f1;border-radius:11px;overflow:hidden;background:var(--tpl-soft)}
+.tplbox .lbl{display:flex;align-items:center;justify-content:space-between;padding:8px 13px;background:#e4d8f7;color:var(--tpl);font-size:12.5px;font-weight:700}
+.tplbox pre{margin:0;padding:14px;color:#3c2a5c;background:transparent;font-family:var(--sans);font-size:14px;white-space:pre-wrap;line-height:1.65}
+.tplbox .copy{border-color:#c4a9ea;color:var(--tpl)}
+.tplbox .copy:hover{background:#dcc7f3}
+mark.slot{background:#e9d9fb;color:#5a2f99;padding:0 3px;border-radius:4px;font-weight:700}
+
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
+.box{padding:13px;border:1px solid var(--line);border-radius:10px;background:#fbfdff}
+.box b{display:block;color:#1c4d83;margin-bottom:3px;font-size:13.5px}
+.box span{color:var(--muted);font-size:13px}
+
+.checklist label{display:flex;gap:9px;margin:3px 0;padding:7px 11px;border-radius:8px;background:#f7faff;cursor:pointer;font-size:14px}
+.checklist input{width:17px;height:17px;margin-top:2px;accent-color:var(--accent)}
+
+.stepnav{display:flex;justify-content:space-between;gap:10px;margin-top:22px;padding-top:16px;border-top:1px solid var(--line)}
+.stepnav button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:9px 15px;border-radius:10px;border:1px solid var(--line);background:#fff;color:#2d5590;font:inherit;font-size:13.5px;cursor:pointer}
+.stepnav button b{font-size:14.5px;color:var(--navy)}
+.stepnav button.next{margin-left:auto;align-items:flex-end;background:var(--navy);border-color:var(--navy);color:#dce9fb}
+.stepnav button.next b{color:#fff}
+.stepnav button:hover{filter:brightness(0.97)}
+.stepnav button:disabled{opacity:.35;cursor:default}
+
+footer.foot{width:min(1180px,calc(100% - 40px));margin:auto;padding:24px 0 48px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+
+@media(max-width:860px){
+  .layout{display:block;padding-top:16px}
+  .toc{position:static;margin-bottom:16px}
+  .toc ol{display:grid;grid-template-columns:repeat(2,1fr)}
+  section.step{padding:20px 16px}
+  .grid2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="crumb">실습 안내</div>
+  <h1>바이브코딩으로 만드는 부서 운영 현황판</h1>
+  <p class="sub">Node.js 설치부터 Cloudflare Tunnel 공유까지</p>
+  <p class="desc">Node.js 설치, 화면 만들기, SQLite 데이터 저장, Cloudflare Tunnel 외부 공유까지 프롬프트로 직접 실습합니다. 실습이 끝나면 같은 방식을 다른 프로그램에도 그대로 적용할 수 있습니다.</p>
+  <div class="meta">
+    <div><b>강사</b>조미정</div>
+    <div><b>도구</b><span class="pill">AI 코딩 도구</span><span class="pill">Node.js</span><span class="pill">SQLite</span><span class="pill">DB Browser for SQLite</span><span class="pill">Cloudflare Tunnel</span></div>
+    <div><b>자료</b><span class="pill">PRD.md</span><span class="pill">AGENTS.md</span><span class="pill">src 소스코드</span></div>
+  </div>
+</div>
+
+<div class="layout">
+  <nav class="toc" aria-label="진행표">
+    <h2>진행표</h2>
+    <ol id="tocList">
+      <li><a href="#prep" data-n="0"><span class="n">0</span>준비 확인</a></li>
+      <li><a href="#flow" data-n="1"><span class="n">1</span>바이브코딩이란</a></li>
+      <li><a href="#s1" data-n="2"><span class="n">2</span>작업 규칙 정하기</a></li>
+      <li><a href="#s2" data-n="3"><span class="n">3</span>기획서 만들기</a></li>
+      <li><a href="#s3" data-n="4"><span class="n">4</span>기술·순서 정하기</a></li>
+      <li><a href="#s4" data-n="5"><span class="n">5</span>기본 화면 만들기</a></li>
+      <li><a href="#s5" data-n="6"><span class="n">6</span>로그인과 계정</a></li>
+      <li><a href="#s6" data-n="7"><span class="n">7</span>기능 하나씩 만들기</a></li>
+      <li><a href="#s7" data-n="8"><span class="n">8</span>대시보드·디자인</a></li>
+      <li><a href="#s8" data-n="9"><span class="n">9</span>데이터 확인·백업</a></li>
+      <li><a href="#s9" data-n="10"><span class="n">10</span>외부 공유</a></li>
+      <li><a href="#finish" data-n="11"><span class="n">11</span>마무리·재사용</a></li>
+    </ol>
+    <button id="expandAll" class="expand-btn" type="button">전체 펼쳐 보기</button>
+  </nav>
+
+  <main>
+
+    <section class="step active" id="prep">
+      <div class="step-head"><span class="badge alt">준비</span><h2>준비 확인</h2><span class="count">1 / 12</span></div>
+      <p class="lead">이 페이지는 아무것도 설치돼 있지 않은 상태에서 처음부터 시작합니다. 체크 상태는 이 브라우저에만 저장됩니다.</p>
+      <div class="checklist" id="prepCheck">
+        <label><input type="checkbox" data-k="p0"> AI 코딩 도구(Codex, Claude Code 등)를 실행할 수 있고 로그인돼 있다</label>
+        <label><input type="checkbox" data-k="p1"> <code>Team Hub</code> 폴더를 AI 코딩 도구로 열었다</label>
+        <label><input type="checkbox" data-k="p3"> 지금 당장 실행 결과를 눈으로 확인할 수 있다 (화면을 볼 PC가 있다)</label>
+      </div>
+
+      <h3>무엇을 만들까?</h3>
+      <p>부서원이 함께 쓰는 내부 현황판입니다. 당직, 휴가·외근, 부서 일정을 한곳에서 확인하고 직접 입력합니다.</p>
+      <div class="grid2">
+        <div class="box"><b>대시보드</b><span>오늘의 당직자·부재자·일정과 월간 달력을 보는 첫 화면</span></div>
+        <div class="box"><b>입력 화면</b><span>당직표, 휴가·외근, 부서 일정 정보를 등록·수정하는 화면</span></div>
+        <div class="box"><b>로그인</b><span>사번과 비밀번호로 사용자를 구분하는 기능</span></div>
+        <div class="box"><b>공유 URL</b><span>내 PC의 앱을 다른 기기에서도 열 수 있게 하는 주소</span></div>
+      </div>
+
+      <h3>꼭 알아둘 말</h3>
+      <table><thead><tr><th>용어</th><th>쉬운 설명</th><th>이 실습에서 하는 일</th></tr></thead><tbody>
+        <tr><td><b>Node.js</b></td><td>JavaScript로 웹서버를 실행하게 해 주는 프로그램</td><td>내 PC에서 현황판 서버를 켭니다.</td></tr>
+        <tr><td><b>npm</b></td><td>Node.js용 설치·실행 도구</td><td><code>npm start</code>로 앱을 실행합니다.</td></tr>
+        <tr><td><b>Express</b></td><td>Node.js에서 웹페이지와 API를 만드는 도구</td><td>브라우저에 화면과 데이터를 제공합니다.</td></tr>
+        <tr><td><b>SQLite</b></td><td>파일 하나에 데이터를 저장하는 가벼운 데이터베이스</td><td><code>data.db</code>에 계정·당직·일정을 저장합니다.</td></tr>
+      </tbody></table>
+
+      <h3>Node.js 설치하기</h3>
+      <p>이 프로젝트는 Node.js 서버로 실행되므로 <b>Node.js 설치가 필요합니다.</b> npm은 Node.js 설치 시 함께 설치됩니다.</p>
+      <ol class="list">
+        <li><a href="https://nodejs.org/en/download/" target="_blank" rel="noreferrer">Node.js 공식 다운로드 페이지</a>를 엽니다. Windows Installer(<code>.msi</code>)의 <b>LTS</b> 버전을 선택합니다. LTS는 안정적으로 오래 지원되는 권장 버전입니다.</li>
+        <li>기본값으로 설치한 뒤 PowerShell을 새로 엽니다.</li>
+      </ol>
+      <div class="cmdbox"><div class="lbl">PowerShell에서 확인<button class="copy" type="button">복사</button></div><pre><code>node -v<br>npm -v</code></pre></div>
+      <p>각각 버전 번호가 보이면 성공입니다.</p>
+      <div class="warn"><div class="lbl">명령을 찾을 수 없다는 오류가 나면</div><ul>
+        <li>PowerShell을 완전히 닫고 새로 열어 보세요. 그래도 안 되면 Node.js 설치를 다시 확인합니다.</li>
+      </ul></div>
+
+      <div class="warn"><div class="lbl">헷갈리기 쉬운 점</div><ul>
+        <li>여기 나오는 프롬프트는 "정답"이 아니라 "실제로 보냈던 요청"입니다. 상황에 맞게 단어를 바꿔도 됩니다.</li>
+        <li>프롬프트는 한 번에 하나씩 보냅니다. 여러 단계를 한 번에 섞어 보내면 AI가 범위를 넘어서기 쉽습니다.</li>
+      </ul></div>
+      <div class="stepnav"><button disabled>← 이전</button><button class="next" data-goto="flow"><span>다음 · 흐름</span><b>바이브코딩이란 →</b></button></div>
+    </section>
+
+    <section class="step" id="flow">
+      <div class="step-head"><span class="badge alt">흐름</span><h2>바이브코딩이란</h2><span class="count">2 / 12</span></div>
+      <p class="lead">바이브코딩은 긴 요구사항을 한 번에 던지는 방식이 아닙니다. <b>작은 요청 → 결과 확인 → 다음 요청</b>을 반복하며 AI와 함께 만들어 가는 방식입니다. 이번 실습은 10단계로 이 과정을 그대로 따라갑니다.</p>
+      <table><thead><tr><th>단계</th><th>하는 일</th><th>이 단계의 핵심 메커니즘</th></tr></thead><tbody>
+        <tr><td>1. 작업 규칙</td><td>AGENTS.md로 AI의 작업 방식을 먼저 합의</td><td>규칙을 한 번 정하면 이후 모든 요청에 계속 적용됨</td></tr>
+        <tr><td>2. 기획서</td><td>AI가 먼저 질문 → 내가 답 → PRD.md 저장</td><td>코드를 짜기 전에 결정 사항부터 문서로 고정</td></tr>
+        <tr><td>3. 기술·순서</td><td>기술 추천, 전체 순서 5단계 받기</td><td>기술 선택을 AI에게 맡기고 큰 그림만 확인</td></tr>
+        <tr><td>4~7. 화면·기능</td><td>화면 → 로그인 → 기능을 하나씩 구현</td><td>"이것만", "다른 기능은 만들지 마"로 범위를 좁힘</td></tr>
+        <tr><td>8~9. 점검·공유</td><td>데이터 확인·백업, 외부 공유</td><td>완성 후에도 실행해서 직접 확인하는 습관</td></tr>
+      </tbody></table>
+      <div class="mech"><b>왜 이 순서인가 —</b> 한 번에 다 만들어 달라고 하면 중간에 무엇이 잘못됐는지 찾기 어렵습니다. 단계를 작게 쪼개면, 문제가 생겨도 "방금 요청한 부분"만 다시 보면 되고, 매 단계가 끝날 때마다 실제로 눈으로 확인할 수 있습니다. <b>이 패턴은 현황판이 아닌 다른 어떤 프로그램을 만들 때도 똑같이 적용됩니다.</b></div>
+      <div class="stepnav"><button data-goto="prep"><span>이전</span><b>← 준비 확인</b></button><button class="next" data-goto="s1"><span>다음 · 1단계</span><b>작업 규칙 정하기 →</b></button></div>
+    </section>
+
+    <section class="step" id="s1">
+      <div class="step-head"><span class="badge">1단계</span><h2>작업 규칙 정하기 (AGENTS.md)</h2><span class="count">3 / 12</span></div>
+      <p class="lead">코드를 한 줄도 쓰기 전에, 먼저 폴더 구조를 손으로 잡아두고, AI가 앞으로 어떻게 작업할지부터 합의합니다.</p>
+      <h3>0. 폴더 구조부터 만들기</h3>
+      <p>파일 탐색기에서 프로젝트 폴더 안에 아래 폴더 4개와 빈 파일 2개를 먼저 만듭니다.</p>
+      <div class="cmdbox"><div class="lbl">만들어 둘 폴더·파일</div><pre><code>Team Hub/
+├─ archive/        (빈 폴더)
+├─ assets/         (빈 폴더)
+├─ docs/           (빈 폴더)
+├─ src/            (빈 폴더)
+├─ AGENTS.md       (빈 파일)
+└─ PRD.md          (빈 파일)</code></pre></div>
+      <h3>1. AI 작업 규칙 만들기</h3>
+      <div class="aibox"><div class="lbl">AI에게<button class="copy" type="button">복사</button></div><pre><code>이 폴더 구조에 대해 agent.md 파일을 만들어줘</code></pre></div>
+      <div class="mech"><b>왜 폴더부터 손으로 만드는가 —</b> 빈 폴더라도 구조가 먼저 있으면 AI가 "이 프로젝트가 무엇을 담을 곳인지" 파악하고 그에 맞는 규칙을 씁니다. 구조 없이 바로 "규칙 파일 만들어줘"라고 하면, AI가 임의로 폴더를 새로 만들어 버릴 수 있습니다.</div>
+      <div class="mech"><b>왜 먼저 이걸 요청하는가 —</b> "한 번에 한 기능만", "바꾸기 전에 설명하기" 같은 규칙을 파일로 만들어 두면, 이후 모든 요청에서 AI가 같은 규칙을 지킵니다. 매번 "하나씩 해줘"를 반복해서 말하지 않아도 됩니다.</div>
+      <div class="check"><div class="lbl">확인할 것</div><ul>
+        <li>프로젝트 최상단에 <code>AGENTS.md</code>가 생겼나요?</li>
+        <li>폴더 구조와 "한 번에 한 기능만", "승인 전 다음 단계로 넘어가지 않는다" 같은 작업 원칙이 적혀 있나요?</li>
+      </ul></div>
+      <div class="warn"><div class="lbl">AGENTS.md는 Codex만의 규칙 파일인가요?</div><ul>
+        <li><code>AGENTS.md</code>는 Codex뿐 아니라 여러 AI 코딩 도구가 공통으로 읽는 표준 파일입니다.</li>
+        <li>Claude Code는 기본적으로 <code>CLAUDE.md</code>라는 이름을 쓰지만, <code>AGENTS.md</code>가 있으면 그것도 함께 인식합니다. 즉 <code>AGENTS.md</code> 하나만 만들어 둬도 Codex와 Claude Code 모두에서 같은 규칙으로 작동합니다.</li>
+      </ul></div>
+      <div class="stepnav"><button data-goto="flow"><span>이전</span><b>← 바이브코딩이란</b></button><button class="next" data-goto="s2"><span>다음 · 2단계</span><b>기획서 만들기 →</b></button></div>
+    </section>
+
+    <section class="step" id="s2">
+      <div class="step-head"><span class="badge">2단계</span><h2>기획서 만들기 (PRD.md)</h2><span class="count">4 / 12</span></div>
+      <p class="lead">무엇을 만들지 AI에게 질문부터 받습니다. 바로 코드를 짜 달라고 하지 않습니다.</p>
+      <div class="aibox"><div class="lbl">AI에게<button class="copy" type="button">복사</button></div><pre><code>나는 개발 초보야.<br>부서원이 쓰는 내부 현황판을 만들고 싶어.<br>기능은 당직, 휴가·외근, 부서 일정만 넣을 거야.<br><br>먼저 PRD에 꼭 필요한 질문 3개만 해줘.<br>내가 답하면 프로젝트 최상단에 PRD.md로 저장해줘.</code></pre></div>
+      <div class="mech"><b>왜 질문부터 받는가 —</b> 처음 만드는 입장에서는 "무엇을 정해야 하는지" 자체를 모르는 경우가 많습니다. AI에게 질문을 먼저 하게 하면, 내가 결정해야 할 것만 골라서 답하면 됩니다. 결정한 내용을 PRD.md로 저장해 두면, 나중에 다른 기능을 요청할 때마다 "PRD.md를 읽어줘"라고만 하면 됩니다.</div>
+      <div class="check"><div class="lbl">확인할 것</div><ul>
+        <li>AI가 코드를 짜지 않고 질문만 했나요?</li>
+        <li>내가 답한 내용이 <code>PRD.md</code>에 정확히 반영됐나요?</li>
+      </ul></div>
+      <div class="stepnav"><button data-goto="s1"><span>이전</span><b>← 작업 규칙 정하기</b></button><button class="next" data-goto="s3"><span>다음 · 3단계</span><b>기술·순서 정하기 →</b></button></div>
+    </section>
+
+    <section class="step" id="s3">
+      <div class="step-head"><span class="badge">3단계</span><h2>기술 선택과 순서 정하기</h2><span class="count">5 / 12</span></div>
+      <p class="lead">기술은 직접 고르지 않고 추천받습니다. 그다음 전체 작업 순서를 받아 큰 그림을 확인합니다.</p>
+      <div class="aibox"><div class="lbl">AI에게<button class="copy" type="button">복사</button></div><pre><code>이 웹앱을 만들기 위해 어떤 기술이 필요한지 추천해줘</code></pre></div>
+      <div class="aibox"><div class="lbl">AI에게<button class="copy" type="button">복사</button></div><pre><code>개발 초보자가 이해할 수 있게<br>이 현황판을 만드는 순서를 5단계로 설명해줘.</code></pre></div>
+      <div class="mech"><b>왜 기술을 직접 고르지 않는가 —</b> 기술 이름을 미리 외우고 있을 필요는 없습니다. "상황(사용자 수, 원하는 기능, 서버 환경)"만 설명하면 AI가 적절한 기술을 추천합니다. 전체 순서를 미리 받아두면, 지금 하는 작업이 전체의 몇 번째 단계인지 항상 알 수 있습니다.</div>
+      <div class="check"><div class="lbl">확인할 것</div><ul>
+        <li>추천받은 기술(Node.js, Express, SQLite)이 내가 이해할 수 있는 수준으로 설명됐나요?</li>
+        <li>5단계 순서가 "화면 → 로그인 → 기능 → 대시보드" 흐름으로 납득이 되나요?</li>
+      </ul></div>
+      <div class="stepnav"><button data-goto="s2"><span>이전</span><b>← 기획서 만들기</b></button><button class="next" data-goto="s4"><span>다음 · 4단계</span><b>기본 화면 만들기 →</b></button></div>
+    </section>
+
+    <section class="step" id="s4">
+      <div class="step-head"><span class="badge">4단계</span><h2>기본 화면 만들기</h2><span class="count">6 / 12</span></div>
+      <p class="lead">기능 없이 눈에 보이는 화면 틀부터 만듭니다. 로그인도, 데이터베이스도 아직 없습니다.</p>
+      <div class="aibox"><div class="lbl">AI에게<button class="copy" type="button">복사</button></div><pre><code>기본 화면을 위한 프롬프트를 추천해줘</code></pre></div>
+      <div class="aibox"><div class="lbl">AI에게 (추천받은 프롬프트)<button class="copy" type="button">복사</button></div><pre><code>1단계인 기본 화면을 만들어줘.<br>아직 로그인, SQLite 데이터베이스, 당직·휴가·외근·일정 등록 기능은 만들지 마.<br><br>Node.js와 Express로 로컬에서 실행되는 웹앱을 만들고,<br>브라우저에서 기본 대시보드 화면이 보이게 해줘.<br><br>화면에는 아래만 포함해줘.<br>- 좌측 메뉴: 대시보드 / 당직표 / 휴가·외근 / 부서 일정 / 내 정보<br>- 오늘 날짜<br>- 오늘 주간·야간 당직자 자리<br>- 오늘 휴가·외근자 자리<br>- 오늘 부서 일정 자리<br>- 이번 주 당직표 자리<br><br>디자인은 차분한 공공기관 내부 시스템 느낌으로,<br>네이비색 좌측 메뉴와 밝은 본문 영역으로 만들어줘.<br>내용은 모두 한국어로 표시해줘.<br><br>필요한 라이브러리만 설치하고,<br>작업 후 직접 실행해서 화면이 정상적으로 보이는지 확인해줘.<br>마지막에는 내가 직접 실행하는 방법을 쉽게 알려줘.</code></pre></div>
+      <div class="mech"><b>"추천받은 프롬프트를 다시 그대로 보낸다" —</b> 좋은 프롬프트를 직접 쓰기 어렵다면, AI에게 "어떻게 요청하면 좋을지"부터 물어보고, 그 답을 그대로 복사해 다시 보내도 됩니다. 또한 "아직 ~은 만들지 마"로 다음 단계의 기능을 미리 선을 그어 두는 것이 핵심입니다.</div>
+      <div class="check"><div class="lbl">확인할 것</div><ul>
+        <li>로그인이나 데이터 저장 없이 화면 틀만 보이나요?</li>
+        <li>좌측 메뉴 5개(대시보드/당직표/휴가·외근/부서 일정/내 정보)가 모두 보이나요?</li>
+      </ul></div>
+      <h3>작은 디테일도 하나의 단계입니다</h3>
+      <div class="aibox"><div class="lbl">AI에게<button class="copy" type="button">복사</button></div><pre><code>Pretendard 폰트로 변경해줘</code></pre></div>
+      <div class="mech"><b>왜 이런 사소한 것도 따로 요청하는가 —</b> 큰 기능 요청 안에 디테일까지 다 욱여넣지 않습니다. 화면이 완성된 뒤 "폰트만", "색상만"처럼 작은 요청을 따로 보내면, 무엇이 바뀌었는지 비교하기 쉽고 실패해도 되돌리기 쉽습니다.</div>
+      <div class="stepnav"><button data-goto="s3"><span>이전</span><b>← 기술·순서 정하기</b></button><button class="next" data-goto="s5"><span>다음 · 5단계</span><b>로그인과 계정 →</b></button></div>
+    </section>
+
+    <section class="step" id="s5">
+      <div class="step-head"><span class="badge">5단계</span><h2>로그인과 부서원 계정</h2><span class="count">7 / 12</span></div>
+      <p class="lead">결정이 필요한 부분(아이디 규칙, 초기 비밀번호 등)은 먼저 질문으로 받고, 그다음에 구현을 요청합니다.</p>
+      <div class="aibox"><div class="lbl">AI에게<button class="copy" type="button">복사</button></div><pre><code>PRD.md와 AGENTS.md를 먼저 읽어줘.<br><br>기본 화면은 완성했어.<br>다음 기능인 "로그인과 부서원 계정"을 만들기 전에,<br>개발 초보자가 이해할 수 있게 필요한 결정 사항을 설명해줘.<br><br>아직 코드는 수정하지 말고,<br>내가 답해야 할 질문 3개만 해줘.</code></pre></div>
+      <div class="grid2">
+        <div class="box"><b>아이디</b><span>사번</span></div>
+        <div class="box"><b>초기 비밀번호</b><span>1234</span></div>
+        <div class="box"><b>첫 로그인 후</b><span>새 비밀번호로 변경</span></div>
+        <div class="box"><b>계정 변경</b><span>인원 변동 시 개발 담당자가 직접 처리</span></div>
+      </div>
+      <div class="aibox"><div class="lbl">AI에게 (결정 사항을 반영해 구현 요청)<button class="copy" type="button">복사</button></div><pre><code>이제 "로그인과 부서원 계정" 기능만 구현해줘.<br><br>PRD에 정한 대로<br>- 사번으로 로그인<br>- 초기 비밀번호는 1234<br>- 첫 로그인 후 비밀번호 변경<br>- 계정 추가·비활성화는 개발 담당자가 처리<br><br>하도록 만들어줘.<br><br>SQLite를 사용하고, 당직·휴가·외근·일정 기능은 아직 만들지 마.<br>작업 후 직접 실행·테스트하고,<br>내가 부서원 계정을 추가하는 쉬운 방법을 알려줘.</code></pre></div>
+      <div class="mech"><b>"질문 → 내 결정 → 구현 요청"의 3단 구조 —</b> AI가 먼저 질문하게 하면 빠뜨리는 결정이 줄어듭니다. 내가 짧게 답만 하면, AI가 그 답을 코드에 반영합니다. 이 3단 구조는 로그인뿐 아니라 "결정이 필요한 모든 기능"에 똑같이 쓸 수 있습니다.</div>
+      <div class="check"><div class="lbl">확인할 것</div><ul>
+        <li><code>npm run add-user -- 100001 홍길동</code> 같은 명령으로 계정을 추가할 수 있나요?</li>
+        <li>사번과 초기 비밀번호 1234로 로그인되고, 첫 로그인 후 비밀번호 변경 화면이 뜨나요?</li>
+      </ul></div>
+      <div class="stepnav"><button data-goto="s4"><span>이전</span><b>← 기본 화면 만들기</b></button><button class="next" data-goto="s6"><span>다음 · 6단계</span><b>기능 하나씩 만들기 →</b></button></div>
+    </section>
+
+    <section class="step" id="s6">
+      <div class="step-head"><span class="badge">6단계</span><h2>기능을 하나씩 만들기</h2><span class="count">8 / 12</span></div>
+      <p class="lead">당직표·휴가외근·부서 일정, 세 기능을 한 번에 요청하지 않고 하나씩 따로 요청합니다.</p>
+      <div class="aibox"><div class="lbl">AI에게 · 당직표<button class="copy" type="button">복사</button></div><pre><code>당직표 기능만 구현해줘.<br><br>주간·야간 당직을 등록·수정·삭제하고<br>월별로 볼 수 있게 해줘.<br>다른 기능은 만들지 마</code></pre></div>
+      <div class="aibox"><div class="lbl">AI에게 · 휴가·외근<button class="copy" type="button">복사</button></div><pre><code>휴가·외근 기능만 구현해줘.<br><br>각자 본인 휴가·외근을 등록·수정·삭제하고,<br>모두의 현황을 월별로 볼 수 있게 해줘.<br>다른 기능은 만들지 마.</code></pre></div>
+      <div class="aibox"><div class="lbl">AI에게 · 부서 일정<button class="copy" type="button">복사</button></div><pre><code>부서 일정 기능만 구현해줘.<br><br>모든 부서원이 일정을 등록·수정·삭제하고,<br>월별로 볼 수 있게 해줘.<br>다른 기능은 만들지 마.</code></pre></div>
+      <div class="mech"><b>"다른 기능은 만들지 마"가 핵심 문장입니다 —</b> 기능을 하나씩 분리해서 요청하지 않으면, AI가 한 번에 여러 파일을 고치다가 의도치 않은 곳까지 바꾸는 경우가 생깁니다. 매번 "이번엔 이것만"이라고 범위를 못박으면, 문제가 생겨도 방금 건드린 기능만 확인하면 됩니다. 세 기능의 문장 구조가 거의 같다는 점도 보세요 — <b>이 틀 그대로 다른 기능(예: 자산 대여, 회의실 예약)에도 적용할 수 있습니다.</b></div>
+      <div class="check"><div class="lbl">확인할 것</div><ul>
+        <li>세 기능을 각각 따로 요청했고, 요청마다 다른 화면이 망가지지 않았나요?</li>
+        <li>각 기능에서 등록·수정·삭제·월별 조회가 모두 되나요?</li>
+      </ul></div>
+      <div class="stepnav"><button data-goto="s5"><span>이전</span><b>← 로그인과 계정</b></button><button class="next" data-goto="s7"><span>다음 · 7단계</span><b>대시보드·디자인 →</b></button></div>
+    </section>
+
+    <section class="step" id="s7">
+      <div class="step-head"><span class="badge">7단계</span><h2>대시보드와 디자인 다듬기</h2><span class="count">9 / 12</span></div>
+      <p class="lead">먼저 거칠게 한 번 만들어 보고, 실제로 보면서 더 구체적인 요청으로 다듬습니다.</p>
+      <div class="aibox"><div class="lbl">AI에게 · 1차 요청<button class="copy" type="button">복사</button></div><pre><code>대시보드를 완성해줘.<br><br>기존 당직·휴가·외근·부서 일정을 연결해서<br>오늘 당직자, 오늘 부재자, 오늘 일정,<br>이번 주 당직표, 다가오는 일정을 보여줘.<br><br>다른 기능은 만들지 마.</code></pre></div>
+      <div class="aibox"><div class="lbl">AI에게 · 실제로 본 뒤 구체적으로 다시 요청<button class="copy" type="button">복사</button></div><pre><code>오늘 당직·휴가/외근·부서 일정을 이름 중심 카드로 보여주고, 사번은 표시하지 마.<br>달력은 이전/다음 달 이동이 가능하고, 모든 날짜 칸 높이는 같게 해줘.<br>일정은 최대 두 줄로 표시하고, 부서 일정의 등록자 표기는 "부서 공통"으로 해줘.<br>카드·달력 항목·색상 버튼을 누르면 해당 메뉴로 이동하게 해줘.<br>다른 기능은 수정하지 마.</code></pre></div>
+      <div class="mech"><b>1차 요청은 "대충", 2차 요청은 "구체적으로" —</b> 처음부터 완벽한 문장으로 요청하지 않아도 됩니다. 일단 만들어서 눈으로 보면, "사번 말고 이름으로", "날짜 칸 높이를 맞춰서"처럼 구체적인 불편함이 보입니다. 그 불편함을 그대로 다음 프롬프트에 적으면 됩니다. <b>완벽한 프롬프트를 한 번에 쓰려고 하지 말고, 보면서 고쳐 나가는 것</b>이 바이브코딩의 실제 모습입니다.</div>
+      <div class="check"><div class="lbl">확인할 것</div><ul>
+        <li>대시보드에 사번 대신 이름이 보이나요?</li>
+        <li>카드나 달력 항목을 누르면 해당 관리 화면으로 이동하나요?</li>
+      </ul></div>
+      <div class="stepnav"><button data-goto="s6"><span>이전</span><b>← 기능 하나씩 만들기</b></button><button class="next" data-goto="s8"><span>다음 · 8단계</span><b>데이터 확인·백업 →</b></button></div>
+    </section>
+
+    <section class="step" id="s8">
+      <div class="step-head"><span class="badge">8단계</span><h2>데이터 확인과 백업</h2><span class="count">10 / 12</span></div>
+      <p class="lead"><code>src/data.db</code> 파일 하나에 계정·당직·휴가·일정이 모두 저장됩니다. 화면이 아니라 파일 자체를 직접 들여다볼 수도 있습니다.</p>
+      <h3>DB Browser for SQLite로 데이터 들여다보기</h3>
+      <div class="box" style="margin-bottom:12px"><b>DB Browser for SQLite</b><span>SQLite 파일을 엑셀처럼 표로 열어 보는 무료 프로그램</span></div>
+      <p>직접 다운로드 페이지를 찾아도 되지만, 설치 자체를 AI에게 맡길 수도 있습니다.</p>
+      <div class="aibox"><div class="lbl">AI에게 (설치를 부탁하는 방법)<button class="copy" type="button">복사</button></div><pre><code>DB Browser for SQLite를 내 컴퓨터에 설치해줘.<br>winget이 있으면 winget으로 설치하고,<br>안 되면 공식 다운로드 링크와 설치 방법을 알려줘.</code></pre></div>
+      <div class="mech"><b>설치도 프롬프트로 요청할 수 있습니다 —</b> AI 코딩 도구는 터미널 명령을 대신 실행할 수 있어서, "이 프로그램을 설치해줘"라고만 해도 되는 경우가 많습니다. 다만 설치 여부 확인이나 관리자 권한 요청 창이 뜨면 직접 눌러 줘야 합니다.</div>
+      <div class="step" style="box-shadow:none;border:none;padding:0;margin:0">
+        <ol class="list">
+          <li>AI가 설치를 못하거나 직접 하고 싶다면, <a href="https://sqlitebrowser.org/dl/" target="_blank" rel="noreferrer">DB Browser for SQLite 공식 다운로드 페이지</a>에서 Windows용 설치 파일을 받아 설치합니다.</li>
+          <li>프로그램을 열고 <b>Open Database</b>로 <code>Team Hub/src/data.db</code>를 엽니다.</li>
+          <li><b>Browse Data</b> 탭에서 테이블(users, duty, leave, schedule 등)을 선택하면 표 형태로 데이터가 보입니다.</li>
+        </ol>
+      </div>
+      <div class="warn"><div class="lbl">헷갈리기 쉬운 점</div><ul>
+        <li><code>npm start</code>로 서버가 실행 중일 때 DB Browser에서 값을 직접 수정하고 저장하면, 서버가 쓰던 내용과 충돌할 수 있습니다. 값은 되도록 화면(브라우저)에서 등록·수정하고, DB Browser는 "확인용"으로만 씁니다.</li>
+        <li>부득이 직접 수정해야 한다면 서버를 <code>Ctrl + C</code>로 멈춘 뒤 수정하고, 끝나면 다시 <code>npm start</code>로 켭니다.</li>
+      </ul></div>
+      <h3>백업하기</h3>
+      <div class="cmdbox"><div class="lbl">PowerShell에서 직접<button class="copy" type="button">복사</button></div><pre><code>Copy-Item .\data.db ..\archive\data-backup-날짜.db</code></pre></div>
+      <div class="mech"><b>왜 화면으로 만든 걸 파일로도 확인하는가 —</b> 화면에 잘 보인다고 데이터가 안전하게 저장된 것은 아닙니다. DB Browser로 파일을 직접 열어 보면 "진짜 저장이 됐는지"를 화면과 별개로 확인할 수 있고, 문제가 생겼을 때 데이터 자체를 보고 원인을 찾을 수 있습니다.</div>
+      <div class="check"><div class="lbl">확인할 것</div><ul>
+        <li>DB Browser로 <code>data.db</code>를 열어 방금 등록한 당직·휴가·일정이 표에 보이나요?</li>
+        <li>백업 파일이 <code>archive</code> 폴더에 날짜별로 쌓이고 있나요?</li>
+      </ul></div>
+      <div class="stepnav"><button data-goto="s7"><span>이전</span><b>← 대시보드·디자인</b></button><button class="next" data-goto="s9"><span>다음 · 9단계</span><b>외부 공유 →</b></button></div>
+    </section>
+
+    <section class="step" id="s9">
+      <div class="step-head"><span class="badge">9단계</span><h2>Cloudflare Tunnel로 외부 공유</h2><span class="count">11 / 12</span></div>
+      <p class="lead">내 PC에서 실행 중인 앱을, 코드를 다른 서버로 옮기지 않고 URL로 바로 연결합니다.</p>
+      <div class="warn"><div class="lbl">전제 조건</div><ul>
+        <li>PC, <code>npm start</code>, <code>cloudflared</code>가 모두 켜져 있어야 합니다. 하나라도 꺼지면 URL도 열리지 않습니다.</li>
+      </ul></div>
+      <h3>1. cloudflared 다운로드</h3>
+      <p><a href="https://developers.cloudflare.com/tunnel/downloads/" target="_blank" rel="noreferrer">Cloudflare 공식 다운로드 안내</a>에서 Windows 64비트 파일(<code>cloudflared-windows-amd64.exe</code>)을 받습니다.</p>
+
+      <h3>2. 창 A에서 앱 실행</h3>
+      <div class="cmdbox"><div class="lbl">창 A · PowerShell<button class="copy" type="button">복사</button></div><pre><code>cd ...\src<br>npm start</code></pre></div>
+
+      <h3>3. 창 B에서 Tunnel 실행</h3>
+      <div class="cmdbox"><div class="lbl">창 B · PowerShell<button class="copy" type="button">복사</button></div><pre><code>.\cloudflared-windows-amd64.exe tunnel --url http://localhost:3000</code></pre></div>
+      <p><code>https://...trycloudflare.com</code> 형태의 주소가 나오면 다른 PC나 휴대폰에서 열어 봅니다.</p>
+
+      <div class="warn"><div class="lbl">실행할 때마다 주소가 바뀌나요?</div><ul>
+        <li>네. Quick Tunnel(<code>--url</code>로 바로 실행하는 방식)은 <b>실행할 때마다 임의의 새 주소</b>가 발급됩니다. 어제 공유했던 주소를 오늘 그대로 쓸 수 없습니다.</li>
+        <li><code>cloudflared</code> 창을 끄면 그 주소는 즉시 작동을 멈춥니다. 다시 켜면 또 다른 새 주소가 나옵니다.</li>
+        <li>항상 같은 주소를 쓰고 싶다면 아래 "실제로 배포하려면"의 Named Tunnel을 사용해야 합니다.</li>
+      </ul></div>
+
+      <h3>실제로 배포하려면</h3>
+      <p>지금 방식(Quick Tunnel)은 테스트용입니다. 팀이 계속 쓸 고정 주소가 필요하면 아래 순서로 넘어갑니다.</p>
+      <ol class="list">
+        <li>Cloudflare 계정을 만들고, 이미 가지고 있는 도메인을 Cloudflare에 연결합니다. (도메인이 없다면 먼저 구입해야 합니다.)</li>
+        <li><code>cloudflared tunnel login</code>으로 로그인하고, <code>cloudflared tunnel create 이름</code>으로 <b>Named Tunnel</b>을 만듭니다.</li>
+        <li>설정 파일에 로컬 주소(<code>http://localhost:3000</code>)와 연결할 도메인 주소를 적습니다.</li>
+        <li><code>cloudflared tunnel route dns 터널이름 사용할주소</code>로 도메인과 터널을 연결합니다.</li>
+        <li><code>cloudflared tunnel run 터널이름</code>으로 실행하면, 이후부터는 항상 같은 주소로 접속됩니다.</li>
+      </ol>
+      <div class="warn"><div class="lbl">그래도 PC는 계속 켜져 있어야 합니다</div><ul>
+        <li>Named Tunnel을 써도 "내 PC의 서버를 연결"하는 방식은 같습니다. PC, <code>npm start</code>, <code>cloudflared</code> 중 하나라도 꺼지면 접속이 끊깁니다.</li>
+        <li>PC를 계속 켜 두기 어렵다면, Render·Railway 같은 클라우드 호스팅에 이 Node.js 앱을 올려 24시간 운영하는 방법도 있습니다. 이 경우 AI에게 "이 프로젝트를 [서비스 이름]에 배포하고 싶어, 방법을 알려줘"라고 물어보면 됩니다.</li>
+      </ul></div>
+
+      <div class="check"><div class="lbl">확인할 것</div><ul>
+        <li><code>https://...trycloudflare.com</code> 주소를 휴대폰 데이터 환경에서 열어 봤나요?</li>
+        <li>창 B(cloudflared)를 껐다 켜면 주소가 바뀐다는 것을 직접 확인해 봤나요?</li>
+      </ul></div>
+      <div class="stepnav"><button data-goto="s8"><span>이전</span><b>← 데이터 확인·백업</b></button><button class="next" data-goto="finish"><span>다음 · 마무리</span><b>마무리·재사용 →</b></button></div>
+    </section>
+
+    <section class="step" id="finish">
+      <div class="step-head"><span class="badge alt">마무리</span><h2>마무리 점검과 재사용 템플릿</h2><span class="count">12 / 12</span></div>
+      <div class="checklist" id="finishCheck">
+        <label><input type="checkbox" data-k="f0"> 당직·휴가·외근·부서 일정을 하나씩 등록해 봤다</label>
+        <label><input type="checkbox" data-k="f1"> 대시보드와 모바일 화면에 등록 내용이 보인다</label>
+        <label><input type="checkbox" data-k="f2"> DB Browser for SQLite로 data.db를 직접 열어 확인했다</label>
+        <label><input type="checkbox" data-k="f3"> data.db와 소스코드를 archive에 백업했다</label>
+        <label><input type="checkbox" data-k="f4"> Cloudflare URL을 모바일 데이터 환경에서 열어 봤다</label>
+        <label><input type="checkbox" data-k="f5"> 테스트 계정·임시 비밀번호를 실제 운영 전 제거했다</label>
+      </div>
+
+      <h3>다른 프로그램을 만들 때 그대로 쓰는 4개 템플릿</h3>
+      <p>지금까지 쓴 프롬프트들은 사실 아래 4가지 틀을 반복한 것입니다. 괄호 안만 바꾸면 완전히 다른 프로그램(재고 관리, 회의실 예약, 자산 대여 등)에도 그대로 씁니다.</p>
+
+      <div class="tplbox"><div class="lbl">템플릿 1 · 작업 규칙 만들기<button class="copy" type="button">복사</button></div><pre><code>이 폴더 구조에 대해 AI 작업 규칙 파일(AGENTS.md)을 만들어줘.</code></pre></div>
+
+      <div class="tplbox"><div class="lbl">템플릿 2 · 기획 질문 받기<button class="copy" type="button">복사</button></div><pre><code>나는 개발 초보야.
+<mark class="slot">[만들고 싶은 서비스]</mark>를 만들고 싶어.
+기능은 <mark class="slot">[핵심 기능 목록]</mark>만 넣을 거야.
+
+먼저 PRD에 꼭 필요한 질문 3개만 해줘.
+내가 답하면 프로젝트 최상단에 PRD.md로 저장해줘.</code></pre></div>
+
+      <div class="tplbox"><div class="lbl">템플릿 3 · 기능 하나만 요청하기<button class="copy" type="button">복사</button></div><pre><code>PRD.md와 AGENTS.md를 먼저 읽어줘.
+
+<mark class="slot">[기능 이름]</mark>만 구현해줘.
+다른 기능은 수정하지 마.
+
+작업 후 직접 실행·테스트하고,
+내가 확인할 방법을 알려줘.</code></pre></div>
+
+      <div class="tplbox"><div class="lbl">템플릿 4 · 디테일만 다듬기<button class="copy" type="button">복사</button></div><pre><code><mark class="slot">[화면/요소]</mark>를 <mark class="slot">[원하는 모습]</mark>으로 바꿔줘.
+다른 기능은 건드리지 마.</code></pre></div>
+
+      <div class="mech"><b>기억할 한 가지 —</b> 바이브코딩에서 중요한 건 프롬프트 문장을 외우는 것이 아니라, <b>"작게 쪼개고, 범위를 못박고, 눈으로 확인하고, 다음으로 넘어간다"</b>는 흐름 자체입니다. 이 네 가지만 지키면 어떤 프로그램이든 비슷한 방식으로 만들 수 있습니다.</div>
+
+      <div class="stepnav"><button data-goto="s9"><span>이전</span><b>← 외부 공유</b></button><button disabled>완료</button></div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="foot">부서 운영 현황판 바이브코딩 실습 · 프롬프트편</footer>
+
+<script>
+(function(){
+  // 복사 버튼
+  document.querySelectorAll('.copy').forEach(function(b){
+    b.addEventListener('click', async function(){
+      var box = b.closest('.aibox,.tplbox,.cmdbox');
+      var code = box.querySelector('code');
+      try{ await navigator.clipboard.writeText(code.innerText); }catch(e){}
+      var old = b.textContent;
+      b.textContent = '복사됨';
+      setTimeout(function(){ b.textContent = old; }, 1200);
+    });
+  });
+
+  // 체크리스트 로컬 저장
+  document.querySelectorAll('.checklist input').forEach(function(i){
+    var k = 'vibe-flow-' + i.dataset.k;
+    try{ i.checked = localStorage.getItem(k) === 'true'; }catch(e){}
+    i.addEventListener('change', function(){
+      try{ localStorage.setItem(k, i.checked); }catch(e){}
+    });
+  });
+
+  var links = Array.prototype.slice.call(document.querySelectorAll('#tocList a'));
+  var stepEls = Array.prototype.slice.call(document.querySelectorAll('main > section.step'));
+
+  function setActiveLink(id){
+    links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + id); });
+  }
+
+  // 한 단계씩 보기: 해당 단계만 보이게 전환
+  function showStep(id){
+    stepEls.forEach(function(s){ s.classList.toggle('active', s.id === id); });
+    setActiveLink(id);
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  // 이전/다음 버튼
+  document.querySelectorAll('[data-goto]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var id = btn.dataset.goto;
+      if(document.body.classList.contains('expanded')){
+        var el = document.getElementById(id);
+        if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+      } else {
+        showStep(id);
+      }
+    });
+  });
+
+  // 진행표 링크: 펼쳐보기 모드가 아니면 해당 단계로 전환, 펼쳐보기 모드면 그 위치로 스크롤
+  links.forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      var id = a.getAttribute('href').slice(1);
+      if(document.body.classList.contains('expanded')){
+        var el = document.getElementById(id);
+        if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+      } else {
+        showStep(id);
+      }
+    });
+  });
+
+  // 전체 펼쳐 보기 / 한 단계씩 보기 전환
+  var expandBtn = document.getElementById('expandAll');
+  var io = null;
+  function startScrollspy(){
+    if(io) return;
+    io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting) setActiveLink(entry.target.id);
+      });
+    }, {rootMargin:'-20% 0px -70% 0px', threshold:0});
+    stepEls.forEach(function(s){ io.observe(s); });
+  }
+  function stopScrollspy(){
+    if(io){ io.disconnect(); io = null; }
+  }
+  expandBtn.addEventListener('click', function(){
+    var expanded = document.body.classList.toggle('expanded');
+    expandBtn.classList.toggle('on', expanded);
+    expandBtn.textContent = expanded ? '한 단계씩 보기' : '전체 펼쳐 보기';
+    if(expanded){
+      startScrollspy();
+    } else {
+      stopScrollspy();
+      var current = stepEls.find(function(s){ return s.classList.contains('active'); }) || stepEls[0];
+      showStep(current.id);
+    }
+  });
+
+  // 시작은 항상 첫 단계만 보이는 상태
+  showStep('prep');
+})();
+</script>
+</body>
+</html>
